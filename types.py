@@ -68,16 +68,28 @@ class PalpationExamination:
             else:
                 return self.right.strength()
 
+"""This function checks if the value of the palpation entry
+    is set according to the schema, e.g P1L2, P3, L1, 0"""
 def validPalapationResult(resultString):
-    rgx = "^P[0-3]L[0-3]$|^P[0-3]$|^L[0-3]$|^0$"
-    return re.match(rgx, resultString)
-    
-    
-def parsePalpationExamination(stringRepresentation):
-    if (not validPalapationResult(stringRepresentation)):
-        raise Exception("Wrong palpation result steing format")
-    else:
-        pass #TODO: add parsing, return tuple of RighSidePain and LeftSidePain?
+    rgx = re.compile("^P[0-3]L[0-3]$|^P[0-3]$|^L[0-3]$|^0$")
+    return rgx.match(resultString)
+
+"""Return a tuple of integers representing
+   a pain strenght on right and left side (rightPain, leftPain)"""
+def parsePalpationExamination(palpationStrRepr):
+    pPain = 0
+    lPain = 0
+    if (not validPalapationResult(palpationStrRepr)):
+        raise Exception("Wrong palpation result string format: {}"
+                        .format(palpationStrRepr))
+    elif (palpationStrRepr != "0"):
+         pPos = palpationStrRepr.find("P")
+         if (pPos != -1):
+            pPain = int(palpationStrRepr[pPos+1]) # get number after 'P'
+         lPos = palpationStrRepr.find("L")
+         if (lPos != -1):
+            lPain = int(palpationStrRepr[lPos+1]) # get number after 'L'
+    return pPain, lPain
 
 class Q:
     def __init__(self, isPain, painType):
