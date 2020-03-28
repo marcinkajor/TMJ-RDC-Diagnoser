@@ -30,6 +30,39 @@ class Person:
 class AxisOne:
     pass
 
+'''A class representing necessary motion ranges:
+  ("5a", "5b", "5c", "5b") as a dict'''
+class Openings:
+    def __init__(self):
+        self.openings = {}
+    def addOpening(self, typeIndex, motionRange):
+        if (not isinstance(motionRange, int)):
+            raise Exception("Motion range must be an integer!")
+        self.allowedIndexes = ["5a", "5b", "5c", "5b"]
+        if typeIndex not in self.allowedIndexes:
+            raise Exception("Invalid Opening range class index: {}, allowed: {}"
+                            .format(typeIndex, self.allowedIndexes))
+        if (typeIndex not in self.openings):
+            self.openings[typeIndex] = motionRange #mm
+    def getOpening(self, name):
+        if (name in self.openings):
+            return self.openings[name]
+
+class E2:
+    def __init__(self, painSource):
+        self._sourceMap = {
+           0: "none",
+           1: "right",
+           2: "left",
+           3: "both",
+         }
+        if (not isinstance(painSource, int) or painSource not in range (0,3)):
+            raise Exception("Pain source must be a integer in range (0,3)")
+        self.painSourceNumeric = painSource
+        self.painSide = self._sourceMap[painSource]
+    def getPainSource(self):
+        return (self.painSourceNumeric, self.painSide)
+
 class PainStrength:
     NO_PAIN = 0
     MILD = 1
@@ -59,7 +92,6 @@ class LeftSidePain(SidePain):
         return "L" #lewy
     
 class Palpation:
-    name = ""
     def __init__(self, rightPain, leftPain):
         self.rightPain = rightPain
         self.leftPain = leftPain
