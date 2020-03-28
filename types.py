@@ -8,10 +8,10 @@ Created on Mon Mar 23 21:31:50 2020
 import re
 
 class Patient:
-    def __init__(self, personalData, axisOne, palpation, q):
+    def __init__(self, personalData, axisOne, palpations, q):
         self.personalData = personalData
         self.asixOne = axisOne
-        self.palpation = palpation
+        self.palpations = palpations
         self.q = q
         
     def getDiagnosis():
@@ -39,8 +39,12 @@ class PainStrength:
 class SidePain:
     def __init__(self, strength):
         self.strength = strength
-    def strength(self):
+    ''' Returns real scaled pain '''
+    def realPainStrength(self):
         return self.strength
+    ''' Returns binary state: pain or no pain '''
+    def pain(self):
+        return (1 if (self.strength > 0) else 0)
 
 class RighSidePain(SidePain):
     def __init__(self, strength):
@@ -54,7 +58,7 @@ class LeftSidePain(SidePain):
     def side():
         return "L" #lewy
     
-class PalpationExamination:
+class Palpation:
     name = ""
     def __init__(self, rightPain, leftPain):
         self.rightPain = rightPain
@@ -64,36 +68,54 @@ class PalpationExamination:
             raise Exception("Only \"L\" and \"R\" are valid side names") 
         else:
             if (side == "L"):
-                return self.leftPain.strength()
+                return self.leftPain.pain()
             else:
-                return self.right.strength()
+                return self.right.pain()
+
+class Palpations:
+    def __init__(self, name):
+        self.name = name
+        self.palpations = []
+    def addPalpation(self, palpation):
+        self.palpations.append(palpation)
+    def name(self):
+        return self.name
+    def painScore(self, side):
+        n = 0
+        for idx in self.palpations:
+            n = n + self.palpations[idx].getPain(side)
+        return n
 
 """This function checks if the value of the palpation entry
     is set according to the schema, e.g P1L2, P3, L1, 0"""
-def validPalapationResult(resultString):
+def validPainResult(resultString):
     rgx = re.compile("^P[0-3]L[0-3]$|^P[0-3]$|^L[0-3]$|^0$")
     return rgx.match(resultString)
 
 """Return a tuple of integers representing
    a pain strenght on right and left side (rightPain, leftPain)"""
-def parsePalpationExamination(palpationStrRepr):
+def parsePainExamination(painStrRepr):
     pPain = 0
     lPain = 0
-    if (not validPalapationResult(palpationStrRepr)):
-        raise Exception("Wrong palpation result string format: {}"
-                        .format(palpationStrRepr))
-    elif (palpationStrRepr != "0"):
-         pPos = palpationStrRepr.find("P")
+    if (not validPainResult(painStrRepr)):
+        raise Exception("Wrong pain result string format: {}"
+                        .format(painStrRepr))
+    elif (painStrRepr != "0"):
+         pPos = painStrRepr.find("P")
          if (pPos != -1):
-            pPain = int(palpationStrRepr[pPos+1]) # get number after 'P'
-         lPos = palpationStrRepr.find("L")
+            pPain = int(painStrRepr[pPos+1]) # get number after 'P'
+         lPos = painStrRepr.find("L")
          if (lPos != -1):
-            lPain = int(palpationStrRepr[lPos+1]) # get number after 'L'
+            lPain = int(painStrRepr[lPos+1]) # get number after 'L'
     return pPain, lPain
 
 class Q:
-    def __init__(self, isPain, painType):
-        self.Q3 = isPain
-        self.E9 = painType
+    def __init__(self, q3, q14):
+        self.Q3 = q3
+        self.Q14 = q14
+    def getQ3(self):
+        return self.Q3
+    def getQ14(self):
+        return self.Q14
 
     
