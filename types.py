@@ -69,6 +69,36 @@ class PainStrength:
     MODERATE = 2
     STRONG = 3
 
+class E6:
+    def __init__(self):
+        self.sounds = {"L":{}, "P":{}}
+        self.mapping = {
+                "open": "E6a",
+                "close": "E6b"
+        }
+    def addSound(self, typeIndex, soundType, side):
+        if (not isinstance(soundType, int) or soundType not in range(0,3)):
+            raise Exception("Sound type must be an integer (0:3)!")
+        self.allowedIndexes = ["E6a", "E6b"]
+        if typeIndex not in self.allowedIndexes:
+            raise Exception("Invalid sound type: {}, allowed: {}"
+                            .format(typeIndex, self.allowedIndexes))
+        if (side not in ["L", "P"]):
+            raise Exception("Invalid side: {}, allowed: {}"
+                            .format(typeIndex, ["L", "P"]))
+        if (side not in self.sounds):
+            self.sounds[side] = {typeIndex : soundType}
+    def addClickEliminaton(self, state):
+        if (not isinstance(state, bool)):
+            raise Exception("Sound type must be a boolean!")
+        self.clickElimination = state
+    def getClickElimination(self):
+        return self.clickElimination
+    def getSound(self, side, motion):
+        return self.sounds[side][self.mapping[motion]]
+    def soundPresent(self, side):
+        return True if (self.sounds[side]["E6a"] > 0
+                         or self.sounds[side]["E6b"] > 0) else False
 class SidePain:
     def __init__(self, strength):
         self.strength = strength
