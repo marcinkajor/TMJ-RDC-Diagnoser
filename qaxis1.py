@@ -10,7 +10,7 @@ class AxisOne:
 
 '''A class representing necessary motion ranges:
   ("5a", "5b", "5c", "5b") as a dict'''
-class Openings:
+class E5:
     def __init__(self):
         self.openings = {}
     def addOpening(self, typeIndex, motionRange):
@@ -73,4 +73,14 @@ class E6:
                          or self.sounds[side]["E6b"] > 0) else False
 
 class E8:
-    pass
+    def __init__(self):
+        self.sideMovePains = {"L":{}, "P":{}}
+    ''' Adds "right" and "left" as a pain accuring when moving "L"/"R" '''
+    def addSideMovePain(self, sideMove, right, left):
+        if (not isinstance(right, int) or not isinstance(left, int)):
+            raise Exception("left and right pain must be integers")
+        self.sideMovePains[sideMove] = {"right:": right, "left": left}
+    ''' Returns True if pain on "left"/"right" side, False otherwise'''
+    def isPainOnSide(self, side):
+        return True if (self.sideMovePains["L"][side] > 0
+                        or self.sideMovePains["R"][side] >0) else False
