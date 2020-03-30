@@ -8,24 +8,6 @@ Created on Sun Mar 29 20:18:40 2020
 class AxisOne:
     pass
 
-'''A class representing necessary motion ranges:
-  ("5a", "5b", "5c", "5b") as a dict'''
-class E5:
-    def __init__(self):
-        self.openings = {}
-    def addOpening(self, typeIndex, motionRange):
-        if (not isinstance(motionRange, int)):
-            raise Exception("Motion range must be an integer!")
-        self.allowedIndexes = ["5a", "5b", "5c", "5b"]
-        if typeIndex not in self.allowedIndexes:
-            raise Exception("Invalid Opening range class index: {}, allowed: {}"
-                            .format(typeIndex, self.allowedIndexes))
-        if (typeIndex not in self.openings):
-            self.openings[typeIndex] = motionRange #mm
-    def getOpening(self, name):
-        if (name in self.openings):
-            return self.openings[name]
-
 class E2:
     def __init__(self, painSource):
         self._sourceMap = {
@@ -55,6 +37,39 @@ class E3:
     def isPainOnSide(self, side):
         return True if (self.pains[side] > 0) else False
 
+'''A class representing lateral deviation as (0-5) integer'''
+class E4:
+    def __init__(self, lateralDeviation):
+        if (not isinstance(lateralDeviation, int)
+            or lateralDeviation not in range(0,5)):
+            raise Exception("Lateral deviation must be an integer (0-5)")
+            self.lateralDeviation = lateralDeviation
+    def getRealDeviation(self):
+        return self.lateralDeviation
+    def isPainOnSide(self, side):
+        if (side not in ["left", "right"]):
+            raise Exception("Side must be \"right\" or \"left\"")
+        if (side == "left"): return True if (self.lateralDeviation == 3) else False
+        if (side == "right"): return True if (self.lateralDeviation == 1) else False
+
+'''A class representing necessary motion ranges:
+  ("5a", "5b", "5c", "5b") as a dict'''
+class E5:
+    def __init__(self):
+        self.openings = {}
+    def addOpening(self, typeIndex, motionRange):
+        if (not isinstance(motionRange, int)):
+            raise Exception("Motion range must be an integer!")
+        self.allowedIndexes = ["5a", "5b", "5c", "5b"]
+        if typeIndex not in self.allowedIndexes:
+            raise Exception("Invalid Opening range class index: {}, allowed: {}"
+                            .format(typeIndex, self.allowedIndexes))
+        if (typeIndex not in self.openings):
+            self.openings[typeIndex] = motionRange #mm
+    def getOpening(self, name):
+        if (name in self.openings):
+            return self.openings[name]
+
 class E6:
     def __init__(self):
         self.sounds = {"L":{}, "P":{}}
@@ -69,9 +84,9 @@ class E6:
         if typeIndex not in self.allowedIndexes:
             raise Exception("Invalid sound type: {}, allowed: {}"
                             .format(typeIndex, self.allowedIndexes))
-        if (side not in ["L", "P"]):
+        if (side not in ["left", "right"]):
             raise Exception("Invalid side: {}, allowed: {}"
-                            .format(typeIndex, ["L", "P"]))
+                            .format(typeIndex, ["left", "right"]))
         if (side not in self.sounds):
             self.sounds[side] = {typeIndex : soundType}
     def addClickEliminaton(self, state):
@@ -83,6 +98,8 @@ class E6:
     def getSound(self, side, motion):
         return self.sounds[side][self.mapping[motion]]
     def isPainOnSide(self, side):
+        if (side not in ["left", "right"]):
+            raise Exception("Side must be \"right\" or \"left\"")
         return True if (self.sounds[side]["E6a"] > 0
                          or self.sounds[side]["E6b"] > 0) else False
 
@@ -96,5 +113,7 @@ class E8:
         self.sideMovePains[sideMove] = {"right:": right, "left": left}
     ''' Returns True if pain on "left"/"right" side, False otherwise'''
     def isPainOnSide(self, side):
+        if (side not in ["left", "right"]):
+            raise Exception("Side must be \"right\" or \"left\"")
         return True if (self.sideMovePains["L"][side] > 0
                         or self.sideMovePains["R"][side] >0) else False
