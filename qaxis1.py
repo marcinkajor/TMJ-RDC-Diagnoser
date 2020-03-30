@@ -6,8 +6,17 @@ Created on Sun Mar 29 20:18:40 2020
 """
 
 class AxisOne:
-    pass
-
+    ''' Accepts a list of Ex objects'''
+    def __init__(self, exList = []):
+        self.schema = [E2, E3, E4, E5, E6, E7, E8]
+        if (len(exList) != len(self.schema)):
+            raise Exception("exList must contain {} elements".format(len(self.schema)))
+        idx = 0
+        for ex in exList:
+            if (not isinstance(ex, self.schema[idx])):
+                raise Exception("AxisOne c'tor accepts a list of {} objects"
+                                .format(self.schema))
+            idx = idx + 1
 class E2:
     def __init__(self, painSource):
         self._sourceMap = {
@@ -102,6 +111,9 @@ class E6:
             raise Exception("Side must be \"right\" or \"left\"")
         return True if (self.sounds[side]["E6a"] > 0
                          or self.sounds[side]["E6b"] > 0) else False
+
+class E7:
+    pass # TODO: implement
 
 class E8:
     def __init__(self):
