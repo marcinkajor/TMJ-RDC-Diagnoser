@@ -71,3 +71,6 @@ class E6:
     def soundPresent(self, side):
         return True if (self.sounds[side]["E6a"] > 0
                          or self.sounds[side]["E6b"] > 0) else False
+
+class E8:
+    pass

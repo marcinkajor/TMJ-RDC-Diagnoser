@@ -5,34 +5,6 @@ Created on Sun Mar 29 20:18:23 2020
 @author: Marcin
 """
 
-class PainStrength:
-    NO_PAIN = 0
-    MILD = 1
-    MODERATE = 2
-    STRONG = 3
-
-class SidePain:
-    def __init__(self, strength):
-        self.strength = strength
-    ''' Returns real scaled pain '''
-    def realPainStrength(self):
-        return self.strength
-    ''' Returns binary state: pain or no pain '''
-    def pain(self):
-        return (1 if (self.strength > 0) else 0)
-
-class RighSidePain(SidePain):
-    def __init__(self, strength):
-        SidePain.__init__(self, strength)
-    def side():
-        return "P" #prawy
-
-class LeftSidePain(SidePain):
-    def __init__(self, strength):
-        SidePain.__init__(self, strength)
-    def side():
-        return "L" #lewy
-
 class Palpation:
     def __init__(self, rightPain, leftPain):
         self.rightPain = rightPain

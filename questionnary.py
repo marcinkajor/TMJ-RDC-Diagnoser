@@ -20,6 +20,3 @@ result = []
 # save the file with diagnosis
 output = pd.DataFrame(result)
 output.to_excel('diagnosis.xlsx') #index=False
-
-
-
