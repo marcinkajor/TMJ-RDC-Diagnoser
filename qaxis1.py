@@ -41,6 +41,20 @@ class E2:
     def getPainSource(self):
         return (self.painSourceNumeric, self.painSide)
 
+class E3:
+    def __init__(self):
+        self.pains = {}
+    def addPain(self, side, painType):
+        if (side not in ["left", "right"]):
+            raise Exception("Side must be either \"right\" of \"left\"")
+        if (side in self.pain):
+            raise Exception("{} already in the map".format(side))
+        self.pains[side] = painType
+    def getRealPain(self, side):
+        return self.pains[side]
+    def isPainOnSide(self, side):
+        return True if (self.pains[side] > 0) else False
+
 class E6:
     def __init__(self):
         self.sounds = {"L":{}, "P":{}}
@@ -68,7 +82,7 @@ class E6:
         return self.clickElimination
     def getSound(self, side, motion):
         return self.sounds[side][self.mapping[motion]]
-    def soundPresent(self, side):
+    def isPainOnSide(self, side):
         return True if (self.sounds[side]["E6a"] > 0
                          or self.sounds[side]["E6b"] > 0) else False
 
