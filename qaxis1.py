@@ -4,6 +4,7 @@ Created on Sun Mar 29 20:18:40 2020
 
 @author: Marcin
 """
+import re
 
 class AxisOne:
     ''' Accepts a list of Ex objects'''
@@ -113,7 +114,33 @@ class E6:
                          or self.sounds[side]["E6b"] > 0) else False
 
 class E7:
-    pass # TODO: implement
+    ''' Nested private struct-like class 7d (midline deviation) '''
+    class _7d:
+        def __init__(self, side, mm):
+            self.side = side
+            self.mm = mm
+    def _validateAndparse7d(self, d):
+        rgx = re.compile("^(?:\d|)\d[L|R]$")
+        if (not rgx.match(d)):
+            raise Exception("7d must be formed by (R or L) and int [mm]")
+        if ("R" in d):
+            mm, rest = d.split("R")
+            return self._7d("right", int(mm))
+        else:
+            mm, rest = d.split("L")
+        return self._7d("left", int(mm))
+    def __init__(self, a, b, d):
+        if (not isinstance(a+b, int)):
+            raise Exception("7a and 7b must be integers [mm]")
+        self.a7 = a
+        self.b7 = b
+        if (not isinstance(d, str)):
+            raise Exception("7d must be a string object")
+        self.d7 = self._validateAndparse7d(d)
+    def correctedExcursion(self, side):
+        if (side not in ["right", "left"]):
+            raise Exception("Side must be a \"right \" or \" left\" string")
+        return self.d7.mm if (self.d7.side == side) else 0
 
 class E8:
     def __init__(self):
