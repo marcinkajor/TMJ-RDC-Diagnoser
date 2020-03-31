@@ -137,10 +137,22 @@ class E7:
         if (not isinstance(d, str)):
             raise Exception("7d must be a string object")
         self.d7 = self._validateAndparse7d(d)
-    def correctedExcursion(self, side):
-        if (side not in ["right", "left"]):
-            raise Exception("Side must be a \"right \" or \" left\" string")
-        return self.d7.mm if (self.d7.side == side) else 0
+    def correctedExcursionLeft(self):
+        if (self.d7.mm == 0):
+            return 0
+        elif (self.d7.mm > 0):
+            if (self.d7.side == "left"):
+                return self.b7 + self.d7.mm
+            elif (self.d7.side == "right"):
+                return self.b7 - self.d7.mm
+    def correctedExcursionRight(self):
+        if (self.d7.mm == 0):
+            return 0
+        elif (self.d7.mm > 0):
+            if (self.d7.side == "left"):
+                return self.a7 + self.d7.mm
+            elif (self.d7.side == "right"):
+                return self.a7 - self.d7.mm
 
 class E8:
     def __init__(self):
