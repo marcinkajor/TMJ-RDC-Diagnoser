@@ -14,6 +14,9 @@ class Person:
         self.surname = surname
         self.age = age
         self.sex = sex
+    def __str__(self):
+        return "Name: {}, surname: {}, age: {}, sex: {}".format(
+                self.name, self.surname, self.age, self.sex)
 
 class Patient:
     def __init__(self, personalData, axisOne, palpations, q):

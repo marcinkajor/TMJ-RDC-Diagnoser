@@ -63,14 +63,14 @@ class E4:
         if (side == "right"): return True if (self.lateralDeviation == 1) else False
 
 '''A class representing necessary motion ranges:
-  ("5a", "5b", "5c", "5b") as a dict'''
+  ("5a", "5b", "5c", "5d") as a dict'''
 class E5:
     def __init__(self):
         self.openings = {}
     def addOpening(self, typeIndex, motionRange):
         if (not isinstance(motionRange, int)):
             raise Exception("Motion range must be an integer!")
-        self.allowedIndexes = ["5a", "5b", "5c", "5b"]
+        self.allowedIndexes = ["5a", "5b", "5c", "5d"]
         if typeIndex not in self.allowedIndexes:
             raise Exception("Invalid Opening range class index: {}, allowed: {}"
                             .format(typeIndex, self.allowedIndexes))
@@ -157,7 +157,7 @@ class E7:
 class E8:
     def __init__(self):
         self.sideMovePains = {"L":{}, "P":{}}
-    ''' Adds "right" and "left" as a pain accuring when moving "L"/"R" '''
+    ''' Adds "right" and "left" as a pain occuring when moving "L"/"R" '''
     def addSideMovePain(self, sideMove, right, left):
         if (not isinstance(right, int) or not isinstance(left, int)):
             raise Exception("left and right pain must be integers")

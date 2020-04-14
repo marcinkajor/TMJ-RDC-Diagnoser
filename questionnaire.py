@@ -16,11 +16,20 @@ from qaxis1 import AxisOne
 from qpalpation import Palpation, Palpations
 from qQ import Q
 from qpatient import Person, Patient
+from qkeys import Keys
 
 # Importing the dataset
 dataset = pd.read_excel('list.xlsx')
 #dataset.drop([0,1], axis = 0, inplace = True)
 dataarray = dataset.to_numpy()
+
+patients = []
+for raw in dataarray:
+    # check if the surname is set, i.e. if we have a string instance
+    if(isinstance(raw[1], str)):
+        person = Person(raw[Keys.Axis1.NAME], raw[Keys.Axis1.SURNAME],
+                        raw[Keys.Axis1.AGE], raw[Keys.Axis1.SEX])
+        print(person)
 
 result = []
 
