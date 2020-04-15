@@ -27,6 +27,12 @@ class Keys:
         E6aR    = 28 #AC
         E6bR    = 29 #AD
     class Palpation:
-        pass
+        # NOTE: these are lists (various Ex types)
+        E8      = [3] #D
+        E9      = [5, 6, 7, 8, 9, 10, 11, 12] #F-M
+        E10a    = [13] #N
+        E10b    = [14] #O
+        E11     = [15, 16] #P-Q
     class Q:
-        pass
+        Q3      = 3  #C
+        Q14     = 11 #K

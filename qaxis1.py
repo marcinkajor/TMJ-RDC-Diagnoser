@@ -39,7 +39,7 @@ class E3:
     def addPain(self, side, painType):
         if (side not in ["left", "right"]):
             raise Exception("Side must be either \"right\" of \"left\"")
-        if (side in self.pain):
+        if (side in self.pains):
             raise Exception("{} already in the map".format(side))
         self.pains[side] = painType
     def getRealPain(self, side):
@@ -70,7 +70,7 @@ class E5:
     def addOpening(self, typeIndex, motionRange):
         if (not isinstance(motionRange, int)):
             raise Exception("Motion range must be an integer!")
-        self.allowedIndexes = ["5a", "5b", "5c", "5d"]
+        self.allowedIndexes = ["E5a", "E5b", "E5c", "E5d"]
         if typeIndex not in self.allowedIndexes:
             raise Exception("Invalid Opening range class index: {}, allowed: {}"
                             .format(typeIndex, self.allowedIndexes))
