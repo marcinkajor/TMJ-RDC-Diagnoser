@@ -4,7 +4,6 @@ Created on Mon Mar 23 21:31:50 2020
 
 @author: Marcin
 """
-
 class Diagnosis:
     pass
 

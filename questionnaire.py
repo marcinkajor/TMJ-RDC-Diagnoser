@@ -18,18 +18,31 @@ from qQ import Q
 from qpatient import Person, Patient
 from qkeys import Keys
 
-# Importing the dataset
-dataset = pd.read_excel('list.xlsx')
-#dataset.drop([0,1], axis = 0, inplace = True)
-dataarray = dataset.to_numpy()
+def removeEmpty(dataset):
+    to_remove = []
+    for idx, raw in enumerate(dataset):
+        if (not isinstance(raw[1], str)):
+            to_remove.append(idx)
+    return np.delete(dataset, to_remove, axis=0)
+
+# Import datasets as separate spreadsheets
+axis1_sheet = pd.read_excel('list.xlsx', sheet_name = 'axis I')
+palpation_sheet = pd.read_excel('list.xlsx', sheet_name = 'axis I palpacja')
+q_sheet = pd.read_excel('list.xlsx', sheet_name = 'Q')
+# transform to np objects
+axis1_data = removeEmpty(axis1_sheet.to_numpy())
+palpation_data = removeEmpty(palpation_sheet.to_numpy())
+q_data = removeEmpty(q_sheet.to_numpy())
+
+# assume that all sheets have the same number of recodrs/patients
+assert(len(axis1_data) == len(palpation_data) == len(q_data))
 
 patients = []
-for raw in dataarray:
-    # check if the surname is set, i.e. if we have a string instance
-    if(isinstance(raw[1], str)):
-        person = Person(raw[Keys.Axis1.NAME], raw[Keys.Axis1.SURNAME],
-                        raw[Keys.Axis1.AGE], raw[Keys.Axis1.SEX])
-        print(person)
+
+for (axis1, palp, q) in zip(axis1_data, palpation_data, q_data):
+    person = Person(axis1[Keys.Axis1.NAME], axis1[Keys.Axis1.SURNAME],
+                    axis1[Keys.Axis1.AGE], axis1[Keys.Axis1.SEX])
+
 
 result = []
 
