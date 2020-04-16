@@ -26,7 +26,7 @@ class E2:
            2: "left",
            3: "both",
          }
-        if (not isinstance(painSource, int) or painSource not in range (0,3)):
+        if (not isinstance(painSource, int) or painSource not in range (0,4)):
             raise Exception("Pain source must be a integer in range (0,3)")
         self.painSourceNumeric = painSource
         self.painSide = self._sourceMap[painSource]
@@ -120,9 +120,12 @@ class E7:
             self.side = side
             self.mm = mm
     def _validateAndparse7d(self, d):
-        rgx = re.compile("^(?:\d|)\d[L|R]$")
+        rgx = re.compile("^(?:\d|)\d[L|R]|^0$")
         if (not rgx.match(d)):
             raise Exception("7d must be formed by (R or L) and int [mm]")
+        if(d == "0"):
+            # TODO: replace side string with Optional utility
+            return self._7d("right", 0)
         if ("R" in d):
             mm, rest = d.split("R")
             return self._7d("right", int(mm))
