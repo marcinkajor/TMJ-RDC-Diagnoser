@@ -28,6 +28,7 @@ class Keys:
         E6bR    = 29 #AD
     class Palpation:
         # NOTE: these are lists (various Ex types)
+        SURNAME = [1]
         E9      = [5, 6, 7, 8, 9, 10, 11, 12] #F-M
         E10a    = [13] #N
         E10b    = [14] #O

@@ -7,9 +7,10 @@ Created on Sun Mar 29 20:18:40 2020
 import re
 
 class AxisOne:
-    ''' Accepts a list of Ex objects'''
+    ''' A Ex list wrapper. C'tor accepts a list of Ex objects'''
     def __init__(self, exList = []):
         self.schema = [E2, E3, E4, E5, E6, E7, E8]
+        self.list = exList
         if (len(exList) != len(self.schema)):
             raise Exception("exList must contain {} elements".format(len(self.schema)))
         idx = 0
@@ -18,6 +19,16 @@ class AxisOne:
                 raise Exception("AxisOne c'tor accepts a list of {} objects"
                                 .format(self.schema))
             idx = idx + 1
+        self.E2 = self.schema[0]
+        self.E3 = self.schema[1]
+        self.E4 = self.schema[2]
+        self.E5 = self.schema[3]
+        self.E6 = self.schema[4]
+        self.E7 = self.schema[5]
+        self.E8 = self.schema[6]
+
+    def __getitem__(self, key):
+        return self.list[key]
 class E2:
     def __init__(self, painSource):
         self._sourceMap = {
