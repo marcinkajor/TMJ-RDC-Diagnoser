@@ -14,15 +14,17 @@ from qaxis1 import AxisOne
 from qpalpation import createPalpations
 import qpalpation
 from qQ import Q
+import qQ
 from qpatient import Person, Patient
 from qkeys import Keys
 
 qpalpation.DEBUG = False
+qQ.DEBUG = True
 
 def removeEmpty(dataset):
     to_remove = []
-    for idx, raw in enumerate(dataset):
-        if (not isinstance(raw[1], str)):
+    for idx, Row in enumerate(dataset):
+        if (not isinstance(Row[1], str)):
             to_remove.append(idx)
     return np.delete(dataset, to_remove, axis=0)
 
@@ -40,43 +42,48 @@ q_data = removeEmpty(q_sheet.to_numpy())
 assert(len(axis1_data) == len(palpation_data) == len(q_data))
 
 patients = []
-for idx, (axis1, palp, q) in enumerate(zip(axis1_data, palpation_data, q_data)):
+for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, q_data)):
 
     # set personal data
-    person = Person(axis1[Keys.Axis1.NAME], axis1[Keys.Axis1.SURNAME],
-                    axis1[Keys.Axis1.AGE], axis1[Keys.Axis1.SEX])
+    person = Person(axis1Row[Keys.Axis1.NAME], axis1Row[Keys.Axis1.SURNAME],
+                    axis1Row[Keys.Axis1.AGE], axis1Row[Keys.Axis1.SEX])
     # set AxisI data
     #print("{}: E2 = {}".format(person.surname, int(axis1[Keys.Axis1.E2])))
-    e2 = E2(int(axis1[Keys.Axis1.E2]))
+    e2 = E2(int(axis1Row[Keys.Axis1.E2]))
     e3 = E3()
-    e3left, e3right = parsePainExamination(str(axis1[Keys.Axis1.E3]))
+    e3left, e3right = parsePainExamination(str(axis1Row[Keys.Axis1.E3]))
     e3.addPain("left", e3left)
     e3.addPain("right", e3right)
-    e4 = E4(int(axis1[Keys.Axis1.E4]))
+    e4 = E4(int(axis1Row[Keys.Axis1.E4]))
     e5 = E5()
-    e5.addOpening("E5a", int(axis1[Keys.Axis1.E5a]))
-    e5.addOpening("E5b", int(axis1[Keys.Axis1.E5b]))
-    e5.addOpening("E5c", int(axis1[Keys.Axis1.E5c]))
-    e5.addOpening("E5d", int(axis1[Keys.Axis1.E5d]))
+    e5.addOpening("E5a", int(axis1Row[Keys.Axis1.E5a]))
+    e5.addOpening("E5b", int(axis1Row[Keys.Axis1.E5b]))
+    e5.addOpening("E5c", int(axis1Row[Keys.Axis1.E5c]))
+    e5.addOpening("E5d", int(axis1Row[Keys.Axis1.E5d]))
     e6 = E6()
-    e6.addSound("E6a", int(axis1[Keys.Axis1.E6aL]), "left")
-    e6.addSound("E6a", int(axis1[Keys.Axis1.E6aR]), "right")
-    e6.addSound("E6b", int(axis1[Keys.Axis1.E6bL]), "left")
-    e6.addSound("E6b", int(axis1[Keys.Axis1.E6bR]), "right")
-    e7 = E7(int(axis1[Keys.Axis1.E7a]), int(axis1[Keys.Axis1.E7b]),
-            str(axis1[Keys.Axis1.E7d]))
+    e6.addSound("E6a", int(axis1Row[Keys.Axis1.E6aL]), "left")
+    e6.addSound("E6a", int(axis1Row[Keys.Axis1.E6aR]), "right")
+    e6.addSound("E6b", int(axis1Row[Keys.Axis1.E6bL]), "left")
+    e6.addSound("E6b", int(axis1Row[Keys.Axis1.E6bR]), "right")
+    e7 = E7(int(axis1Row[Keys.Axis1.E7a]), int(axis1Row[Keys.Axis1.E7b]),
+            str(axis1Row[Keys.Axis1.E7d]))
     e8 = E8()
-    e8aleft, e8aright = parsePainExamination(str(axis1[Keys.Axis1.E8a]))
+    e8aleft, e8aright = parsePainExamination(str(axis1Row[Keys.Axis1.E8a]))
     e8.addSideMovePain("right", e8aright, e8aleft)
-    e8bleft, e8bright = parsePainExamination(str(axis1[Keys.Axis1.E8b]))
+    e8bleft, e8bright = parsePainExamination(str(axis1Row[Keys.Axis1.E8b]))
     e8.addSideMovePain("left", e8bleft, e8bright)
     axis1_whole = AxisOne([e2, e3, e4, e5, e6, e7, e8])
     # set palpations
-    e9 = createPalpations("E9", palp, Keys.Palpation.E9)
-    e10a = createPalpations("E10a", palp, Keys.Palpation.E10a)
-    e10a = createPalpations("E10b", palp, Keys.Palpation.E10b)
-    e11 = createPalpations("E11", palp, Keys.Palpation.E11)
-
+    e9 = createPalpations("E9", palpRow, Keys.Palpation.E9)
+    e10a = createPalpations("E10a", palpRow, Keys.Palpation.E10a)
+    e10a = createPalpations("E10b", palpRow, Keys.Palpation.E10b)
+    e11 = createPalpations("E11", palpRow, Keys.Palpation.E11)
+    # set q
+    q = Q(qRow[Keys.Q.SURNAME], qRow[Keys.Q.Q3], qRow[Keys.Q.Q14])
+    # TODO : accumulate all patient data
+    # extend data containers to contain name and surname
+    # for patient identification when combining data
+    # from all spreadsheets together
 result = []
 
 # save the file with diagnosis

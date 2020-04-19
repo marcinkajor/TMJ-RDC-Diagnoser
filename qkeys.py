@@ -34,5 +34,6 @@ class Keys:
         E10b    = [14] #O
         E11     = [15, 16] #P-Q
     class Q:
-        Q3      = 3  #C
-        Q14     = 11 #K
+        SURNAME = 1
+        Q3      = 2  #C
+        Q14     = 10 #K

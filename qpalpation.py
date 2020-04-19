@@ -56,9 +56,10 @@ def createPalpations(palpationType, palpationRaw, keys):
             # TODO: this is a dirty hack, maybe an exception should be raised
             # and catched in the application layer code
             if (np.isnan(value)):
-                print("WARNING: one of the palpation results (patient: {},"\
-                      " column: {}) was NaN, it was converted to 0"
-                      .format(patient, key))
+                if (DEBUG):
+                    print("WARNING: one of the palpation results (patient: {},"\
+                          " column: {}) was NaN, it was converted to 0"
+                          .format(patient, key))
                 value = 0
             value = str(int(value))
         right, left = parsePainExamination(value)
