@@ -65,3 +65,11 @@ def createPalpations(palpationType, palpationRaw, keys):
         right, left = parsePainExamination(value)
         palpations.addPalpation(Palpation(right, left))
     return palpations
+
+def combinePalpations(e9, e10a, e10b, e11):
+    return { "e9"   : e9,
+             "e10a" : e10a,
+             "e10a" : e10a,
+             "e10b" : e10b,
+             "e11"  : e11
+            }

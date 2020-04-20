@@ -11,7 +11,7 @@ import pandas as pd
 from qhelpers import parsePainExamination
 from qaxis1 import E2, E3, E4, E5, E6, E7, E8
 from qaxis1 import AxisOne
-from qpalpation import createPalpations
+from qpalpation import createPalpations, combinePalpations
 import qpalpation
 from qQ import Q
 import qQ
@@ -41,14 +41,18 @@ q_data = removeEmpty(q_sheet.to_numpy())
 # assume that all sheets have the same number of records/patients
 assert(len(axis1_data) == len(palpation_data) == len(q_data))
 
-patients = []
+persons = {}
+axisOnes = {}
+palpations = {}
+qs = {}
+
 for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, q_data)):
 
     # set personal data
     person = Person(axis1Row[Keys.Axis1.NAME], axis1Row[Keys.Axis1.SURNAME],
                     axis1Row[Keys.Axis1.AGE], axis1Row[Keys.Axis1.SEX])
-    # set AxisI data
-    #print("{}: E2 = {}".format(person.surname, int(axis1[Keys.Axis1.E2])))
+    persons[axis1Row[Keys.Axis1.ID]] = person
+    # parse and combine AxisI data
     e2 = E2(int(axis1Row[Keys.Axis1.E2]))
     e3 = E3()
     e3left, e3right = parsePainExamination(str(axis1Row[Keys.Axis1.E3]))
@@ -73,17 +77,19 @@ for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, 
     e8bleft, e8bright = parsePainExamination(str(axis1Row[Keys.Axis1.E8b]))
     e8.addSideMovePain("left", e8bleft, e8bright)
     axis1_whole = AxisOne([e2, e3, e4, e5, e6, e7, e8])
-    # set palpations
+    axisOnes[axis1Row[Keys.Axis1.ID]] = axis1_whole
+    # parse and combine palpations
     e9 = createPalpations("E9", palpRow, Keys.Palpation.E9)
     e10a = createPalpations("E10a", palpRow, Keys.Palpation.E10a)
-    e10a = createPalpations("E10b", palpRow, Keys.Palpation.E10b)
+    e10b = createPalpations("E10b", palpRow, Keys.Palpation.E10b)
     e11 = createPalpations("E11", palpRow, Keys.Palpation.E11)
+    palpations_whole = combinePalpations(e9, e10a, e10b, e11)
+    palpations[palpRow[Keys.Palpation.ID]] = palpations_whole
     # set q
     q = Q(qRow[Keys.Q.SURNAME], qRow[Keys.Q.Q3], qRow[Keys.Q.Q14])
-    # TODO : accumulate all patient data
-    # extend data containers to contain name and surname
-    # for patient identification when combining data
-    # from all spreadsheets together
+    qs[qRow[Keys.Q.ID]] = q
+
+# add a method for combining all patient data
 result = []
 
 # save the file with diagnosis

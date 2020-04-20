@@ -6,6 +6,7 @@ Created on Tue Apr 14 22:49:19 2020
 """
 class Keys:
     class Axis1:
+        ID      = 0
         SURNAME = 1  #B
         NAME    = 2  #C
         AGE     = 3  #D
@@ -28,12 +29,14 @@ class Keys:
         E6bR    = 29 #AD
     class Palpation:
         # NOTE: these are lists (various Ex types)
+        ID      =  0
         SURNAME = [1]
         E9      = [5, 6, 7, 8, 9, 10, 11, 12] #F-M
         E10a    = [13] #N
         E10b    = [14] #O
         E11     = [15, 16] #P-Q
     class Q:
+        ID      = 0
         SURNAME = 1
         Q3      = 2  #C
         Q14     = 10 #K
