@@ -19,9 +19,9 @@ class Palpation:
             raise Exception("Only \"left\" and \"right\" are valid side names")
         else:
             if (side == "left"):
-                return self.leftPain.pain()
+                return self.leftPain
             else:
-                return self.right.pain()
+                return self.rightPain
 
 class Palpations:
     def __init__(self, patientSurname, palpType):
@@ -38,8 +38,8 @@ class Palpations:
         return self.palpType
     def painScore(self, side):
         n = 0
-        for idx in self.palpations:
-            n = n + self.palpations[idx].getPain(side)
+        for palp in self.palpations:
+            n = n + palp.getPain(side)
         return n
 
 def createPalpations(palpationType, palpationRaw, keys):
@@ -47,7 +47,7 @@ def createPalpations(palpationType, palpationRaw, keys):
     palpations = Palpations(patient, palpationType)
     for key in keys:
         if (DEBUG):
-            print("Palpation {} = {}".format(palpationType, palpationRaw[key]))
+            print("Patient {}, Palpation {} = {}".format(patient, palpationType, palpationRaw[key]))
         # remember that values from excel sheet are floats
         value = palpationRaw[key]
         if (not isinstance(value, str)):
@@ -67,9 +67,9 @@ def createPalpations(palpationType, palpationRaw, keys):
     return palpations
 
 def combinePalpations(e9, e10a, e10b, e11):
-    return { "e9"   : e9,
-             "e10a" : e10a,
-             "e10a" : e10a,
-             "e10b" : e10b,
-             "e11"  : e11
+    return { "E9"   : e9,
+             "E10a" : e10a,
+             "E10a" : e10a,
+             "E10b" : e10b,
+             "E11"  : e11
             }
