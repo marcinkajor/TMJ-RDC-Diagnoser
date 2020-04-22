@@ -5,28 +5,20 @@ Created on Wed Mar 18 22:39:22 2020
 @author: Marcin
 """
 
-import numpy as np
 import pandas as pd
 
-from qhelpers import parsePainExamination
+from qhelpers import parsePainExamination, removeEmpty
 from qaxis1 import E2, E3, E4, E5, E6, E7, E8
 from qaxis1 import AxisOne
 from qpalpation import createPalpations, combinePalpations
 import qpalpation
 from qQ import Q
 import qQ
-from qpatient import Person, Patient
+from qpatient import Person, formPatientsDict
 from qkeys import Keys
 
 qpalpation.DEBUG = False
-qQ.DEBUG = True
-
-def removeEmpty(dataset):
-    to_remove = []
-    for idx, Row in enumerate(dataset):
-        if (not isinstance(Row[1], str)):
-            to_remove.append(idx)
-    return np.delete(dataset, to_remove, axis=0)
+qQ.DEBUG = False
 
 # Import datasets as separate spreadsheets
 axis1_sheet = pd.read_excel('list.xlsx', sheet_name = 'axis I')
@@ -47,7 +39,6 @@ palpations = {}
 qs = {}
 
 for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, q_data)):
-
     # set personal data
     person = Person(axis1Row[Keys.Axis1.NAME], axis1Row[Keys.Axis1.SURNAME],
                     axis1Row[Keys.Axis1.AGE], axis1Row[Keys.Axis1.SEX])
@@ -89,7 +80,9 @@ for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, 
     q = Q(qRow[Keys.Q.SURNAME], qRow[Keys.Q.Q3], qRow[Keys.Q.Q14])
     qs[qRow[Keys.Q.ID]] = q
 
-# add a method for combining all patient data
+patients = formPatientsDict(persons, axisOnes, palpations, qs)
+
+
 result = []
 
 # save the file with diagnosis

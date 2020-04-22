@@ -6,15 +6,26 @@ Created on Mon Mar 30 08:54:17 2020
 """
 
 import re
+import numpy as np
 
-"""This function checks if the value of "pain" entry
-    is set according to the schema, e.g P1L2, P3, L1, 0"""
+""" This function removes empty entries from the dataset
+     by checking if the surname is provided """
+# TODO: maybe better use patient index
+def removeEmpty(dataset):
+    to_remove = []
+    for idx, row in enumerate(dataset):
+        if (not isinstance(row[1], str)):
+            to_remove.append(idx)
+    return np.delete(dataset, to_remove, axis=0)
+
+""" This function checks if the value of "pain" entry
+    is set according to the schema, e.g P1L2, P3, L1, 0 """
 def validPainResult(resultString):
     rgx = re.compile("^P[0-3]L[0-3]$|^P[0-3]$|^L[0-3]$|^0$")
     return rgx.match(resultString)
 
-"""Return a tuple of integers representing a pain
-   (strenght/type) on right and left side (rightPain, leftPain)"""
+""" Return a tuple of integers representing a pain
+   (strenght/type) on right and left side (rightPain, leftPain) """
 def parsePainExamination(painRepr):
     pPain = 0
     lPain = 0
