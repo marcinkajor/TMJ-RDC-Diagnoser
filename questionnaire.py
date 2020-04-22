@@ -82,6 +82,9 @@ for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, 
 
 patients = formPatientsDict(persons, axisOnes, palpations, qs)
 
+for patient in patients:
+    diag = patient.getAsixIIDiagnosis()
+    print ("ID: {}, NAME: {}, DIAGNOSIS: {}".format(patient.idx, patient.personalData.surname, diag))
 
 result = []
 
