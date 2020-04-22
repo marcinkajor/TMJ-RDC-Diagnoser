@@ -19,13 +19,13 @@ class AxisOne:
                 raise Exception("AxisOne c'tor accepts a list of {} objects"
                                 .format(self.schema))
             idx = idx + 1
-        self.E2 = self.schema[0]
-        self.E3 = self.schema[1]
-        self.E4 = self.schema[2]
-        self.E5 = self.schema[3]
-        self.E6 = self.schema[4]
-        self.E7 = self.schema[5]
-        self.E8 = self.schema[6]
+        self.E2 = exList[0]
+        self.E3 = exList[1]
+        self.E4 = exList[2]
+        self.E5 = exList[3]
+        self.E6 = exList[4]
+        self.E7 = exList[5]
+        self.E8 = exList[6]
 
     def __getitem__(self, key):
         return self.list[key]
