@@ -92,37 +92,43 @@ class E5:
             return self.openings[name]
 
 class E6:
+    class patoSound:
+        def __init__(self, sound, mm):
+            self.sound = sound
+            self.mm = mm
     def __init__(self):
-        self.sounds = {"L":{}, "P":{}}
         self.mapping = {
                 "open": "E6a",
                 "close": "E6b"
         }
-    def addSound(self, typeIndex, soundType, side):
-        if (not isinstance(soundType, int) or soundType not in range(0,3)):
-            raise Exception("Sound type must be an integer (0:3)!")
-        self.allowedIndexes = ["E6a", "E6b"]
-        if typeIndex not in self.allowedIndexes:
-            raise Exception("Invalid sound type: {}, allowed: {}"
-                            .format(typeIndex, self.allowedIndexes))
+        self.sound = {}
+    def addSound(self, side, move, soundType, mm):
         if (side not in ["left", "right"]):
             raise Exception("Invalid side: {}, allowed: {}"
-                            .format(typeIndex, ["left", "right"]))
-        if (side not in self.sounds):
-            self.sounds[side] = {typeIndex : soundType}
+                            .format(side, ["left", "right"]))
+        if (move not in ["open", "close"]):
+            raise Exception("Invalid move: {}, allowed: {}"
+                            .format(move, ["open", "closed"]))
+        if (not isinstance(soundType, int) or soundType not in range(0,3)):
+            raise Exception("Sound type must be an integer (0:3)!")
+        if (not isinstance(mm, int)):
+            raise Exception("Range must be an integer!")
+        self.sound[side] = {move : self.patoSound(soundType, mm)}
     def addClickEliminaton(self, state):
-        if (not isinstance(state, bool)):
-            raise Exception("Sound type must be a boolean!")
-        self.clickElimination = state
-    def getClickElimination(self):
-        return self.clickElimination
-    def getSound(self, side, motion):
-        return self.sounds[side][self.mapping[motion]]
-    def isPainOnSide(self, side):
-        if (side not in ["left", "right"]):
-            raise Exception("Side must be \"right\" or \"left\"")
-        return True if (self.sounds[side]["E6a"] > 0
-                         or self.sounds[side]["E6b"] > 0) else False
+       if (state not in ["T", "N"] or state != 0):
+           raise Exception("Click elimination must be T or N !(or 0)")
+       self.clickElimination = True if (state == "T") else False
+    def __getSound(self, side, move):
+        if (side not in ["left", "right"] or move not in ["open", "close"]):
+            raise Exception("Side must be either 'left' or 'right' and \
+                            move must be either 'open' or 'close'")
+        return self.sound[side][move]
+    def isSound(self, side, move):
+        sound = self.__getSound(side, move)
+        return True if (sound.sound) else False
+    def getMeasure(self, side, move):
+        sound = self.sound = __getSound(side, move)
+        return sound.mm
 
 class E7:
     ''' Nested private struct-like class 7d (midline deviation) '''

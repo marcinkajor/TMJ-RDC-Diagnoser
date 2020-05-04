@@ -24,11 +24,11 @@ class Patient:
         self.axisOne = axisOne
         self.palpations = palpations
         self.q = q
-    def getAsixIIDiagnosis(self):
+    def getAsixI1Diagnosis(self):
         q3 = self.q.getQ3()
         if (q3 == 0):
             return "No pain"
-        else :
+        else:
             left = self.palpations["E9"].painScore("left") + self.palpations["E11"].painScore("left")
             right = self.palpations["E9"].painScore("right") + self.palpations["E11"].painScore("right")
             if ((left + right) < 3):
@@ -47,6 +47,13 @@ class Patient:
                             return "Ia"
                         else:
                             return "Ib"
+    def getAxisI2Diagnosis(self, side):
+        # TODO: Implement
+        pass
+        # opening = self.axisOne.E6.isSound(side, "open")
+        # closing = self.axisOne.E6.isSound(side, "close")
+        # if (opening and closing):
+        #     diff = self.axisOne.E6.
 
 """ This function creates the whole final patients dictionary """
 def formPatientsDict(persons, axisOnes, palpations, qs):

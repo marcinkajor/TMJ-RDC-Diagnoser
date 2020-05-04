@@ -23,10 +23,14 @@ class Keys:
         E7b     = 17 #R
         E8a     = 19 #T
         E8b     = 20 #U
-        E6aL    = 26 #AA
-        E6bL    = 27 #AB
-        E6aR    = 28 #AC
-        E6bR    = 29 #AD
+        E6aLmm  = 22 #W  - open
+        E6bLmm  = 23 #X  - close
+        E6aRmm  = 24 #Y  - open
+        E6bRmm  = 25 #Z  - close
+        E6aL    = 26 #AA - open
+        E6bL    = 27 #AB - close
+        E6aR    = 28 #AC - open
+        E6bR    = 29 #AD - close
     class Palpation:
         # NOTE: these are lists (various Ex types)
         ID      =  0
