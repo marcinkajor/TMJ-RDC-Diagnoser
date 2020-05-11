@@ -5,6 +5,7 @@ Created on Sun Mar 29 20:18:40 2020
 @author: Marcin
 """
 import re
+from qhelpers import parseRLExamination
 
 class AxisOne:
     ''' A Ex list wrapper. C'tor accepts a list of Ex objects'''
@@ -115,19 +116,21 @@ class E6:
             raise Exception("Range must be an integer!")
         self.sound[side] = {move : self.patoSound(soundType, mm)}
     def addClickEliminaton(self, state):
-       if (state not in ["T", "N"] or state != 0):
-           raise Exception("Click elimination must be T or N !(or 0)")
-       self.clickElimination = True if (state == "T") else False
+        if (state not in ["T", "N", "0"]):
+            raise Exception("Click elimination must be T or N !(or 0)")
+        self.clickElimination = True if (state == "T") else False
     def __getSound(self, side, move):
         if (side not in ["left", "right"] or move not in ["open", "close"]):
             raise Exception("Side must be either 'left' or 'right' and \
                             move must be either 'open' or 'close'")
         return self.sound[side][move]
+    def isClickElimination(self):
+        return self.clickElimination
     def isSound(self, side, move):
         sound = self.__getSound(side, move)
         return True if (sound.sound) else False
     def getMeasure(self, side, move):
-        sound = self.sound = __getSound(side, move)
+        sound = self.sound = self.__getSound(side, move)
         return sound.mm
 
 class E7:
@@ -176,15 +179,11 @@ class E7:
 
 class E8:
     def __init__(self):
-        self.sideMovePains = {"L":{}, "P":{}}
-    ''' Adds "right" and "left" as a pain occuring when moving "L"/"R" '''
-    def addSideMovePain(self, sideMove, right, left):
-        if (not isinstance(right, int) or not isinstance(left, int)):
-            raise Exception("left and right pain must be integers")
-        self.sideMovePains[sideMove] = {"right:": right, "left": left}
-    ''' Returns True if pain on "left"/"right" side, False otherwise'''
-    def isPainOnSide(self, side):
-        if (side not in ["left", "right"]):
-            raise Exception("Side must be \"right\" or \"left\"")
-        return True if (self.sideMovePains["L"][side] > 0
-                        or self.sideMovePains["R"][side] >0) else False
+        self.horizontalMoves = {"left":{}, "right":{}, "protrusion":{}}
+    def addSideMoveSound(self, symptom, examiation):
+        right, left = parseRLExamination(examiation)
+        self.horizontalMoves[symptom] = {"right": right, "left": left}
+    def getSound(self, symptom, side):
+        return self.horizontalMoves[symptom][side]
+    def isSound(self, symptom, side):
+        return True if (self.getSound(symptom, side) > 0) else False

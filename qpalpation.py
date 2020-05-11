@@ -4,7 +4,7 @@ Created on Sun Mar 29 20:18:23 2020
 
 @author: Marcin
 """
-from qhelpers import parsePainExamination
+from qhelpers import parseRLExamination
 from qkeys import Keys
 import numpy as np
 
@@ -62,7 +62,7 @@ def createPalpations(palpationType, palpationRaw, keys):
                           .format(patient, key))
                 value = 0
             value = str(int(value))
-        right, left = parsePainExamination(value)
+        right, left = parseRLExamination(value)
         palpations.addPalpation(Palpation(right, left))
     return palpations
 

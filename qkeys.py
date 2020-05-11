@@ -21,8 +21,6 @@ class Keys:
         E7d     = 15 #P
         E7a     = 16 #Q
         E7b     = 17 #R
-        E8a     = 19 #T
-        E8b     = 20 #U
         E6aLmm  = 22 #W  - open
         E6bLmm  = 23 #X  - close
         E6aRmm  = 24 #Y  - open
@@ -31,6 +29,10 @@ class Keys:
         E6bL    = 27 #AB - close
         E6aR    = 28 #AC - open
         E6bR    = 29 #AD - close
+        E6c     = 30 #AE - click elimination
+        E8L     = 31 #AF
+        E8R     = 32 #AG
+        E8Pr    = 33 #AH
     class Palpation:
         # NOTE: these are lists (various Ex types)
         ID      =  0

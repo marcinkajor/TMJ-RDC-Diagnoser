@@ -7,7 +7,7 @@ Created on Wed Mar 18 22:39:22 2020
 
 import pandas as pd
 
-from qhelpers import parsePainExamination, removeEmpty
+from qhelpers import parseRLExamination, removeEmpty
 from qaxis1 import E2, E3, E4, E5, E6, E7, E8
 from qaxis1 import AxisOne
 from qpalpation import createPalpations, combinePalpations
@@ -46,7 +46,8 @@ for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, 
     # parse and combine AxisI data
     e2 = E2(int(axis1Row[Keys.Axis1.E2]))
     e3 = E3()
-    e3left, e3right = parsePainExamination(str(axis1Row[Keys.Axis1.E3]))
+    # TODO: encaplulate parseRLExamination in E3!
+    e3left, e3right = parseRLExamination(str(axis1Row[Keys.Axis1.E3]))
     e3.addPain("left", e3left)
     e3.addPain("right", e3right)
     e4 = E4(int(axis1Row[Keys.Axis1.E4]))
@@ -60,13 +61,13 @@ for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, 
     e6.addSound("left", "close", int(axis1Row[Keys.Axis1.E6bL]), int(axis1Row[Keys.Axis1.E6bLmm]))
     e6.addSound("right", "open", int(axis1Row[Keys.Axis1.E6aR]), int(axis1Row[Keys.Axis1.E6aRmm]))
     e6.addSound("right", "close", int(axis1Row[Keys.Axis1.E6bR]), int(axis1Row[Keys.Axis1.E6bRmm]))
+    e6.addClickEliminaton(str(axis1Row[Keys.Axis1.E6c]))
     e7 = E7(int(axis1Row[Keys.Axis1.E7a]), int(axis1Row[Keys.Axis1.E7b]),
             str(axis1Row[Keys.Axis1.E7d]))
     e8 = E8()
-    e8aleft, e8aright = parsePainExamination(str(axis1Row[Keys.Axis1.E8a]))
-    e8.addSideMovePain("right", e8aright, e8aleft)
-    e8bleft, e8bright = parsePainExamination(str(axis1Row[Keys.Axis1.E8b]))
-    e8.addSideMovePain("left", e8bleft, e8bright)
+    e8.addSideMoveSound("right", str(axis1Row[Keys.Axis1.E8R]))
+    e8.addSideMoveSound("left", str(axis1Row[Keys.Axis1.E8L]))
+    e8.addSideMoveSound("protrusion", str(axis1Row[Keys.Axis1.E8Pr]))
     axis1_whole = AxisOne([e2, e3, e4, e5, e6, e7, e8])
     axisOnes[axis1Row[Keys.Axis1.ID]] = axis1_whole
     # parse and combine palpations

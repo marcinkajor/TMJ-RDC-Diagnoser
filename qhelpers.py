@@ -20,16 +20,16 @@ def removeEmpty(dataset):
 
 """ This function checks if the value of "pain" entry
     is set according to the schema, e.g P1L2, P3, L1, 0 """
-def validPainResult(resultString):
+def validRLResult(resultString):
     rgx = re.compile("^P[0-3]L[0-3]$|^P[0-3]$|^L[0-3]$|^0$")
     return rgx.match(resultString)
 
 """ Return a tuple of integers representing a pain
    (strenght/type) on right and left side (rightPain, leftPain) """
-def parsePainExamination(painRepr):
+def parseRLExamination(painRepr):
     pPain = 0
     lPain = 0
-    if (not validPainResult(painRepr)):
+    if (not validRLResult(painRepr)):
         raise Exception("Wrong pain result string format: {}"
                         .format(painRepr))
     elif (painRepr != "0"):
