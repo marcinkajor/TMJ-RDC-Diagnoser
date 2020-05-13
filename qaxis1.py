@@ -68,7 +68,7 @@ class E4:
             self.lateralDeviation = lateralDeviation
     def getRealDeviation(self):
         return self.lateralDeviation
-    def isPainOnSide(self, side):
+    def isRealDeviationOnSide(self, side):
         if (side not in ["left", "right"]):
             raise Exception("Side must be \"right\" or \"left\"")
         if (side == "left"): return True if (self.lateralDeviation == 3) else False
@@ -114,7 +114,11 @@ class E6:
             raise Exception("Sound type must be an integer (0:3)!")
         if (not isinstance(mm, int)):
             raise Exception("Range must be an integer!")
-        self.sound[side] = {move : self.patoSound(soundType, mm)}
+        if (side in self.sound):
+            current = self.sound[side]
+            current.update({move : self.patoSound(soundType, mm)})
+        else:
+            self.sound[side] = {move : self.patoSound(soundType, mm)}
     def addClickEliminaton(self, state):
         if (state not in ["T", "N", "0"]):
             raise Exception("Click elimination must be T or N !(or 0)")
@@ -130,7 +134,7 @@ class E6:
         sound = self.__getSound(side, move)
         return True if (sound.sound) else False
     def getMeasure(self, side, move):
-        sound = self.sound = self.__getSound(side, move)
+        sound = self.__getSound(side, move)
         return sound.mm
 
 class E7:

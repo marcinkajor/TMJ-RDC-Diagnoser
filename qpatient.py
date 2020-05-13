@@ -18,7 +18,10 @@ class Person:
                 self.name, self.surname, self.age, self.sex)
 
 class Patient:
-    LIMIT_DIFF_E6 = 5 #mm
+    LIMIT_DIFF_E6        = 5  #mm
+    MAX_E5               = 35 #mm
+    STREACH_E5           = 4  #mm
+    CORR_EXCURSION_LIMIT = 7  #mm
     def __init__(self, idx, personalData, axisOne, palpations, q):
         self.idx = idx
         self.personalData = personalData
@@ -53,29 +56,52 @@ class Patient:
         closing = self.axisOne.E6.isSound(side, "close")
         if (opening and closing):
             diff = self.axisOne.E6.getMeasure(side, "open") - self.axisOne.E6.getMeasure(side, "close")
-            if (diff >= LIMIT_DIFF_E6):
-                if (axisOne.E6.isClickElimination()):
-                    return "{} DD with reduction".format(side)
+            if (diff >= self.LIMIT_DIFF_E6):
+                if (self.axisOne.E6.isClickElimination()):
+                    return "IIa {} DD with reduction".format(side)
                 else:
-                    if (self.isE8Relevant()):
-                        return "{} DD with reduction".format(side)
+                    if (self.__isE8Relevant(side)):
+                        return "IIa {} DD with reduction".format(side)
                     else:
-                        return self.historyDependentDiagnosis()
-            elif (self.isE8Relevant()):
-                return "{} DD with reduction".format(side)
+                        return self.__historyDependentDiagnosis(side)
+            elif (self.__isE8Relevant(side)):
+                return "IIa {} DD with reduction".format(side)
         elif (opening or closing):
-            if (self.isE8Relevantside()):
-                return "{} DD with reduction".format(side)
+            if (self.__isE8Relevant(side)):
+                return "IIa {} DD with reduction".format(side)
             else:
-                return self.historyDependentDiagnosis()
+                return self.__historyDependentDiagnosis(side)
         else:
-            return self.historyDependentDiagnosis()
+            return self.__historyDependentDiagnosis(side)
 
-    def historyDependentDiagnosis(self):
-        #TODO: implement
-        pass
+    def __historyDependentDiagnosis(self, side):
+        if (not self.q.getQ14()):
+            return "No {} Group II Diagnosis".format(side)
+        else:
+            maxOpen = self.axisOne.E5.getOpening("E5b") + self.axisOne.E5.getOpening("E5d")
+            passStreach = self.axisOne.E5.getOpening("E5c") - self.axisOne.E5.getOpening("E5b")
+            if (maxOpen <= self.MAX_E5 and passStreach <= self.STREACH_E5):
+                if (self.axisOne.E7.correctedExcursionLeft() < self.CORR_EXCURSION_LIMIT):
+                    return "IIb {} DD without reduction with limited opening".format(side)
+                else:
+                    if (self.axisOne.E4.isRealDeviationOnSide("right")):
+                        return "IIb {} DD without reduction with limited opening".format(side)
+                    else:
+                         return "No {} Group II Diagnosis".format(side)
+            elif (maxOpen > self.MAX_E5 and passStreach > self.STREACH_E5):
+                if (self.axisOne.E7.correctedExcursionLeft() >= self.CORR_EXCURSION_LIMIT):
+                    e6openSound = self.axisOne.E6.isSound(side, "open")
+                    e6closeSound = self.axisOne.E6.isSound(side, "close")
+                    if (e6openSound or e6closeSound or self.__isE8Relevant(side)):
+                        return "IIc {} DD without reduction without limited opening".format(side)
+                    else:
+                        return "No {} Group II Diagnosis".format(side)
+                else:
+                    return "No {} Group II Diagnosis".format(side)
+            else:
+                return "No {} Group II Diagnosis".format(side)
 
-    def isE8Relevant(self, side):
+    def __isE8Relevant(self, side):
         rightExcursion = self.axisOne.E8.isSound(side, "right")
         leftExcursion = self.axisOne.E8.isSound(side, "left")
         rightProtrusion = self.axisOne.E8.isSound("protrusion", "right")
