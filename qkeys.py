@@ -13,7 +13,7 @@ class Keys:
         SEX     = 4  #E
         E2      = 5  #F
         E3      = 6  #G
-        E4      = 7  #H
+        E4      = 7  #H - lateral deviation
         E5a     = 8  #I
         E5b     = 9  #J
         E5c     = 11 #L

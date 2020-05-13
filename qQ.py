@@ -13,7 +13,7 @@ class Q:
     def __init__(self, patientSurname, q3, q14):
         if (DEBUG):
             print("Patient: {}, Q3 = {}, Q14 = {}".format(patientSurname, q3, q14))
-        if (not isinstance(q3, int) or not isinstance(q14, int)):
+        if (not isinstance(q3, bool) or not isinstance(q14, bool)):
             # TODO: This is a dirty hack but done on purpose
             if (isinstance(q3, str) or np.isnan(q3)):
                 if (DEBUG):
