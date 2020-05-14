@@ -69,7 +69,6 @@ def createPalpations(palpationType, palpationRaw, keys):
 def combinePalpations(e9, e10a, e10b, e11):
     return { "E9"   : e9,
              "E10a" : e10a,
-             "E10a" : e10a,
              "E10b" : e10b,
              "E11"  : e11
             }
