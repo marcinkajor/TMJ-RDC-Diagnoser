@@ -15,8 +15,10 @@ class Keys:
         E3      = 6  #G
         E4      = 7  #H - lateral deviation
         E5a     = 8  #I
-        E5b     = 9  #J
-        E5c     = 11 #L
+        E5b     = 9  #J - active opening
+        E5bA    = 10 #K - active opening pain
+        E5c     = 11 #L - passive opening
+        E5cP    = 12 #M - passive opening pain
         E5d     = 13 #N
         E7d     = 15 #P
         E7a     = 16 #Q

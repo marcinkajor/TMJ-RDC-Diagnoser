@@ -79,6 +79,7 @@ class E4:
 class E5:
     def __init__(self):
         self.openings = {}
+        self.pain = {}
     def addOpening(self, typeIndex, motionRange):
         if (not isinstance(motionRange, int)):
             raise Exception("Motion range must be an integer!")
@@ -88,9 +89,21 @@ class E5:
                             .format(typeIndex, self.allowedIndexes))
         if (typeIndex not in self.openings):
             self.openings[typeIndex] = motionRange #mm
+    def addOpeningPain(self, passiveOrAcvive, examination):
+        if (passiveOrAcvive not in ["passive", "active"]):
+            raise Exception("Allowed E5 opening types is \"passive\" or \"active\"")
+        right, left = parseRLExamination(examination)
+        self.pain["right"] = {passiveOrAcvive : right}
+        self.pain["left"] = {passiveOrAcvive : left}
     def getOpening(self, name):
         if (name in self.openings):
             return self.openings[name]
+    def getOpeningPain(self, passiveOrAcvive, side):
+        if (side not in ["left", "right"]):
+            raise Exception("Side must be \"right\" or \"left\"")
+        if (passiveOrAcvive not in ["passive", "active"]):
+            raise Exception("Side must be \"passive\" or \"active\"")
+        return self.pain[side][passiveOrAcvive]
 
 class E6:
     class patoSound:

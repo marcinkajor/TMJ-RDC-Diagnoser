@@ -56,6 +56,8 @@ for idx, (axis1Row, palpRow, qRow) in enumerate(zip(axis1_data, palpation_data, 
     e5.addOpening("E5b", int(axis1Row[Keys.Axis1.E5b]))
     e5.addOpening("E5c", int(axis1Row[Keys.Axis1.E5c]))
     e5.addOpening("E5d", int(axis1Row[Keys.Axis1.E5d]))
+    e5.addOpeningPain("passive", str(axis1Row[Keys.Axis1.E5cP]))
+    e5.addOpeningPain("active", str(axis1Row[Keys.Axis1.E5bA]))
     e6 = E6()
     e6.addSound("left", "open", int(axis1Row[Keys.Axis1.E6aL]), int(axis1Row[Keys.Axis1.E6aLmm]))
     e6.addSound("left", "close", int(axis1Row[Keys.Axis1.E6bL]), int(axis1Row[Keys.Axis1.E6bLmm]))
