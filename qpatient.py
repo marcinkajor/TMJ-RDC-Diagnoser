@@ -81,7 +81,11 @@ class Patient:
             maxOpen = self.axisOne.E5.getOpening("E5b") + self.axisOne.E5.getOpening("E5d")
             passStreach = self.axisOne.E5.getOpening("E5c") - self.axisOne.E5.getOpening("E5b")
             if (maxOpen <= self.MAX_E5 and passStreach <= self.STREACH_E5):
-                if (self.axisOne.E7.correctedExcursionLeft() < self.CORR_EXCURSION_LIMIT):
+                if (side == "left"):
+                    correctedExcursion = self.axisOne.E7.correctedExcursionLeft()
+                else:
+                    correctedExcursion = self.axisOne.E7.correctedExcursionRight()
+                if (correctedExcursion < self.CORR_EXCURSION_LIMIT):
                     return "IIb {} DD without reduction with limited opening".format(side)
                 else:
                     if (self.axisOne.E4.isRealDeviationOnSide("right")):
@@ -89,7 +93,11 @@ class Patient:
                     else:
                          return "No {} Group II Diagnosis".format(side)
             elif (maxOpen > self.MAX_E5 and passStreach > self.STREACH_E5):
-                if (self.axisOne.E7.correctedExcursionLeft() >= self.CORR_EXCURSION_LIMIT):
+                if (side == "left"):
+                    correctedExcursion = self.axisOne.E7.correctedExcursionLeft()
+                else:
+                    correctedExcursion = self.axisOne.E7.correctedExcursionRight()
+                if (correctedExcursion >= self.CORR_EXCURSION_LIMIT):
                     e6openSound = self.axisOne.E6.isSound(side, "open")
                     e6closeSound = self.axisOne.E6.isSound(side, "close")
                     if (e6openSound or e6closeSound or self.__isE8Relevant(side)):
