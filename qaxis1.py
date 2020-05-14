@@ -177,7 +177,14 @@ class E7:
         if (not isinstance(d, str)):
             raise Exception("7d must be a string object")
         self.d7 = self._validateAndparse7d(d)
-    def correctedExcursionLeft(self):
+    def correctedExcursion(self, side):
+        if (side not in ["left", "right"]):
+            raise Exception("Side must be \"left\" or \"right\"")
+        if (side == "left"):
+            return self.__correctedExcursionLeft()
+        else:
+            return self.__correctedExcursionRight()
+    def __correctedExcursionLeft(self):
         if (self.d7.mm == 0):
             return 0
         elif (self.d7.mm > 0):
@@ -185,7 +192,7 @@ class E7:
                 return self.b7 + self.d7.mm
             elif (self.d7.side == "right"):
                 return self.b7 - self.d7.mm
-    def correctedExcursionRight(self):
+    def __correctedExcursionRight(self):
         if (self.d7.mm == 0):
             return 0
         elif (self.d7.mm > 0):
