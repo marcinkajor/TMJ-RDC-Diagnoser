@@ -4,6 +4,9 @@ Created on Mon Mar 23 21:31:50 2020
 
 @author: Marcin
 """
+
+from qhelpers import SoundType
+
 class Diagnosis:
     pass
 
@@ -52,22 +55,24 @@ class Patient:
                         else:
                             return "Ib Myofascial Pain with limited opening"
     def getAxisI2Diagnosis(self, side):
-        opening = self.axisOne.E6.isSound(side, "open")
-        closing = self.axisOne.E6.isSound(side, "close")
+        opening = self.axisOne.E6.isSound(side, "open", SoundType.CLICK)
+        closing = self.axisOne.E6.isSound(side, "close", SoundType.CLICK)
         if (opening and closing):
             diff = self.axisOne.E6.getMeasure(side, "open") - self.axisOne.E6.getMeasure(side, "close")
             if (diff >= self.LIMIT_DIFF_E6):
                 if (self.axisOne.E6.isClickElimination()):
                     return "IIa {} DD with reduction".format(side)
                 else:
-                    if (self.__isE8Relevant(side)):
+                    if (self.__isE8Relevant(side, SoundType.CLICK)):
                         return "IIa {} DD with reduction".format(side)
                     else:
                         return self.__historyDependentDiagnosis(side)
-            elif (self.__isE8Relevant(side)):
+            elif (self.__isE8Relevant(side, SoundType.CLICK)):
                 return "IIa {} DD with reduction".format(side)
+            else:
+                return self.__historyDependentDiagnosis(side)
         elif (opening or closing):
-            if (self.__isE8Relevant(side)):
+            if (self.__isE8Relevant(side, SoundType.CLICK)):
                 return "IIa {} DD with reduction".format(side)
             else:
                 return self.__historyDependentDiagnosis(side)
@@ -86,12 +91,12 @@ class Patient:
         palpationPain = (e10a or e10b)
         painReport = (e3 or (e5Passive or e5Active) or (e7left or e7right))
         if (palpationPain and painReport):
-            if (self.__anyCrepitusOnAnyMovement(side)):
+            if (self.__anyCoarseCrepitusOnAnyMovement(side)):
                 return "IIIb {} Osteoarthritis".format(side)
             else:
                 return "IIIa {} Arthralgia".format(side)
         elif (not palpationPain and not painReport):
-            if (self.__anyCrepitusOnAnyMovement(side)):
+            if (self.__anyCoarseCrepitusOnAnyMovement(side)):
                 return "IIIc {} Osteoarthrosis".format(side)
             else:
                 return "No {} Group III Diagnosis".format(side)
@@ -125,16 +130,16 @@ class Patient:
                     return "No {} Group II Diagnosis".format(side)
             else:
                 return "No {} Group II Diagnosis".format(side)
-    def __isE8Relevant(self, side):
-        rightExcursion = self.axisOne.E8.isSound(side, "right")
-        leftExcursion = self.axisOne.E8.isSound(side, "left")
-        rightProtrusion = self.axisOne.E8.isSound("protrusion", "right")
-        leftProtrusion = self.axisOne.E8.isSound("protrusion", "left")
+    def __isE8Relevant(self, side, soundType=SoundType.ANY):
+        rightExcursion = self.axisOne.E8.isSound(side, "right", soundType)
+        leftExcursion = self.axisOne.E8.isSound(side, "left", soundType)
+        rightProtrusion = self.axisOne.E8.isSound("protrusion", "right", soundType)
+        leftProtrusion = self.axisOne.E8.isSound("protrusion", "left", soundType)
         return (rightExcursion or leftExcursion or rightProtrusion or leftProtrusion)
-    def __anyCrepitusOnAnyMovement(self, side):
-        e6open = self.axisOne.E6.isSound(side, "open")
-        e6close = self.axisOne.E6.isSound(side, "close")
-        e8 = self.__isE8Relevant(side)
+    def __anyCoarseCrepitusOnAnyMovement(self, side):
+        e6open = self.axisOne.E6.isSound(side, "open", SoundType.COARSE_CREPITUS)
+        e6close = self.axisOne.E6.isSound(side, "close", SoundType.COARSE_CREPITUS)
+        e8 = self.__isE8Relevant(side, SoundType.COARSE_CREPITUS)
         return (e6open or e6close or e8)
 
 """ This function creates the whole final patients dictionary """

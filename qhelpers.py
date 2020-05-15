@@ -41,17 +41,14 @@ def parseRLExamination(painRepr):
             lPain = int(painRepr[lPos+1]) # get number after 'L'
     return pPain, lPain
 
-class PainStrength:
-    NO_PAIN = 0
-    MILD = 1
-    MODERATE = 2
-    STRONG = 3
-
-class PainType:
-    NONE = 0,
-    MUSCLE = 1,
-    JOINT = 2,
-    BOTH = 3
+class SoundType:
+        # sound types
+    NONE            = 0
+    CLICK           = 1
+    COARSE_CREPITUS = 2
+    SLIGHT_CREPITUS = 3
+    # not specified in documentation
+    ANY             = 4
 
 class SidePain:
     def __init__(self, pain):

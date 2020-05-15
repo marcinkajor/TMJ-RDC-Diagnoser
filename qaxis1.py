@@ -5,7 +5,7 @@ Created on Sun Mar 29 20:18:40 2020
 @author: Marcin
 """
 import re
-from qhelpers import parseRLExamination
+from qhelpers import parseRLExamination, SoundType
 
 class AxisOne:
     ''' A Ex list wrapper. C'tor accepts a list of Ex objects'''
@@ -146,9 +146,12 @@ class E6:
         return self.sound[side][move]
     def isClickElimination(self):
         return self.clickElimination
-    def isSound(self, side, move):
+    def isSound(self, side, move, soundType=SoundType.ANY):
         sound = self.__getSound(side, move)
-        return True if (sound.sound) else False
+        if (soundType==SoundType.ANY):
+            return True if (sound.sound > 0) else False
+        else:
+            return True if (sound.sound == soundType) else False
     def getMeasure(self, side, move):
         sound = self.__getSound(side, move)
         return sound.mm
@@ -212,5 +215,8 @@ class E8:
         self.horizontalMoves[symptom] = {"right": right, "left": left}
     def getSound(self, symptom, side):
         return self.horizontalMoves[symptom][side]
-    def isSound(self, symptom, side):
-        return True if (self.getSound(symptom, side) > 0) else False
+    def isSound(self, symptom, side, soundType=SoundType.ANY):
+        if (soundType == SoundType.ANY):
+            return True if (self.getSound(symptom, side) > 0) else False
+        else:
+            return True if (self.getSound(symptom, side) == soundType) else False
