@@ -89,8 +89,16 @@ for patient in patients:
     diag11 = patient.getAsixI1Diagnosis()
     diag12right = patient.getAxisI2Diagnosis("right")
     diag12left = patient.getAxisI2Diagnosis("left")
-    print ("ID: {}, NAME: {}, DIAGN11: {}, DIAGN12_right: {}, DIAGN12_left: {}"
-           .format(patient.idx, patient.personalData.surname, diag11, diag12right, diag12left))
+    diag13right = patient.getAxisI3Diagnosis("right")
+    diag13left = patient.getAxisI3Diagnosis("left")
+    print ("ID: {}, NAME: {}, \
+            DIAGN11: {}, \
+            DIAGN12_right: {}, DIAGN12_left: {} \
+            DIAGN13_right: {}, DIAGN13_left: {}"
+           .format(patient.idx, patient.personalData.surname,
+                   diag11,
+                   diag12right, diag12left,
+                   diag13right, diag13left))
 
 result = []
 

@@ -73,6 +73,32 @@ class Patient:
                 return self.__historyDependentDiagnosis(side)
         else:
             return self.__historyDependentDiagnosis(side)
+    def getAxisI3Diagnosis(self, side):
+        #palpations
+        e10a = self.palpations["E10a"].painScore(side)
+        e10b = self.palpations["E10b"].painScore(side)
+        # pain report - axis1
+        e3 = self.axisOne.E3.isPainOnSide(side)
+        e5Passive = self.axisOne.E5.getOpeningPain("passive", side)
+        e5Active = self.axisOne.E5.getOpeningPain("active", side)
+        e7left = self.axisOne.E7.correctedExcursion("left")
+        e7right = self.axisOne.E7.correctedExcursion("right")
+        palpationPain = (e10a or e10b)
+        painReport = (e3 or (e5Passive or e5Active) or (e7left or e7right))
+        if (palpationPain and painReport):
+            if (self.__anyCrepitusOnAnyMovement(side)):
+                return "IIIb {} Osteoarthritis".format(side)
+            else:
+                return "IIIa {} Arthralgia".format(side)
+        elif (not palpationPain and not painReport):
+            if (self.__anyCrepitusOnAnyMovement(side)):
+                return "IIIc {} Osteoarthrosis".format(side)
+            else:
+                return "No {} Group III Diagnosis".format(side)
+        elif (palpationPain or painReport):
+            return "No {} Group III Diagnosis".format(side)
+        else:
+            raise Exception("Not possible!")
     def __historyDependentDiagnosis(self, side):
         if (not self.q.getQ14()):
             return "No {} Group II Diagnosis".format(side)
@@ -105,6 +131,11 @@ class Patient:
         rightProtrusion = self.axisOne.E8.isSound("protrusion", "right")
         leftProtrusion = self.axisOne.E8.isSound("protrusion", "left")
         return (rightExcursion or leftExcursion or rightProtrusion or leftProtrusion)
+    def __anyCrepitusOnAnyMovement(self, side):
+        e6open = self.axisOne.E6.isSound(side, "open")
+        e6close = self.axisOne.E6.isSound(side, "close")
+        e8 = self.__isE8Relevant(side)
+        return (e6open or e6close or e8)
 
 """ This function creates the whole final patients dictionary """
 def formPatientsDict(persons, axisOnes, palpations, qs):
