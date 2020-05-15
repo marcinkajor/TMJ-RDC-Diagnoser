@@ -89,12 +89,15 @@ class E5:
                             .format(typeIndex, self.allowedIndexes))
         if (typeIndex not in self.openings):
             self.openings[typeIndex] = motionRange #mm
-    def addOpeningPain(self, passiveOrAcvive, examination):
-        if (passiveOrAcvive not in ["passive", "active"]):
+    def addOpeningPain(self, passiveOrActive, examination):
+        if (passiveOrActive not in ["passive", "active"]):
             raise Exception("Allowed E5 opening types is \"passive\" or \"active\"")
         right, left = parseRLExamination(examination)
-        self.pain["right"] = {passiveOrAcvive : right}
-        self.pain["left"] = {passiveOrAcvive : left}
+        if(passiveOrActive in self.pain):
+            current = self.pain[passiveOrActive]
+            current.update({"right": right, "left": left})
+        else:
+            self.pain[passiveOrActive] = {"right": right, "left": left}
     def getOpening(self, name):
         if (name in self.openings):
             return self.openings[name]
@@ -103,7 +106,7 @@ class E5:
             raise Exception("Side must be \"right\" or \"left\"")
         if (passiveOrAcvive not in ["passive", "active"]):
             raise Exception("Side must be \"passive\" or \"active\"")
-        return self.pain[side][passiveOrAcvive]
+        return self.pain[passiveOrAcvive][side]
 
 class E6:
     class patoSound:
