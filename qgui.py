@@ -5,10 +5,14 @@ Created on Tue May  5 19:49:43 2020
 @author: Marcin
 """
 
-from PyQt5 import QtWidgets, QtGui, QtCore, QtWidgets
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog
 import sys
 import pandas as pd
+from qhelpers import removeEmpty, printDiagnosis
+from qpatient import formPatientsDict
+from qparser import parseDatabase
+
 
 class Window(QMainWindow):
     def __init__(self):
@@ -16,11 +20,12 @@ class Window(QMainWindow):
         self.setGeometry(50, 50, 500, 300)
         self.setWindowTitle("TMJ RDC Diagnoser")
         self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
+        self.path = ""
 
         quitAction = QAction("Open", self)
         quitAction.setShortcut("Ctrl+O")
         quitAction.setStatusTip('Open the examination file')
-        quitAction.triggered.connect(self.openFile)
+        quitAction.triggered.connect(self.openDiagnosticFile)
 
         openAction = QAction("Quit", self)
         openAction.setShortcut("Ctrl+Q")
@@ -46,18 +51,30 @@ class Window(QMainWindow):
         else:
             event.ignore()
 
-    def openFile(self):
+    def openDiagnosticFile(self):
         fileName, fileFilter = QFileDialog.getOpenFileName(self, 'Open File',
                                                filter="Excel files (*.xlsx)")
+        # Import datasets as separate spreadsheets
+        axis1_sheet = pd.read_excel('list.xlsx', sheet_name = 'axis I')
+        palpation_sheet = pd.read_excel('list.xlsx', sheet_name = 'axis I palpacja')
+        q_sheet = pd.read_excel('list.xlsx', sheet_name = 'Q')
 
-        print(fileName)
-        axis1_sheet = pd.read_excel(fileName, sheet_name = 'axis I')
-        palpation_sheet = pd.read_excel(fileName, sheet_name = 'axis I palpacja')
-        q_sheet = pd.read_excel(fileName, sheet_name = 'Q')
+        # transform to np objects
+        axis1_data = removeEmpty(axis1_sheet.to_numpy())
+        palpation_data = removeEmpty(palpation_sheet.to_numpy())
+        q_data = removeEmpty(q_sheet.to_numpy())
 
-if __name__ == "__main__":
-    def run():
+        # assume that all sheets have the same number of records/patients
+        assert(len(axis1_data) == len(palpation_data) == len(q_data))
+
+        persons, axisOnes, palpations, qs = parseDatabase(axis1_data, palpation_data, q_data)
+        patients = formPatientsDict(persons, axisOnes, palpations, qs)
+        printDiagnosis(patients)
+
+def run():
         app = QtWidgets.QApplication(sys.argv)
         window = Window()
         app.exec_()
+
+if __name__ == "__main__":
     run()
