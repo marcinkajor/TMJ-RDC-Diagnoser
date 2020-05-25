@@ -5,15 +5,14 @@ Created on Tue May  5 19:49:43 2020
 @author: Marcin
 """
 
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import *
+from PyQt5 import QtWidgets, QtGui, QtCore, QtWidgets
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog
 import sys
 import pandas as pd
 
 class Window(QMainWindow):
-
     def __init__(self):
-        super(Window, self).__init__()
+        QMainWindow.__init__(self)
         self.setGeometry(50, 50, 500, 300)
         self.setWindowTitle("TMJ RDC Diagnoser")
         self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
@@ -26,7 +25,7 @@ class Window(QMainWindow):
         openAction = QAction("Quit", self)
         openAction.setShortcut("Ctrl+Q")
         openAction.setStatusTip('Quit the application')
-        openAction.triggered.connect(self.closeApp)
+        openAction.triggered.connect(QtWidgets.QApplication.quit)
 
         self.statusBar()
 
@@ -35,14 +34,17 @@ class Window(QMainWindow):
         fileMenu.addAction(quitAction)
         fileMenu.addAction(openAction)
 
-        self.quitButton()
-
-    def quitButton(self):
-        btn = QPushButton("Quit", self)
-        btn.clicked.connect(self.closeApp)
-        btn.resize(btn.minimumSizeHint())
-        btn.move(200,150)
         self.show()
+
+    # handle close button of the main window (quit QApplication properly)
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self, "Window close", "Close the Diagnoser?",
+                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if (reply == QMessageBox.Yes):
+            event.accept()
+            QtWidgets.QApplication.quit()
+        else:
+            event.ignore()
 
     def openFile(self):
         fileName, fileFilter = QFileDialog.getOpenFileName(self, 'Open File',
@@ -53,14 +55,9 @@ class Window(QMainWindow):
         palpation_sheet = pd.read_excel(fileName, sheet_name = 'axis I palpacja')
         q_sheet = pd.read_excel(fileName, sheet_name = 'Q')
 
-    def closeApp(self):
-        sys.exit()
-
-
-def run():
-    app = QApplication(sys.argv)
-    window = Window()
-    sys.exit(app.exec_())
-
 if __name__ == "__main__":
+    def run():
+        app = QtWidgets.QApplication(sys.argv)
+        window = Window()
+        app.exec_()
     run()
