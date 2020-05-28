@@ -12,7 +12,8 @@ import pandas as pd
 from qhelpers import removeEmpty, printDiagnosis
 from qpatient import formPatientsDict
 from qparser import parseDatabase
-
+import csv
+import os
 
 class Window(QMainWindow):
     def __init__(self):
@@ -85,7 +86,33 @@ class Window(QMainWindow):
                      QMessageBox.Ok, QMessageBox.Ok)
 
     def generateDiagnosticReport(self):
-        # TODO: implement
+        path, fileFilter = QFileDialog.getSaveFileName(self, 'Save file',
+                                                       filter="CSV (*.csv) ;; Excel file (*.xlsx)")
+
+        filename, fileExtension = os.path.splitext(path)
+        if (fileExtension == ".csv"):
+            self.saveDataToCsv(path)
+        elif (fileExtension == ".xlsx"):
+            self.saveDataToXlsx()
+
+    def saveDataToCsv(self, path):
+        with open(path, mode='w', newline='') as file:
+            fileWriter = csv.writer(file, delimiter=',')
+            fileWriter.writerow(['Id', 'Name', 'Surname', 'Axis I1', 'Axis I2 left',
+                                 'Axis I2 right', 'Axis I3 left', 'Axis I3 right'])
+            for patient in self.patients:
+                idx = patient.idx
+                name = patient.personalData.name
+                surname = patient.personalData.surname
+                diag11 = patient.getAsixI1Diagnosis()
+                diag12left = patient.getAxisI2Diagnosis("left")
+                diag12right = patient.getAxisI2Diagnosis("right")
+                diag13left = patient.getAxisI3Diagnosis("left")
+                diag13right = patient.getAxisI3Diagnosis("right")
+                fileWriter.writerow([idx, name, surname, diag11, diag12left,
+                                     diag12right, diag13left, diag13right])
+    def saveDataToXlsx(self):
+        #TODO: implement
         pass
 
 def run():
