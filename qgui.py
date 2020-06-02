@@ -93,7 +93,7 @@ class Window(QMainWindow):
         if (fileExtension == ".csv"):
             self.saveDataToCsv(path)
         elif (fileExtension == ".xlsx"):
-            self.saveDataToXlsx()
+            self.saveDataToXlsx(path)
 
     def saveDataToCsv(self, path):
         with open(path, mode='w', newline='') as file:
@@ -111,9 +111,25 @@ class Window(QMainWindow):
                 diag13right = patient.getAxisI3Diagnosis("right")
                 fileWriter.writerow([idx, name, surname, diag11, diag12left,
                                      diag12right, diag13left, diag13right])
-    def saveDataToXlsx(self):
-        #TODO: implement
-        pass
+    def saveDataToXlsx(self, path):
+        data = []
+        for patient in self.patients:
+            idx = patient.idx
+            name = patient.personalData.name
+            surname = patient.personalData.surname
+            diag11 = patient.getAsixI1Diagnosis()
+            diag12left = patient.getAxisI2Diagnosis("left")
+            diag12right = patient.getAxisI2Diagnosis("right")
+            diag13left = patient.getAxisI3Diagnosis("left")
+            diag13right = patient.getAxisI3Diagnosis("right")
+            data.append([idx, name, surname, diag11, diag12left,
+                                 diag12right, diag13left, diag13right])
+
+        df = pd.DataFrame(data, columns=['Id', 'Name', 'Surname', 'Axis I1', 'Axis I2 left',
+                                 'Axis I2 right', 'Axis I3 left', 'Axis I3 right'])
+        writer = pd.ExcelWriter(path, engine='xlsxwriter')
+        df.to_excel(writer, sheet_name='Diagnosis', index=False)
+        writer.save()
 
 def run():
         app = QtWidgets.QApplication(sys.argv)
