@@ -87,7 +87,7 @@ class Window(QMainWindow):
 
     def _generateDiagnosticReport(self):
         path, fileFilter = QFileDialog.getSaveFileName(self, 'Save file',
-                                                       filter="CSV (*.csv) ;; Excel file (*.xlsx)")
+                                                       filter="Excel file (*.xlsx) ;; CSV (*.csv)")
 
         filename, fileExtension = os.path.splitext(path)
         if (fileExtension == ".csv"):
