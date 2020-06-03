@@ -26,7 +26,7 @@ class Window(QMainWindow):
         quitAction = QAction("Open", self)
         quitAction.setShortcut("Ctrl+O")
         quitAction.setStatusTip('Open the examination file')
-        quitAction.triggered.connect(self.openDiagnosticFile)
+        quitAction.triggered.connect(self._openDiagnosticFile)
 
         openAction = QAction("Quit", self)
         openAction.setShortcut("Ctrl+Q")
@@ -35,7 +35,7 @@ class Window(QMainWindow):
 
         generateDiagnosisAction = QAction("Generate diagnostic file", self)
         generateDiagnosisAction.setStatusTip('Generate the diagnosis based on the the examination file')
-        generateDiagnosisAction.triggered.connect(self.generateDiagnosticReport)
+        generateDiagnosisAction.triggered.connect(self._generateDiagnosticReport)
 
         self.statusBar()
 
@@ -57,7 +57,7 @@ class Window(QMainWindow):
         else:
             event.ignore()
 
-    def openDiagnosticFile(self):
+    def _openDiagnosticFile(self):
         fileName, fileFilter = QFileDialog.getOpenFileName(self, 'Open File',
                                                filter="Excel files (*.xlsx)")
 
@@ -85,17 +85,17 @@ class Window(QMainWindow):
             QMessageBox.question(self, "TMJ RDC Diagnoser", "Wrong file format!",
                      QMessageBox.Ok, QMessageBox.Ok)
 
-    def generateDiagnosticReport(self):
+    def _generateDiagnosticReport(self):
         path, fileFilter = QFileDialog.getSaveFileName(self, 'Save file',
                                                        filter="CSV (*.csv) ;; Excel file (*.xlsx)")
 
         filename, fileExtension = os.path.splitext(path)
         if (fileExtension == ".csv"):
-            self.saveDataToCsv(path)
+            self._saveDataToCsv(path)
         elif (fileExtension == ".xlsx"):
-            self.saveDataToXlsx(path)
+            self._saveDataToXlsx(path)
 
-    def saveDataToCsv(self, path):
+    def _saveDataToCsv(self, path):
         with open(path, mode='w', newline='') as file:
             fileWriter = csv.writer(file, delimiter=',')
             fileWriter.writerow(['Id', 'Name', 'Surname', 'Axis I1', 'Axis I2 left',
@@ -111,7 +111,7 @@ class Window(QMainWindow):
                 diag13right = patient.getAxisI3Diagnosis("right")
                 fileWriter.writerow([idx, name, surname, diag11, diag12left,
                                      diag12right, diag13left, diag13right])
-    def saveDataToXlsx(self, path):
+    def _saveDataToXlsx(self, path):
         data = []
         for patient in self.patients:
             idx = patient.idx
@@ -129,6 +129,14 @@ class Window(QMainWindow):
                                  'Axis I2 right', 'Axis I3 left', 'Axis I3 right'])
         writer = pd.ExcelWriter(path, engine='xlsxwriter')
         df.to_excel(writer, sheet_name='Diagnosis', index=False)
+        # adjust the columns width
+        worksheet= writer.sheets['Diagnosis']
+        for idx, col in enumerate(df):
+            series = df[col]
+            maxLen = max((series.astype(str).map(len).max(), len(str(series.name)))) + 1
+            # width is in 1 unit per font character width
+            # Default font is Calibri 11px which boils down to ~8.5 pixels per unit
+            worksheet.set_column(idx, idx, width=maxLen)
         writer.save()
 
 def run():
