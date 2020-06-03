@@ -14,13 +14,20 @@ from qpatient import formPatientsDict
 from qparser import parseDatabase
 import csv
 import os
+import ctypes
+
+# needed for custom toolbar icon
+# https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105#1552105
+if os.name == 'nt': # 'nt' - Windows, 'posix' - Linux
+    myappid = u'tmj-diagnoser' # arbitrary string
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 class Window(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.setGeometry(50, 50, 500, 300)
         self.setWindowTitle("TMJ RDC Diagnoser")
-        self.setWindowIcon(QtGui.QIcon('pythonlogo.png'))
+        self.setWindowIcon(QtGui.QIcon('tooth.png'))
         self.path = ""
 
         quitAction = QAction("Open", self)
