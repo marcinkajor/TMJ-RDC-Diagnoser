@@ -15,6 +15,7 @@ from qparser import parseDatabase
 import csv
 import os
 import ctypes
+from qnavigator import Navigator
 
 # needed for custom toolbar icon
 # https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105#1552105
@@ -30,15 +31,20 @@ class Window(QMainWindow):
         self.setWindowIcon(QtGui.QIcon('tooth.png'))
         self.path = ""
 
-        quitAction = QAction("Open", self)
-        quitAction.setShortcut("Ctrl+O")
-        quitAction.setStatusTip('Open the examination file')
-        quitAction.triggered.connect(self._openDiagnosticFile)
+        openAction = QAction("Open", self)
+        openAction.setShortcut("Ctrl+O")
+        openAction.setStatusTip('Open the examination file')
+        openAction.triggered.connect(self._openDiagnosticFile)
 
-        openAction = QAction("Quit", self)
-        openAction.setShortcut("Ctrl+Q")
-        openAction.setStatusTip('Quit the application')
-        openAction.triggered.connect(QtWidgets.QApplication.quit)
+        addRecord = QAction("Add patient record", self)
+        addRecord.setShortcut("Ctrl+p")
+        addRecord.setStatusTip('Add patient record')
+        addRecord.triggered.connect(self.addPatientRecord)
+
+        quitAction = QAction("Quit", self)
+        quitAction.setShortcut("Ctrl+Q")
+        quitAction.setStatusTip('Quit the application')
+        quitAction.triggered.connect(QtWidgets.QApplication.quit)
 
         generateDiagnosisAction = QAction("Generate diagnostic file", self)
         generateDiagnosisAction.setStatusTip('Generate the diagnosis based on the the examination file')
@@ -51,8 +57,14 @@ class Window(QMainWindow):
         fileMenu.addAction(quitAction)
         fileMenu.addAction(openAction)
         fileMenu.addAction(generateDiagnosisAction)
+        fileMenu.addAction(addRecord)
+
+        self.navigator = Navigator()
 
         self.show()
+
+    def addPatientRecord(self):
+        self.navigator.open()
 
     # handle close button of the main window (quit QApplication properly)
     def closeEvent(self, event):
