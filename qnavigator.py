@@ -20,3 +20,4 @@ class Navigator(QWizard):
         # self.setPixmap(QWizard.WatermarkPixmap, QPixmap('steth.png'))
         # TODO: add all necessary pages
         self.addPage(PersonalDataPage())
+        self.addPage(InitialDataPage())
