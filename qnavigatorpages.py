@@ -30,15 +30,7 @@ class PersonalDataPage(QWizardPage):
 
     @staticmethod
     def _generateSex():
-        box = QGroupBox("Sex")
-        male = QRadioButton("Male")
-        female = QRadioButton("Female")
-        male.setChecked(True)
-        layout = QVBoxLayout()
-        layout.addWidget(male)
-        layout.addWidget(female)
-        box.setLayout(layout)
-        return box
+        return ButtonGroupBox("Sex", ["Male", "Female"], layout='vertical').getWidget()
 
     def onNameChanged(self, name):
         pass  # TODO: this is rather not necessary, the NEXT button shall trigger proper input data handling
@@ -56,53 +48,44 @@ class InitialDataPage(QWizardPage):
         self.setWindowIcon(QtGui.QIcon('tooth.png'))
 
         self.grid = QGridLayout()
-        self.labelPresence = QLabel("Facial pain")
+        self.facialPainBox = ButtonGroupBox("Facial pain", [self.NO_PAIN, self.RIGHT, self.LEFT, self.BOTH],
+                                            layout='horizontal')
+        self.facialPainBox.registerClickCallback(self._onButtonGroupChanged)
+        self.grid.addWidget(self.facialPainBox.getWidget())
 
-        self.labelPresence.setFont(QFont("Arial", 12))
-        self.labelArea = QLabel("Pain area")
-        self.labelArea.setFont(QFont("Arial", 12))
-        self.grid.addWidget(self.labelPresence)
-        self.grid.addWidget(self.labelArea)
-        self.facialPainState = [self.NO_PAIN, self.RIGHT, self.LEFT, self.BOTH]
-        self._generateSideLocalizationButtonGroup(self.facialPainState)
         self._generatePainOptions()
         self.setLayout(self.grid)
 
-    def _generateSideLocalizationButtonGroup(self, options):
-        self.buttonGroup = QButtonGroup()
-        for buttonId, option in enumerate(options):
-            newRadioButton = QRadioButton(option)
-            newRadioButton.setObjectName(option)
-            self.buttonGroup.addButton(newRadioButton, buttonId)
-            self.grid.addWidget(newRadioButton, 0, buttonId + 1)  # +1 to avoid overlapping with QLabel at (0,0)
-        self.buttonGroup.buttonClicked.connect(self._onButtonGroupChanged)
-
     def _onButtonGroupChanged(self):
-        currentOption = self.buttonGroup.checkedButton().objectName()
+        currentOption = self.facialPainBox.getCheckedButton()
+        if currentOption is None:
+            return
         if currentOption != self.NO_PAIN:
-            self.optionsGridLayout.setEnabled(True)
+            self.facialPainBox.setEnabled(True)
             if currentOption == self.RIGHT:
-                self._enableOptions(right=True, left=False)
+                self._enablePainOptions(right=True, left=False)
             elif currentOption == self.LEFT:
-                self._enableOptions(right=False, left=True)
+                self._enablePainOptions(right=False, left=True)
             else:
-                self._enableOptions(right=True, left=True)
+                self._enablePainOptions(right=True, left=True)
         else:
-            self._enableOptions(left=False, right=False)
+            self._enablePainOptions(left=False, right=False)
 
-    def _enableOptions(self, right, left):
+    def _enablePainOptions(self, right, left):
         self.rightOptionsGroup.enableAll(right)
         self.leftOptionsGroup.enableAll(left)
 
     def _generatePainOptions(self):
         options = ["Muscle", "Join", "Both"]
-        self.optionsGridLayout = QGridLayout()
+        self.optionsGridLayout = QHBoxLayout()
         self.rightOptionsGroup = ButtonGroupBox("Right", options, layout='horizontal')
         self.leftOptionsGroup = ButtonGroupBox("Left", options, layout='horizontal')
-        self.optionsGridLayout.addWidget(self.rightOptionsGroup.getWidget(), 0, 0)
-        self.optionsGridLayout.addWidget(self.leftOptionsGroup.getWidget(), 0, 1)
-        self._enableOptions(right=False, left=False)
-        self.grid.addLayout(self.optionsGridLayout, 1, 1)
+        self.optionsGridLayout.addWidget(self.rightOptionsGroup.getWidget())
+        self.optionsGridLayout.addWidget(self.leftOptionsGroup.getWidget())
+        self._enablePainOptions(right=False, left=False)
+        self.painAreaBox = QGroupBox("Pain area")
+        self.painAreaBox.setLayout(self.optionsGridLayout)
+        self.grid.addWidget(self.painAreaBox)
 
 
 class ButtonGroupBox(QWidget):
@@ -112,9 +95,11 @@ class ButtonGroupBox(QWidget):
         layout = QVBoxLayout() if layout == 'vertical' else QHBoxLayout()
         self.buttonGroup = QButtonGroup()
         self.box = QGroupBox(name)
+        self.buttonNames = []
         for buttonId, buttonName in enumerate(buttons):
             newButton = QRadioButton(buttonName)
             newButton.setObjectName(buttonName)
+            self.buttonNames.append(buttonName)
             self.buttonGroup.addButton(newButton, buttonId)
             layout.addWidget(newButton)
         self.box.setLayout(layout)
@@ -126,3 +111,16 @@ class ButtonGroupBox(QWidget):
         assert(enable in [True, False])
         for button in self.buttonGroup.buttons():
             button.setEnabled(enable)
+
+    def getButton(self, name):
+        assert(name in self.buttonNames)
+        for button in self.buttonGroup.buttons():
+            if button.objectName() == name:
+                return button
+
+    def registerClickCallback(self, callback):
+        self.buttonGroup.buttonClicked.connect(callback)
+
+    def getCheckedButton(self):
+        if self.buttonGroup.checkedButton():
+            return self.buttonGroup.checkedButton().objectName()
