@@ -1,7 +1,7 @@
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QIntValidator
 from PyQt5.QtWidgets import QLineEdit, QWizardPage, QLabel, QGroupBox, QRadioButton, QVBoxLayout, QGridLayout, \
-    QButtonGroup, QWidget
+    QButtonGroup, QWidget, QHBoxLayout
 
 
 class PersonalDataPage(QWizardPage):
@@ -57,6 +57,7 @@ class InitialDataPage(QWizardPage):
 
         self.grid = QGridLayout()
         self.labelPresence = QLabel("Facial pain")
+
         self.labelPresence.setFont(QFont("Arial", 12))
         self.labelArea = QLabel("Pain area")
         self.labelArea.setFont(QFont("Arial", 12))
@@ -90,25 +91,38 @@ class InitialDataPage(QWizardPage):
             self._enableOptions(left=False, right=False)
 
     def _enableOptions(self, right, left):
-        for button in self.rightOptionsGroup.buttons():
-            button.setEnabled(right)
-        for button in self.leftOptionsGroup.buttons():
-            button.setEnabled(left)
+        self.rightOptionsGroup.enableAll(right)
+        self.leftOptionsGroup.enableAll(left)
 
     def _generatePainOptions(self):
         options = ["Muscle", "Join", "Both"]
         self.optionsGridLayout = QGridLayout()
-        self.rightOptionsGroup = QButtonGroup()
-        self.leftOptionsGroup = QButtonGroup()
-        self.options = QWidget()
-        self.optionsGridLayout.addWidget(self.options)
-
-        for buttonId, option in enumerate(options):
-            newRightRadioButton = QRadioButton(option)
-            newLeftRadioButton = QRadioButton(option)
-            self.rightOptionsGroup.addButton(newRightRadioButton, buttonId)
-            self.leftOptionsGroup.addButton(newLeftRadioButton, buttonId)
-            self.optionsGridLayout.addWidget(newRightRadioButton, buttonId, 0)
-            self.optionsGridLayout.addWidget(newLeftRadioButton, buttonId, 1)
+        self.rightOptionsGroup = ButtonGroupBox("Right", options, layout='horizontal')
+        self.leftOptionsGroup = ButtonGroupBox("Left", options, layout='horizontal')
+        self.optionsGridLayout.addWidget(self.rightOptionsGroup.getWidget(), 0, 0)
+        self.optionsGridLayout.addWidget(self.leftOptionsGroup.getWidget(), 0, 1)
         self._enableOptions(right=False, left=False)
         self.grid.addLayout(self.optionsGridLayout, 1, 1)
+
+
+class ButtonGroupBox(QWidget):
+    def __init__(self, name, buttons, layout='vertical'):
+        super(ButtonGroupBox, self).__init__()
+        assert(layout in ['vertical', 'horizontal'])
+        layout = QVBoxLayout() if layout == 'vertical' else QHBoxLayout()
+        self.buttonGroup = QButtonGroup()
+        self.box = QGroupBox(name)
+        for buttonId, buttonName in enumerate(buttons):
+            newButton = QRadioButton(buttonName)
+            newButton.setObjectName(buttonName)
+            self.buttonGroup.addButton(newButton, buttonId)
+            layout.addWidget(newButton)
+        self.box.setLayout(layout)
+
+    def getWidget(self):
+        return self.box
+
+    def enableAll(self, enable):
+        assert(enable in [True, False])
+        for button in self.buttonGroup.buttons():
+            button.setEnabled(enable)
