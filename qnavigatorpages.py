@@ -5,12 +5,15 @@ from PyQt5.QtWidgets import QLineEdit, QWizardPage, QLabel, QGroupBox, QRadioBut
 
 
 class PersonalDataPage(QWizardPage):
-    def __init__(self):
+    def __init__(self, database):
         super(PersonalDataPage, self).__init__()
+        self.database = database
         self.setTitle("Personal patient data")
         self.setWindowIcon(QtGui.QIcon('tooth.png'))
         # generate all needed QLineEdits with corresponding validators
         self.formItems = self._generateForm([("Name", None), ("Surname", None), ("Age", QIntValidator(18, 120))])
+        self.formItems["Name"].editingFinished.connect(self.onNameChanged)
+        self.formItems["Surname"].editingFinished.connect(self.onSurnameChanged)
         self.vboxLayout = QVBoxLayout()
         for formItemName in self.formItems:
             self.vboxLayout.addWidget(QLabel(formItemName))
@@ -23,6 +26,7 @@ class PersonalDataPage(QWizardPage):
         formItems = {}
         for item in listOfItemsAndValidators:
             newLineEdit = QLineEdit()
+            newLineEdit.setObjectName(item[0])
             newLineEdit.setValidator(item[1])
             newLineEdit.setFont(QFont("Arial", 12))
             formItems[item[0]] = newLineEdit
@@ -32,12 +36,18 @@ class PersonalDataPage(QWizardPage):
     def _generateSex():
         return ButtonGroupBox("Sex", ["Male", "Female"], layout='vertical').getWidget()
 
-    def onNameChanged(self, name):
-        pass  # TODO: this is rather not necessary, the NEXT button shall trigger proper input data handling
+    def onNameChanged(self):
+        print("Name changed")
+        self.database.addNewPatientRecord((1, self.formItems["Name"].text(), "Stolec", 12, "Male"))
+
+    def onSurnameChanged(self):
+        print("SurName changed")
+        #self.database.addPatientSurname(self.formItems["Surname"].text())
 
 
 class InitialDataPage(QWizardPage):
-    def __init__(self):
+    def __init__(self, database):
+        self.database = database
         self.NO_PAIN = "NO PAIN"
         self.RIGHT = "RIGHT"
         self.LEFT = "LEFT"
