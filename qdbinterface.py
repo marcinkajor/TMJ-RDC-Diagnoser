@@ -23,5 +23,8 @@ class PatientDatabaseInterface:
     def addPatientSingleAttribute(self, patientId, attribute, value):
         pass
 
-    def dropDatabase(self):
+    def removeRecord(self, patientId):
+        pass
+
+    def drop(self):
         pass

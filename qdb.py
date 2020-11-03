@@ -7,23 +7,6 @@ class Database(PatientDatabaseInterface):
         self.connection = None
         self.executor = None
 
-    def addPatientName(self, name):
-        print("Adding patient name")
-        try:
-            self.executor.execute('''INSERT INTO patients(name) VALUES (?) WHERE identity=1;''', (name,))
-            self.connection.commit()
-        except Exception as e:
-            print(e)
-
-    def addPatientSurname(self, surname):
-        print("Adding patient surname")
-        try:
-            self.executor.execute('''INSERT INTO patients(surname) VALUES (?) WHERE identity=1;''', (surname,))
-            self.connection.commit()
-            print("Successfully inserted an item into row: ", self.executor.rowcount)
-        except Exception as e:
-            print(e)
-
     def connect(self):
         try:
             self.connection = sqlite3.connect('database.db')
@@ -32,20 +15,28 @@ class Database(PatientDatabaseInterface):
             print("Cannot connect to the DB: {}".format(e))
 
     def createPatientTable(self):
-        self.executor.execute('''CREATE TABLE IF NOT EXISTS patients (
-                      patient_id INTEGER PRIMARY_KEY, name TEXT, surname TEXT, age INTEGER, sex TEXT
-                      )''')
-        self.connection.commit()
+        with self.connection:
+            self.executor.execute('''CREATE TABLE IF NOT EXISTS patients (
+                          patient_id INTEGER PRIMARY KEY,
+                          name TEXT,
+                          surname TEXT,
+                          age INTEGER,
+                          sex TEXT
+                          )''')
 
     def addNewPatientRecord(self, patientRecord):
         cmdSchema = 'INSERT INTO patients VALUES ({})'
-        questionMarks = ('?,'*len(patientRecord))[:-1]
+        questionMarks = ('?,' * len(patientRecord))[:-1]
         cmd = cmdSchema.format(questionMarks)
         try:
-            self.executor.execute(cmd, patientRecord)
-        except Exception as e:
-            print(e)
-        self.connection.commit()
+            with self.connection:
+                self.executor.execute(cmd, patientRecord)
+        except sqlite3.OperationalError as e:
+            if str(e).find("table has") and str(e).find("supplied"): # TODO: regex?
+                cmdSchema = 'INSERT INTO patients (name, surname, age, sex) VALUES ({})'
+                cmd = cmdSchema.format(questionMarks)
+                with self.connection:
+                    self.executor.execute(cmd, patientRecord)
 
     def updatePatientRecord(self, patientId, patientData):
         pass
@@ -54,11 +45,16 @@ class Database(PatientDatabaseInterface):
         pass
 
     def updatePatientSingleAttribute(self, patientId, attribute, value):
-        pass
+        try:
+            with self.connection:
+                schema = '''UPDATE patients SET {} = ? WHERE patient_id = ?'''.format(attribute)
+                self.executor.execute(schema, (value, patientId))
+        except Exception as e:
+            print(e)
 
-    def addPatientSingleAttribute(self,patientId, attribute, value):
-        self.executor.execute('''INSERT INTO patients({}}) VALUES (?)'''.format(attribute), (value,))
-        self.connection.commit()
+    def addPatientSingleAttribute(self, patientId, attribute, value):
+        with self.connection:
+            self.executor.execute('''INSERT INTO patients({}}) VALUES (?)'''.format(attribute), (value,))
 
-    def dropDatabase(self):
-        pass
+    def drop(self):
+        self.executor.execute('''DROP TABLE IF EXISTS patients''')
