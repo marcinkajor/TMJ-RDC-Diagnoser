@@ -14,16 +14,13 @@ class PatientDatabaseInterface:
     def updatePatientRecord(self, patientId, patientData):
         pass
 
-    def addNewPatientOnIndex(self, patientId, patientData):
-        pass
-
     def updatePatientSingleAttribute(self, patientId, attribute, value):
         pass
 
     def addPatientSingleAttribute(self, patientId, attribute, value):
         pass
 
-    def removeRecord(self, patientId):
+    def removeRecordOnId(self, patientId):
         pass
 
     def drop(self):
