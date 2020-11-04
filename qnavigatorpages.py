@@ -1,14 +1,23 @@
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QIntValidator
-from PyQt5.QtWidgets import QLineEdit, QWizardPage, QLabel, QGroupBox, QRadioButton, QVBoxLayout, QGridLayout, \
-    QButtonGroup, QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QLineEdit, QWizardPage, QLabel, QGroupBox, QVBoxLayout, QGridLayout, QHBoxLayout
+from qnavigatorpageshelper import *
 
 
-class PersonalDataPage(QWizardPage):
+class BasePage(QWizardPage):
     def __init__(self):
-        super(PersonalDataPage, self).__init__()
-        self.setTitle("Personal patient data")
+        super(QWizardPage, self).__init__()
         self.setWindowIcon(QtGui.QIcon('tooth.png'))
+
+    def onNextClicked(self):
+        pass
+
+
+class PersonalDataPage(BasePage):
+    def __init__(self, database):
+        super(BasePage, self).__init__()
+        self.database = database
+        self.setTitle("Personal patient data")
         # generate all needed QLineEdits with corresponding validators
         self.formItems = self._generateForm([("Name", None), ("Surname", None), ("Age", QIntValidator(18, 120))])
         self.vboxLayout = QVBoxLayout()
@@ -23,6 +32,7 @@ class PersonalDataPage(QWizardPage):
         formItems = {}
         for item in listOfItemsAndValidators:
             newLineEdit = QLineEdit()
+            newLineEdit.setObjectName(item[0])
             newLineEdit.setValidator(item[1])
             newLineEdit.setFont(QFont("Arial", 12))
             formItems[item[0]] = newLineEdit
@@ -32,20 +42,24 @@ class PersonalDataPage(QWizardPage):
     def _generateSex():
         return ButtonGroupBox("Sex", ["Male", "Female"], layout='vertical').getWidget()
 
-    def onNameChanged(self, name):
-        pass  # TODO: this is rather not necessary, the NEXT button shall trigger proper input data handling
+    def onNextClicked(self):
+        try:
+            self.database.addNewPatientRecord(
+                (self.formItems["Name"].text(), self.formItems["Surname"].text(), self.formItems["Age"].text(), "MALE"))
+        except Exception as e:
+            print(e)
 
 
-class InitialDataPage(QWizardPage):
-    def __init__(self):
+class InitialDataPage(BasePage):
+    def __init__(self, database):
+        self.database = database
         self.NO_PAIN = "NO PAIN"
         self.RIGHT = "RIGHT"
         self.LEFT = "LEFT"
         self.BOTH = "BOTH"
 
-        super(InitialDataPage, self).__init__()
+        super(BasePage, self).__init__()
         self.setTitle("Initial data page")
-        self.setWindowIcon(QtGui.QIcon('tooth.png'))
 
         self.grid = QGridLayout()
         self.facialPainBox = ButtonGroupBox("Facial pain", [self.NO_PAIN, self.RIGHT, self.LEFT, self.BOTH],
@@ -86,41 +100,3 @@ class InitialDataPage(QWizardPage):
         self.painAreaBox = QGroupBox("Pain area")
         self.painAreaBox.setLayout(self.optionsGridLayout)
         self.grid.addWidget(self.painAreaBox)
-
-
-class ButtonGroupBox(QWidget):
-    def __init__(self, name, buttons, layout='vertical'):
-        super(ButtonGroupBox, self).__init__()
-        assert(layout in ['vertical', 'horizontal'])
-        layout = QVBoxLayout() if layout == 'vertical' else QHBoxLayout()
-        self.buttonGroup = QButtonGroup()
-        self.box = QGroupBox(name)
-        self.buttonNames = []
-        for buttonId, buttonName in enumerate(buttons):
-            newButton = QRadioButton(buttonName)
-            newButton.setObjectName(buttonName)
-            self.buttonNames.append(buttonName)
-            self.buttonGroup.addButton(newButton, buttonId)
-            layout.addWidget(newButton)
-        self.box.setLayout(layout)
-
-    def getWidget(self):
-        return self.box
-
-    def enableAll(self, enable):
-        assert(enable in [True, False])
-        for button in self.buttonGroup.buttons():
-            button.setEnabled(enable)
-
-    def getButton(self, name):
-        assert(name in self.buttonNames)
-        for button in self.buttonGroup.buttons():
-            if button.objectName() == name:
-                return button
-
-    def registerClickCallback(self, callback):
-        self.buttonGroup.buttonClicked.connect(callback)
-
-    def getCheckedButton(self):
-        if self.buttonGroup.checkedButton():
-            return self.buttonGroup.checkedButton().objectName()
