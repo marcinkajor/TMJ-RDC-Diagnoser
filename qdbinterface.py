@@ -20,6 +20,12 @@ class PatientDatabaseInterface:
     def addPatientSingleAttribute(self, patientId, attribute, value):
         pass
 
+    def getLastInsertedPatientId(self):
+        pass
+
+    def getMaxPatientId(self):
+        pass
+
     def removeRecordOnId(self, patientId):
         pass
 

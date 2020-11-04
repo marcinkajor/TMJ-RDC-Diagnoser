@@ -40,9 +40,20 @@ class Database(PatientDatabaseInterface):
                     self.executor.execute(cmd, patientRecord)
 
     def updatePatientRecord(self, patientId, patientData):
+        keys = patientData.keys()
+        query = '''UPDATE patients SET '''
+        attributes = []
+        for key in keys:
+            attributes.append('{} = ?,'.format(key))
+        # get rid of the trailing ','
+        lastAttribute = attributes[-1]
+        del(attributes[-1])
+        attributes.append(lastAttribute[:-1])
+        query += ''.join(attributes)
+        query += ''' WHERE patient_id = ?'''
         try:
             with self.connection:
-                self.executor.execute('''UPDATE patients SET WHERE patient_id = ?''', ())
+                self.executor.execute(query, (tuple(patientData.values()) + (patientId,)))
         except Exception as e:
             print(e)
 
@@ -58,6 +69,18 @@ class Database(PatientDatabaseInterface):
         try:
             with self.connection:
                 self.executor.execute('''INSERT INTO patients({}}) VALUES (?)'''.format(attribute), (value,))
+        except Exception as e:
+            print(e)
+
+    def getLastInsertedPatientId(self):
+        return self.executor.lastrowid
+
+    def getMaxPatientId(self):
+        try:
+            with self.connection:
+                self.executor.execute('''SELECT MAX(patient_id) FROM patients''')
+                resList = self.executor.fetchone()
+                return resList[0]
         except Exception as e:
             print(e)
 
