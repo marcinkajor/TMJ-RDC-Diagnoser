@@ -1,6 +1,6 @@
 from PyQt5 import QtGui
 from PyQt5.QtGui import QFont, QIntValidator
-from PyQt5.QtWidgets import QLineEdit, QWizardPage, QLabel, QGroupBox, QVBoxLayout, QGridLayout, QHBoxLayout
+from PyQt5.QtWidgets import QLineEdit, QWizardPage, QLabel, QGridLayout
 from qnavigatorpageshelper import *
 
 
@@ -24,23 +24,26 @@ class PersonalDataPage(BasePage):
         for formItemName in self.formItems:
             self.vboxLayout.addWidget(QLabel(formItemName))
             self.vboxLayout.addWidget(self.formItems[formItemName])
-        self.vboxLayout.addWidget(self._generateSex())
+        self.sexButtonGroup = ButtonGroupBox("Sex", ["Male", "Female"], layout='vertical')
+        self.registerField("Sex", self.sexButtonGroup,
+                           property="checkedButton",  # This is a property defined in ButtonGroupBox!!
+                           changedSignal=self.sexButtonGroup.buttonClicked)
+        self.vboxLayout.addWidget(self.sexButtonGroup.getWidget())
+
         self.setLayout(self.vboxLayout)
 
-    @staticmethod
-    def _generateForm(listOfItemsAndValidators):
+    def _generateForm(self, listOfItemsAndValidators):
         formItems = {}
         for item in listOfItemsAndValidators:
+            name = item[0]
+            validator = item[1]
             newLineEdit = QLineEdit()
-            newLineEdit.setObjectName(item[0])
-            newLineEdit.setValidator(item[1])
+            newLineEdit.setObjectName(name)
+            newLineEdit.setValidator(validator)
             newLineEdit.setFont(QFont("Arial", 12))
             formItems[item[0]] = newLineEdit
+            self.registerField(name, newLineEdit)
         return formItems
-
-    @staticmethod
-    def _generateSex():
-        return ButtonGroupBox("Sex", ["Male", "Female"], layout='vertical').getWidget()
 
     def onNextClicked(self):
         try:
@@ -52,15 +55,15 @@ class PersonalDataPage(BasePage):
 
 class InitialDataPage(BasePage):
     def __init__(self, database):
+        super(BasePage, self).__init__()
+
         self.database = database
         self.NO_PAIN = "NO PAIN"
         self.RIGHT = "RIGHT"
         self.LEFT = "LEFT"
         self.BOTH = "BOTH"
 
-        super(BasePage, self).__init__()
         self.setTitle("Initial data page")
-
         self.grid = QGridLayout()
         self.facialPainBox = ButtonGroupBox("Facial pain", [self.NO_PAIN, self.RIGHT, self.LEFT, self.BOTH],
                                             layout='horizontal')
@@ -71,7 +74,8 @@ class InitialDataPage(BasePage):
         self.setLayout(self.grid)
 
     def _onButtonGroupChanged(self):
-        currentOption = self.facialPainBox.getCheckedButton()
+        print("Sex: {}".format(self.field("Sex")))  # TODO: Remove, only for testing custom field
+        currentOption = self.facialPainBox.checkedButton
         if currentOption is None:
             return
         if currentOption != self.NO_PAIN:
