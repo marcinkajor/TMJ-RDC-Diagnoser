@@ -5,6 +5,8 @@ from qnavigatorpageshelper import *
 
 
 class BasePage(QWizardPage):
+    defaultFont = QFont("Arial", 10)
+
     def __init__(self):
         super(QWizardPage, self).__init__()
         self.setWindowIcon(QtGui.QIcon('tooth.png'))
@@ -40,7 +42,6 @@ class PersonalDataPage(BasePage):
             newLineEdit = QLineEdit()
             newLineEdit.setObjectName(name)
             newLineEdit.setValidator(validator)
-            newLineEdit.setFont(QFont("Arial", 14))
             formItems[item[0]] = newLineEdit
             self.registerField(name, newLineEdit)
         return formItems
@@ -72,7 +73,7 @@ class InitialDataPage(BasePage):
         self.painAreaBox = self._generatePainOptions()
 
         self.majorBox = QGroupBox("Facial pain")
-        self.majorBox.setFont(QFont("Arial", 10))
+        self.majorBox.setFont(self.defaultFont)
         vLayout = QVBoxLayout()
         vLayout.addWidget(self.painSideBox.getWidget())
         vLayout.addWidget(self.painAreaBox)
@@ -114,14 +115,41 @@ class InitialDataPage(BasePage):
 
 
 class AbductionMovementPage(BasePage):
+
+    Mapping = {
+        "Straight": 0,
+        "Uncorrected right deviation": 1,
+        "'S' left corrected deviation": 2,
+        "Non-corrected left deviation": 3,
+        "'S' left corrected deviation": 4,
+        "Other": 5
+    }
+
     def __init__(self, database):
         super(BasePage, self).__init__()
         self.setTitle("2. Abduction movement")
 
-        self.movementBox = ButtonGroupBox("Abduction movement", ["Straight",
-                                                                 "Uncorrected Right Deviation",
-                                                                 ''''S' left corrected deviation'''],
-                                          layout="vertical")
+        self.movementBox = ButtonGroupBox("Abduction movement", self.Mapping.keys(), layout="vertical")
+        self.otherDescription = QLineEdit()
+        self.otherDescription.setObjectName("Please specify")
+        self.otherDescription.setEnabled(False)
+        self.movementBox.registerClickCallback(self._onButtonGroupChanged)
+        self.otherDescriptionLabel = QLabel(self.otherDescription.objectName())
+        self.otherDescriptionLabel.setFont(self.defaultFont)
         layout = QVBoxLayout()
+        self.movementBox.getWidget().setFont(self.defaultFont)
+
         layout.addWidget(self.movementBox.getWidget())
+        layout.addWidget(self.otherDescriptionLabel)
+        layout.addWidget(self.otherDescription)
         self.setLayout(layout)
+
+    def _onButtonGroupChanged(self):
+        currentOption = self.movementBox.checkedButton
+        if currentOption is None:
+            return
+        if currentOption == "Other":
+            self.otherDescription.setEnabled(True)
+        else:
+            self.otherDescription.clear()
+            self.otherDescription.setEnabled(False)
