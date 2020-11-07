@@ -40,7 +40,7 @@ class PersonalDataPage(BasePage):
             newLineEdit = QLineEdit()
             newLineEdit.setObjectName(name)
             newLineEdit.setValidator(validator)
-            newLineEdit.setFont(QFont("Arial", 12))
+            newLineEdit.setFont(QFont("Arial", 14))
             formItems[item[0]] = newLineEdit
             self.registerField(name, newLineEdit)
         return formItems
@@ -63,23 +63,30 @@ class InitialDataPage(BasePage):
         self.LEFT = "LEFT"
         self.BOTH = "BOTH"
 
-        self.setTitle("Initial data page")
+        self.setTitle("1. Initial patient interview")
         self.grid = QGridLayout()
-        self.facialPainBox = ButtonGroupBox("Facial pain", [self.NO_PAIN, self.RIGHT, self.LEFT, self.BOTH],
-                                            layout='horizontal')
-        self.facialPainBox.registerClickCallback(self._onButtonGroupChanged)
-        self.grid.addWidget(self.facialPainBox.getWidget())
+        self.painSideBox = ButtonGroupBox("Pain side", [self.NO_PAIN, self.RIGHT, self.LEFT, self.BOTH],
+                                          layout='horizontal')
+        self.painSideBox.registerClickCallback(self._onButtonGroupChanged)
 
-        self._generatePainOptions()
+        self.painAreaBox = self._generatePainOptions()
+
+        self.majorBox = QGroupBox("Facial pain")
+        self.majorBox.setFont(QFont("Arial", 10))
+        vLayout = QVBoxLayout()
+        vLayout.addWidget(self.painSideBox.getWidget())
+        vLayout.addWidget(self.painAreaBox)
+        self.majorBox.setLayout(vLayout)
+        self.grid.addWidget(self.majorBox)
         self.setLayout(self.grid)
 
     def _onButtonGroupChanged(self):
         print("Sex: {}".format(self.field("Sex")))  # TODO: Remove, only for testing custom field
-        currentOption = self.facialPainBox.checkedButton
+        currentOption = self.painSideBox.checkedButton
         if currentOption is None:
             return
         if currentOption != self.NO_PAIN:
-            self.facialPainBox.setEnabled(True)
+            self.painSideBox.setEnabled(True)
             if currentOption == self.RIGHT:
                 self._enablePainOptions(right=True, left=False)
             elif currentOption == self.LEFT:
@@ -103,4 +110,18 @@ class InitialDataPage(BasePage):
         self._enablePainOptions(right=False, left=False)
         self.painAreaBox = QGroupBox("Pain area")
         self.painAreaBox.setLayout(self.optionsGridLayout)
-        self.grid.addWidget(self.painAreaBox)
+        return self.painAreaBox
+
+
+class AbductionMovementPage(BasePage):
+    def __init__(self, database):
+        super(BasePage, self).__init__()
+        self.setTitle("2. Abduction movement")
+
+        self.movementBox = ButtonGroupBox("Abduction movement", ["Straight",
+                                                                 "Uncorrected Right Deviation",
+                                                                 ''''S' left corrected deviation'''],
+                                          layout="vertical")
+        layout = QVBoxLayout()
+        layout.addWidget(self.movementBox.getWidget())
+        self.setLayout(layout)
