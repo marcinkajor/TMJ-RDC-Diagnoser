@@ -158,3 +158,43 @@ class AbductionMovementPage(BasePage):
         else:
             self.otherDescription.clear()
             self.otherDescription.setEnabled(False)
+
+
+class VerticalMovementRangePage(BasePage):
+    def __init__(self, database):
+        super(BasePage, self).__init__()
+        self.database = database
+
+        self.usedForetooth = ButtonGroupBox("Used foretooth", ["11", "21"], layout='horizontal')
+        self.usedForetooth.getWidget().setFont(self.defaultFont)
+        self.noPainOpeningLabel = QLabel("No pain opening")
+        self.maxActiveOpeningLabel = QLabel("Max active opening")
+        self.maxPassiveOpeningLabel = QLabel("Max passive opening")
+        leftLayout = QVBoxLayout()
+        # leftLayout.addWidget(self.usedForetooth.getWidget())
+        leftLayout.addWidget(self.noPainOpeningLabel)
+        leftLayout.addWidget(self.maxActiveOpeningLabel)
+        leftLayout.addWidget(self.maxPassiveOpeningLabel)
+
+        self.noPainOpeningValue = QLineEdit()
+        self.maxPassiveOpeningValue = QLineEdit()
+        self.maxActiveOpeningValue = QLineEdit()
+        middleLayout = QVBoxLayout()
+        middleLayout.addWidget(self.noPainOpeningValue)
+        middleLayout.addWidget(self.maxActiveOpeningValue)
+        middleLayout.addWidget(self.maxPassiveOpeningValue)
+
+        self.rightSidePainLabel = QLabel("Right side pain")
+        self.leftSidePainLabel = QLabel("Left side pain")
+        rightLayout = QHBoxLayout()
+        rightLayout.addWidget(self.rightSidePainLabel)
+        rightLayout.addWidget(self.leftSidePainLabel)
+
+        mainLayout = QGridLayout()
+        self.mmLabel = QLabel("mm")
+        mainLayout.addWidget(self.usedForetooth.getWidget(), 0, 0)
+        mainLayout.addWidget(self.mmLabel, 0, 1)
+        mainLayout.addLayout(rightLayout, 0, 2)
+        mainLayout.addLayout(leftLayout, 1, 0)
+        mainLayout.addLayout(middleLayout, 1, 1)
+        self.setLayout(mainLayout)
