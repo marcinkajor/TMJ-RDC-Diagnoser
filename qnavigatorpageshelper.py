@@ -30,6 +30,13 @@ class ButtonGroupBox(QWidget):
         for button in self.buttonGroup.buttons():
             button.setEnabled(enable)
 
+    def clearAll(self):
+        self.buttonGroup.setExclusive(False)
+        for button in self.buttonGroup.buttons():
+            if button.isChecked():
+                button.setChecked(False)
+        self.buttonGroup.setExclusive(True)
+
     def getButton(self, name):
         assert(name in self.buttonNames)
         for button in self.buttonGroup.buttons():

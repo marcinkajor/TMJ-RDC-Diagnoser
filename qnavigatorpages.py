@@ -69,9 +69,7 @@ class InitialDataPage(BasePage):
         self.painSideBox = ButtonGroupBox("Pain side", [self.NO_PAIN, self.RIGHT, self.LEFT, self.BOTH],
                                           layout='horizontal')
         self.painSideBox.registerClickCallback(self._onButtonGroupChanged)
-
         self.painAreaBox = self._generatePainOptions()
-
         self.majorBox = QGroupBox("Facial pain")
         self.majorBox.setFont(self.defaultFont)
         vLayout = QVBoxLayout()
@@ -98,6 +96,13 @@ class InitialDataPage(BasePage):
             self._enablePainOptions(left=False, right=False)
 
     def _enablePainOptions(self, right, left):
+        if right and not left:
+            self.leftOptionsGroup.clearAll()
+        if left and not right:
+            self.rightOptionsGroup.clearAll()
+        if not left and not right:
+            self.rightOptionsGroup.clearAll()
+            self.leftOptionsGroup.clearAll()
         self.rightOptionsGroup.enableAll(right)
         self.leftOptionsGroup.enableAll(left)
 
