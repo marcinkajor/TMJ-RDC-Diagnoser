@@ -164,37 +164,62 @@ class VerticalMovementRangePage(BasePage):
     def __init__(self, database):
         super(BasePage, self).__init__()
         self.database = database
-
+        mmValidator = QIntValidator(0, 9999)
         self.usedForetooth = ButtonGroupBox("Used foretooth", ["11", "21"], layout='horizontal')
         self.usedForetooth.getWidget().setFont(self.defaultFont)
         self.noPainOpeningLabel = QLabel("No pain opening")
         self.maxActiveOpeningLabel = QLabel("Max active opening")
         self.maxPassiveOpeningLabel = QLabel("Max passive opening")
-        leftLayout = QVBoxLayout()
-        # leftLayout.addWidget(self.usedForetooth.getWidget())
-        leftLayout.addWidget(self.noPainOpeningLabel)
-        leftLayout.addWidget(self.maxActiveOpeningLabel)
-        leftLayout.addWidget(self.maxPassiveOpeningLabel)
-
         self.noPainOpeningValue = QLineEdit()
+        self.noPainOpeningValue.setValidator(mmValidator)
         self.maxPassiveOpeningValue = QLineEdit()
+        self.maxPassiveOpeningValue.setValidator(mmValidator)
         self.maxActiveOpeningValue = QLineEdit()
-        middleLayout = QVBoxLayout()
-        middleLayout.addWidget(self.noPainOpeningValue)
-        middleLayout.addWidget(self.maxActiveOpeningValue)
-        middleLayout.addWidget(self.maxPassiveOpeningValue)
+        self.maxActiveOpeningValue.setValidator(mmValidator)
 
-        self.rightSidePainLabel = QLabel("Right side pain")
-        self.leftSidePainLabel = QLabel("Left side pain")
+        leftLayout = QGridLayout()
+        leftLayout.addWidget(self.noPainOpeningLabel, 0, 0)
+        leftLayout.addWidget(self.maxActiveOpeningLabel, 1, 0)
+        leftLayout.addWidget(self.maxPassiveOpeningLabel, 2, 0)
+        leftLayout.addWidget(self.noPainOpeningValue, 0, 1)
+        leftLayout.addWidget(self.maxActiveOpeningValue, 1, 1)
+        leftLayout.addWidget(self.maxPassiveOpeningValue, 2, 1)
+        self.mmBox = QGroupBox("mm")
+        self.mmBox.setLayout(leftLayout)
+        self.mmBox.setFont(self.defaultFont)
+
         rightLayout = QHBoxLayout()
-        rightLayout.addWidget(self.rightSidePainLabel)
-        rightLayout.addWidget(self.leftSidePainLabel)
-
+        rightLayout.addLayout(self._generatePainOptions())
         mainLayout = QGridLayout()
-        self.mmLabel = QLabel("mm")
+
         mainLayout.addWidget(self.usedForetooth.getWidget(), 0, 0)
-        mainLayout.addWidget(self.mmLabel, 0, 1)
-        mainLayout.addLayout(rightLayout, 0, 2)
-        mainLayout.addLayout(leftLayout, 1, 0)
-        mainLayout.addLayout(middleLayout, 1, 1)
+        mainLayout.addWidget(self.mmBox, 1, 0)
+        mainLayout.addLayout(rightLayout, 1, 1)
         self.setLayout(mainLayout)
+
+    def _generatePainOptions(self):
+        options = ["None", "Muscle", "Join", "Both"]
+        self.rightOptionsGridLayout = QVBoxLayout()
+        self.maxActiveOpenOptGroupRight = ButtonGroupBox("Max active opening", options, layout='horizontal')
+        self.maxPassiveOpenOptGroupRight = ButtonGroupBox("Max passive opening", options, layout='horizontal')
+        self.rightOptionsGridLayout.addWidget(self.maxActiveOpenOptGroupRight.getWidget())
+        self.rightOptionsGridLayout.addWidget(self.maxPassiveOpenOptGroupRight.getWidget())
+
+        self.leftOptionsGridLayout = QVBoxLayout()
+        self.maxActiveOpenOptGroupLeft = ButtonGroupBox("Max active opening", options, layout='horizontal')
+        self.maxPassiveOpenOptGroupLeft = ButtonGroupBox("Max passive opening", options, layout='horizontal')
+        self.leftOptionsGridLayout.addWidget(self.maxActiveOpenOptGroupLeft.getWidget())
+        self.leftOptionsGridLayout.addWidget(self.maxPassiveOpenOptGroupLeft.getWidget())
+
+        self.rightPainAreaBox = QGroupBox("Right side pain")
+        self.rightPainAreaBox.setFont(self.defaultFont)
+        self.leftPainAreaBox = QGroupBox("Left side pain")
+        self.leftPainAreaBox.setFont(self.defaultFont)
+        self.rightPainAreaBox.setLayout(self.rightOptionsGridLayout)
+        self.leftPainAreaBox.setLayout(self.leftOptionsGridLayout)
+
+        finalLayout = QHBoxLayout()
+        finalLayout.addWidget(self.rightPainAreaBox)
+        finalLayout.addWidget(self.leftPainAreaBox)
+
+        return finalLayout
