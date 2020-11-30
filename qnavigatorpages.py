@@ -169,37 +169,14 @@ class VerticalMovementRangePage(BasePage):
         self.usedForetooth = ButtonGroupBox("Used foretooth", ["11", "21"], layout='horizontal')
         self.usedForetooth.getWidget().setFont(self.defaultFont)
 
-        mmValidator = QIntValidator(0, 9999)
-
-        self.noPainOpeningLabel = QLabel("No pain opening")
-        self.noPainOpeningValue = QLineEdit()
-        self.noPainOpeningValue.setValidator(mmValidator)
-
-        self.maxActiveOpeningLabel = QLabel("Max active opening")
-        self.maxPassiveOpeningValue = QLineEdit()
-        self.maxPassiveOpeningValue.setValidator(mmValidator)
-
-        self.maxPassiveOpeningLabel = QLabel("Max passive opening")
-        self.maxActiveOpeningValue = QLineEdit()
-        self.maxActiveOpeningValue.setValidator(mmValidator)
-
-        leftLayout = QGridLayout()
-        leftLayout.addWidget(self.noPainOpeningLabel, 0, 0)
-        leftLayout.addWidget(self.maxActiveOpeningLabel, 1, 0)
-        leftLayout.addWidget(self.maxPassiveOpeningLabel, 2, 0)
-        leftLayout.addWidget(self.noPainOpeningValue, 0, 1)
-        leftLayout.addWidget(self.maxActiveOpeningValue, 1, 1)
-        leftLayout.addWidget(self.maxPassiveOpeningValue, 2, 1)
-        self.mmBox = QGroupBox("mm")
-        self.mmBox.setLayout(leftLayout)
-        self.mmBox.setFont(self.defaultFont)
+        self.mm = MmInputs(["No pain opening", "Max active opening", "Max passive opening"], self.defaultFont)
 
         rightLayout = QHBoxLayout()
         rightLayout.addLayout(self._generatePainOptions())
         mainLayout = QGridLayout()
 
         mainLayout.addWidget(self.usedForetooth.getWidget(), 0, 0)
-        mainLayout.addWidget(self.mmBox, 1, 0)
+        mainLayout.addWidget(self.mm.getWidget(), 1, 0)
         mainLayout.addLayout(rightLayout, 1, 1)
         self.setLayout(mainLayout)
 
@@ -237,31 +214,7 @@ class IncisorsGapPage(BasePage):
         self.setTitle("4. Incisors gap")
         self.database = database
 
-        mmValidator = QIntValidator(0, 9999)
-
-        self.verticalLabel = QLabel("Vertical")
-        self.verticalValue = QLineEdit()
-        self.verticalValue.setValidator(mmValidator)
-
-        self.horizontalLabel = QLabel("Horizontal")
-        self.horizontalValue = QLineEdit()
-        self.horizontalValue.setValidator(mmValidator)
-
-        self.middleLineLabel = QLabel("Middle line")
-        self.middleLineValue = QLineEdit()
-        self.middleLineValue.setValidator(mmValidator)
-
-        leftLayout = QGridLayout()
-        leftLayout.addWidget(self.verticalLabel, 0, 0)
-        leftLayout.addWidget(self.horizontalLabel, 1, 0)
-        leftLayout.addWidget(self.middleLineLabel, 2, 0)
-        leftLayout.addWidget(self.verticalValue, 0, 1)
-        leftLayout.addWidget(self.horizontalValue, 1, 1)
-        leftLayout.addWidget(self.middleLineValue, 2, 1)
-
-        self.mmBox = QGroupBox("mm")
-        self.mmBox.setLayout(leftLayout)
-        self.mmBox.setFont(self.defaultFont)
+        self.mm = MmInputs(["Vertical", "Horizontal", "Middle line"], self.defaultFont)
 
         self.middleLineAlignment = ButtonGroupBox("Middle line alignment relative to the jaw", ["R", "L"],
                                                   layout='horizontal')
@@ -271,6 +224,6 @@ class IncisorsGapPage(BasePage):
         rightLayout.addWidget(self.middleLineAlignment.getWidget())
         mainLayout = QGridLayout()
 
-        mainLayout.addWidget(self.mmBox, 0, 0)
+        mainLayout.addWidget(self.mm.getWidget(), 0, 0)
         mainLayout.addLayout(rightLayout, 0, 1)
         self.setLayout(mainLayout)

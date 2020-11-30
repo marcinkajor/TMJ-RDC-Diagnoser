@@ -1,4 +1,6 @@
-from PyQt5.QtWidgets import QGroupBox, QRadioButton, QVBoxLayout, QButtonGroup, QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QGroupBox, QRadioButton, QVBoxLayout, QButtonGroup, QWidget, QHBoxLayout, \
+    QLabel, QLineEdit, QGridLayout
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtCore import pyqtSignal, pyqtProperty
 
 
@@ -53,3 +55,30 @@ class ButtonGroupBox(QWidget):
 
     def onButtonClicked(self, buttonId):
         self.buttonClicked.emit()
+
+
+class MmInputs:
+    def __init__(self, inputs, font):
+        mmValidator = QIntValidator(0, 9999)
+        self.inputs = {}
+        self.layout = QGridLayout()
+        self.mmBox = QGroupBox("mm")
+
+        for idx, mmInput in enumerate(inputs):
+            label = QLabel(mmInput)
+            self.inputs[mmInput] = QLineEdit()
+            self.inputs[mmInput].setValidator(mmValidator)
+            self.layout.addWidget(label, idx, 0)
+            self.layout.addWidget(self.inputs[mmInput], idx, 1)
+
+        self.mmBox.setLayout(self.layout)
+        self.mmBox.setFont(font)
+
+    def getLineEdit(self, name):
+        return self.inputs[name]
+
+    def getAllLineEdits(self):
+        return self.inputs
+
+    def getWidget(self):
+        return self.mmBox
