@@ -163,17 +163,23 @@ class AbductionMovementPage(BasePage):
 class VerticalMovementRangePage(BasePage):
     def __init__(self, database):
         super(BasePage, self).__init__()
+        self.setTitle("3. Vertical movement range")
         self.database = database
-        mmValidator = QIntValidator(0, 9999)
+
         self.usedForetooth = ButtonGroupBox("Used foretooth", ["11", "21"], layout='horizontal')
         self.usedForetooth.getWidget().setFont(self.defaultFont)
+
+        mmValidator = QIntValidator(0, 9999)
+
         self.noPainOpeningLabel = QLabel("No pain opening")
-        self.maxActiveOpeningLabel = QLabel("Max active opening")
-        self.maxPassiveOpeningLabel = QLabel("Max passive opening")
         self.noPainOpeningValue = QLineEdit()
         self.noPainOpeningValue.setValidator(mmValidator)
+
+        self.maxActiveOpeningLabel = QLabel("Max active opening")
         self.maxPassiveOpeningValue = QLineEdit()
         self.maxPassiveOpeningValue.setValidator(mmValidator)
+
+        self.maxPassiveOpeningLabel = QLabel("Max passive opening")
         self.maxActiveOpeningValue = QLineEdit()
         self.maxActiveOpeningValue.setValidator(mmValidator)
 
@@ -223,3 +229,48 @@ class VerticalMovementRangePage(BasePage):
         finalLayout.addWidget(self.leftPainAreaBox)
 
         return finalLayout
+
+
+class IncisorsGapPage(BasePage):
+    def __init__(self, database):
+        super(BasePage, self).__init__()
+        self.setTitle("4. Incisors gap")
+        self.database = database
+
+        mmValidator = QIntValidator(0, 9999)
+
+        self.verticalLabel = QLabel("Vertical")
+        self.verticalValue = QLineEdit()
+        self.verticalValue.setValidator(mmValidator)
+
+        self.horizontalLabel = QLabel("Horizontal")
+        self.horizontalValue = QLineEdit()
+        self.horizontalValue.setValidator(mmValidator)
+
+        self.middleLineLabel = QLabel("Middle line")
+        self.middleLineValue = QLineEdit()
+        self.middleLineValue.setValidator(mmValidator)
+
+        leftLayout = QGridLayout()
+        leftLayout.addWidget(self.verticalLabel, 0, 0)
+        leftLayout.addWidget(self.horizontalLabel, 1, 0)
+        leftLayout.addWidget(self.middleLineLabel, 2, 0)
+        leftLayout.addWidget(self.verticalValue, 0, 1)
+        leftLayout.addWidget(self.horizontalValue, 1, 1)
+        leftLayout.addWidget(self.middleLineValue, 2, 1)
+
+        self.mmBox = QGroupBox("mm")
+        self.mmBox.setLayout(leftLayout)
+        self.mmBox.setFont(self.defaultFont)
+
+        self.middleLineAlignment = ButtonGroupBox("Middle line alignment relative to the jaw", ["R", "L"],
+                                                  layout='horizontal')
+        self.middleLineAlignment.getWidget().setFont(self.defaultFont)
+
+        rightLayout = QHBoxLayout()
+        rightLayout.addWidget(self.middleLineAlignment.getWidget())
+        mainLayout = QGridLayout()
+
+        mainLayout.addWidget(self.mmBox, 0, 0)
+        mainLayout.addLayout(rightLayout, 0, 1)
+        self.setLayout(mainLayout)
