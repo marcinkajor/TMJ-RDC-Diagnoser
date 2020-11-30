@@ -15,6 +15,7 @@ class Navigator(QWizard):
         super(Navigator, self).__init__()
         self.database = database
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
+        self.button(QWizard.FinishButton).clicked.connect(self.restart)
         self.setWindowTitle("Add patient record")
         self.setWizardStyle(QWizard.ModernStyle)
         self.setWindowIcon(QtGui.QIcon('tooth.png'))
