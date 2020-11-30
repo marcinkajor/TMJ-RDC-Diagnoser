@@ -172,40 +172,14 @@ class VerticalMovementRangePage(BasePage):
         self.mm = MmInputs(["No pain opening", "Max active opening", "Max passive opening"], self.defaultFont)
 
         rightLayout = QHBoxLayout()
-        rightLayout.addLayout(self._generatePainOptions())
+        self.painOptions = PainOptions(["Max active opening", "Max passive opening"], self.defaultFont)
+        rightLayout.addLayout(self.painOptions.getLayout())
         mainLayout = QGridLayout()
 
         mainLayout.addWidget(self.usedForetooth.getWidget(), 0, 0)
         mainLayout.addWidget(self.mm.getWidget(), 1, 0)
         mainLayout.addLayout(rightLayout, 1, 1)
         self.setLayout(mainLayout)
-
-    def _generatePainOptions(self):
-        options = ["None", "Muscle", "Join", "Both"]
-        self.rightOptionsGridLayout = QVBoxLayout()
-        self.maxActiveOpenOptGroupRight = ButtonGroupBox("Max active opening", options, layout='horizontal')
-        self.maxPassiveOpenOptGroupRight = ButtonGroupBox("Max passive opening", options, layout='horizontal')
-        self.rightOptionsGridLayout.addWidget(self.maxActiveOpenOptGroupRight.getWidget())
-        self.rightOptionsGridLayout.addWidget(self.maxPassiveOpenOptGroupRight.getWidget())
-
-        self.leftOptionsGridLayout = QVBoxLayout()
-        self.maxActiveOpenOptGroupLeft = ButtonGroupBox("Max active opening", options, layout='horizontal')
-        self.maxPassiveOpenOptGroupLeft = ButtonGroupBox("Max passive opening", options, layout='horizontal')
-        self.leftOptionsGridLayout.addWidget(self.maxActiveOpenOptGroupLeft.getWidget())
-        self.leftOptionsGridLayout.addWidget(self.maxPassiveOpenOptGroupLeft.getWidget())
-
-        self.rightPainAreaBox = QGroupBox("Right side pain")
-        self.rightPainAreaBox.setFont(self.defaultFont)
-        self.leftPainAreaBox = QGroupBox("Left side pain")
-        self.leftPainAreaBox.setFont(self.defaultFont)
-        self.rightPainAreaBox.setLayout(self.rightOptionsGridLayout)
-        self.leftPainAreaBox.setLayout(self.leftOptionsGridLayout)
-
-        finalLayout = QHBoxLayout()
-        finalLayout.addWidget(self.rightPainAreaBox)
-        finalLayout.addWidget(self.leftPainAreaBox)
-
-        return finalLayout
 
 
 class IncisorsGapPage(BasePage):
