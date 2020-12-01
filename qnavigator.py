@@ -27,6 +27,7 @@ class Navigator(QWizard):
         self.addPage(AbductionMovementPage(self.database))
         self.addPage(VerticalMovementRangePage(self.database))
         self.addPage(IncisorsGapPage(self.database))
+        self.addPage(VerticalMandibleMovementsPage(self.database))
 
     def _onNextCLicked(self):
         currentPage = self.page(self.currentId() - 1)
