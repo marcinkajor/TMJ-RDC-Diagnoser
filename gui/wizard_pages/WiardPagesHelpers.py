@@ -108,12 +108,10 @@ class Options:
         return self.options
 
 
-class PainOptions:
-    def __init__(self,  movements, font):
-        painOptions = ["None", "Muscle", "Join", "Both"]
-
-        self.rightOptions = Options("Right Side pain", movements, painOptions, font)
-        self.leftOptions = Options("Left side pain", movements, painOptions, font)
+class SideOptions:
+    def __init__(self,  movements, options, font):
+        self.rightOptions = Options("Right Side pain", movements, options, font)
+        self.leftOptions = Options("Left side pain", movements, options, font)
 
         self.mainLayout = QHBoxLayout()
         self.mainLayout.addLayout(self.rightOptions.getLayout())

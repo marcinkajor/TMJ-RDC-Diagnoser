@@ -9,7 +9,8 @@ class VerticalMandibleMovementsPage(BasePage):
         self.database = database
 
         self.mm = MmInputs(["Right side", "Left side", "Forward"], "mm", self.defaultFont)
-        self.painOptions = PainOptions(["Right side", "Left side", "Forward"], self.defaultFont)
+        self.painOptions = SideOptions(["Right side", "Left side", "Forward"], ["None", "Muscle", "Join", "Both"],
+                                       self.defaultFont)
 
         rightLayout = QHBoxLayout()
         rightLayout.addLayout(self.painOptions.getLayout())

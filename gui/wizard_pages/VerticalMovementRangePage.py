@@ -14,7 +14,8 @@ class VerticalMovementRangePage(BasePage):
         self.mm = MmInputs(["No pain opening", "Max active opening", "Max passive opening"], "mm", self.defaultFont)
 
         rightLayout = QHBoxLayout()
-        self.painOptions = PainOptions(["Max active opening", "Max passive opening"], self.defaultFont)
+        self.painOptions = SideOptions(["Max active opening", "Max passive opening"],
+                                       ["None", "Muscle", "Join", "Both"], self.defaultFont)
         rightLayout.addLayout(self.painOptions.getLayout())
         mainLayout = QGridLayout()
 
