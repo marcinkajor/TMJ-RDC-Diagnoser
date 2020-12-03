@@ -119,3 +119,4 @@ class PainOptions:
 
     def getLeftOptions(self):
         return self.leftOptions
+

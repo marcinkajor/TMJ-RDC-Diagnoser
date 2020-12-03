@@ -9,14 +9,14 @@ from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog
 import sys
 import pandas as pd
-from qhelpers import removeEmpty, printDiagnosis
-from qpatient import formPatientsDict
-from qparser import parseDatabase
+from algo.AlgoHelpers import removeEmpty, printDiagnosis
+from algo.AlgoPatient import formPatientsDict
+from algo.AlgoParser import parseDatabase
 import csv
 import os
 import ctypes
-from qnavigator import Navigator
-from qdb import Database
+from gui.Wizard import Wizard
+from database import Database
 
 # needed for custom toolbar icon
 # https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105#1552105
@@ -35,7 +35,7 @@ class Window(QMainWindow):
 
         self.setGeometry(50, 50, 500, 300)
         self.setWindowTitle("TMJ RDC Diagnoser")
-        self.setWindowIcon(QtGui.QIcon('tooth.png'))
+        self.setWindowIcon(QtGui.QIcon('../tooth.png'))
         self.path = ""
 
         openAction = QAction("Open", self)
@@ -66,7 +66,7 @@ class Window(QMainWindow):
         fileMenu.addAction(generateDiagnosisAction)
         fileMenu.addAction(addRecord)
 
-        self.navigator = Navigator(self.database)
+        self.navigator = Wizard(self.database)
 
         self.show()
 

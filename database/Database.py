@@ -1,4 +1,4 @@
-from qdbinterface import PatientDatabaseInterface
+from database.DatabaseInterface import PatientDatabaseInterface
 import sqlite3
 
 
@@ -9,7 +9,7 @@ class Database(PatientDatabaseInterface):
 
     def connect(self):
         try:
-            self.connection = sqlite3.connect('database.db')
+            self.connection = sqlite3.connect('../database.db')
             self.executor = self.connection.cursor()
         except Exception as e:
             print("Cannot connect to the DB: {}".format(e))

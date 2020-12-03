@@ -4,8 +4,8 @@ Created on Sun Mar 29 20:18:23 2020
 
 @author: Marcin
 """
-from qhelpers import parseRLExamination
-from qkeys import Keys
+from algo.AlgoHelpers import parseRLExamination
+from algo.AlgoKeys import Keys
 import numpy as np
 
 DEBUG = False

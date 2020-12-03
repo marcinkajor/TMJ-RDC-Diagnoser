@@ -5,13 +5,13 @@ Created on Wed Mar 18 22:39:22 2020
 @author: Marcin
 """
 
-from qhelpers import parseRLExamination
-from qaxis1 import E2, E3, E4, E5, E6, E7, E8
-from qaxis1 import AxisOne
-from qpalpation import createPalpations, combinePalpations
-from qQ import Q
-from qpatient import Person
-from qkeys import Keys
+from algo.AlgoHelpers import parseRLExamination
+from algo.AlgoAxis1 import E2, E3, E4, E5, E6, E7, E8
+from algo.AlgoAxis1 import AxisOne
+from algo.AlgoPalpation import createPalpations, combinePalpations
+from algo.AlgoQ import Q
+from algo.AlgoPatient import Person
+from algo.AlgoKeys import Keys
 
 
 def parseDatabase(axis1_data, palpation_data, q_data):
