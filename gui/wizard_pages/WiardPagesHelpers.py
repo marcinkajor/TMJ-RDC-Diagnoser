@@ -110,7 +110,7 @@ class Options:
 
 class SideOptions:
     def __init__(self,  movements, options, font):
-        self.rightOptions = Options("Right Side pain", movements, options, font)
+        self.rightOptions = Options("Right side pain", movements, options, font)
         self.leftOptions = Options("Left side pain", movements, options, font)
 
         self.mainLayout = QHBoxLayout()
