@@ -28,6 +28,7 @@ class Wizard(QWizard):
         self.addPage(VerticalMovementRangePage(self.database))
         self.addPage(IncisorsGapPage(self.database))
         self.addPage(VerticalMandibleMovementsPage(self.database))
+        self.addPage(SoundsInJointAbductionPage(self.database))
 
     def _onNextCLicked(self):
         currentPage = self.page(self.currentId() - 1)
