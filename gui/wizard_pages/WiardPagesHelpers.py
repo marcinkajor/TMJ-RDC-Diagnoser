@@ -58,11 +58,11 @@ class ButtonGroupBox(QWidget):
 
 
 class MmInputs:
-    def __init__(self, inputs, font):
+    def __init__(self, inputs, name, font):
         mmValidator = QIntValidator(0, 9999)
         self.inputs = {}
         self.layout = QGridLayout()
-        self.mmBox = QGroupBox("mm")
+        self.mmBox = QGroupBox(name)
 
         for idx, mmInput in enumerate(inputs):
             label = QLabel(mmInput)
@@ -84,32 +84,40 @@ class MmInputs:
         return self.mmBox
 
 
-class PainOptions:
-    def __init__(self,  movements, font):
-        painOptions = ["None", "Muscle", "Join", "Both"]
-        self.rightOptions = {}
-        self.rightLayout = QVBoxLayout()
-        self.rightPainAreaBox = QGroupBox("Right side pain")
-        self.rightPainAreaBox.setFont(font)
-        self.leftOptions = {}
-        self.leftLayout = QVBoxLayout()
-        self.leftPainAreaBox = QGroupBox("Left side pain")
-        self.leftPainAreaBox.setFont(font)
+class Options:
+    def __init__(self, name, movements, options, font):
+        self.options = {}
+        self.layout = QVBoxLayout()
+        self.boxArea = QGroupBox(name)
+        self.boxArea.setFont(font)
         self.mainLayout = QHBoxLayout()
 
         for move in movements:
-            rightGroupBox = ButtonGroupBox(move, painOptions, layout='horizontal')
-            leftGroupBox = ButtonGroupBox(move, painOptions, layout='horizontal')
-            self.rightOptions[move] = rightGroupBox
-            self.rightLayout.addWidget(rightGroupBox.getWidget())
-            self.leftOptions[move] = leftGroupBox
-            self.leftLayout.addWidget(leftGroupBox.getWidget())
+            groupBox = ButtonGroupBox(move, options, layout='horizontal')
+            self.options[move] = groupBox
+            self.layout.addWidget(groupBox.getWidget())
 
-        self.rightPainAreaBox.setLayout(self.rightLayout)
-        self.leftPainAreaBox.setLayout(self.leftLayout)
+        self.boxArea.setLayout(self.layout)
 
-        self.mainLayout.addWidget(self.rightPainAreaBox)
-        self.mainLayout.addWidget(self.leftPainAreaBox)
+        self.mainLayout.addWidget(self.boxArea)
+
+    def getLayout(self):
+        return self.mainLayout
+
+    def getOptions(self):
+        return self.options
+
+
+class PainOptions:
+    def __init__(self,  movements, font):
+        painOptions = ["None", "Muscle", "Join", "Both"]
+
+        self.rightOptions = Options("Right Side pain", movements, painOptions, font)
+        self.leftOptions = Options("Left side pain", movements, painOptions, font)
+
+        self.mainLayout = QHBoxLayout()
+        self.mainLayout.addLayout(self.rightOptions.getLayout())
+        self.mainLayout.addLayout(self.leftOptions.getLayout())
 
     def getLayout(self):
         return self.mainLayout
@@ -119,4 +127,3 @@ class PainOptions:
 
     def getLeftOptions(self):
         return self.leftOptions
-

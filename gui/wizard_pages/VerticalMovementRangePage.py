@@ -11,7 +11,7 @@ class VerticalMovementRangePage(BasePage):
         self.usedForetooth = ButtonGroupBox("Used foretooth", ["11", "21"], layout='horizontal')
         self.usedForetooth.getWidget().setFont(self.defaultFont)
 
-        self.mm = MmInputs(["No pain opening", "Max active opening", "Max passive opening"], self.defaultFont)
+        self.mm = MmInputs(["No pain opening", "Max active opening", "Max passive opening"], "mm", self.defaultFont)
 
         rightLayout = QHBoxLayout()
         self.painOptions = PainOptions(["Max active opening", "Max passive opening"], self.defaultFont)

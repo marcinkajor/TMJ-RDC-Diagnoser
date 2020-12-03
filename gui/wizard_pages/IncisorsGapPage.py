@@ -8,7 +8,7 @@ class IncisorsGapPage(BasePage):
         self.setTitle("4. Incisors gap")
         self.database = database
 
-        self.mm = MmInputs(["Vertical", "Horizontal", "Middle line"], self.defaultFont)
+        self.mm = MmInputs(["Vertical", "Horizontal", "Middle line"], "mm", self.defaultFont)
 
         self.middleLineAlignment = ButtonGroupBox("Middle line alignment relative to the jaw", ["R", "L"],
                                                   layout='horizontal')

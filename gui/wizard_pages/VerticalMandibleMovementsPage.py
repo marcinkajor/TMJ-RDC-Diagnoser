@@ -8,7 +8,7 @@ class VerticalMandibleMovementsPage(BasePage):
         self.setTitle("5. Vertical mandible movements")
         self.database = database
 
-        self.mm = MmInputs(["Right side", "Left side", "Forward"], self.defaultFont)
+        self.mm = MmInputs(["Right side", "Left side", "Forward"], "mm", self.defaultFont)
         self.painOptions = PainOptions(["Right side", "Left side", "Forward"], self.defaultFont)
 
         rightLayout = QHBoxLayout()
