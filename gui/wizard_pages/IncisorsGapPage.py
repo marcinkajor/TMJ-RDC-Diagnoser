@@ -1,5 +1,5 @@
 from gui.wizard_pages.BaseWizardPage import BasePage
-from gui.wizard_pages.WiardPagesHelpers import *
+from gui.wizard_pages.WizardPagesHelpers import *
 
 
 class IncisorsGapPage(BasePage):
