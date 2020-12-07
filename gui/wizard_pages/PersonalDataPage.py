@@ -4,7 +4,7 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 class PersonalDataPage(BasePage):
     def __init__(self, database):
-        super(BasePage, self).__init__()
+        super().__init__()
         self.database = database
         self.setTitle("Personal patient data")
         # generate all needed QLineEdits with corresponding validators

@@ -27,7 +27,7 @@ if os.name == 'nt':  # 'nt' - Windows, 'posix' - Linux
 
 class Window(QMainWindow):
     def __init__(self):
-        QMainWindow.__init__(self)
+        super().__init__()
 
         self.database = Database()
         self.database.connect()

@@ -6,7 +6,7 @@ class BasePage(QWizardPage):
     defaultFont = QFont("Arial", 10)
 
     def __init__(self):
-        super(QWizardPage, self).__init__()
+        super().__init__()
         self.setWindowIcon(QIcon('../../tooth.png'))
 
     def onNextClicked(self):

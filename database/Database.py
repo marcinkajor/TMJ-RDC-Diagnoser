@@ -4,6 +4,7 @@ import sqlite3
 
 class Database(PatientDatabaseInterface):
     def __init__(self):
+        super().__init__()
         self.connection = None
         self.executor = None
 

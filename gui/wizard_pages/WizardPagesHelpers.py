@@ -9,7 +9,7 @@ class ButtonGroupBox(QWidget):
     buttonClicked = pyqtSignal()
 
     def __init__(self, name, buttons, layout='vertical'):
-        super(ButtonGroupBox, self).__init__()
+        super().__init__()
         assert(layout in ['vertical', 'horizontal'])
         layout = QVBoxLayout() if layout == 'vertical' else QHBoxLayout()
         self.buttonGroup = QButtonGroup()

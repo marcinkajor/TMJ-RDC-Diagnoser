@@ -4,7 +4,7 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 class VerticalMandibleMovementsPage(BasePage):
     def __init__(self, database):
-        super(BasePage, self).__init__()
+        super().__init__()
         self.setTitle("5. Vertical mandible movements")
         self.database = database
 

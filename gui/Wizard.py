@@ -12,7 +12,7 @@ from gui.wizard_pages import *
 
 class Wizard(QWizard):
     def __init__(self, database):
-        super(Wizard, self).__init__()
+        super().__init__()
         self.database = database
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
         self.button(QWizard.FinishButton).clicked.connect(self.restart)

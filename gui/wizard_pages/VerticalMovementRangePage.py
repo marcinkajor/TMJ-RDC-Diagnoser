@@ -4,7 +4,7 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 class VerticalMovementRangePage(BasePage):
     def __init__(self, database):
-        super(BasePage, self).__init__()
+        super().__init__()
         self.setTitle("3. Vertical movement range")
         self.database = database
 

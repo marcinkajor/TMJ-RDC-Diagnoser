@@ -14,7 +14,7 @@ class AbductionMovementPage(BasePage):
     }
 
     def __init__(self, database):
-        super(BasePage, self).__init__()
+        super().__init__()
         self.setTitle("2. Abduction movement")
 
         self.movementBox = ButtonGroupBox("Abduction movement", self.Mapping.keys(), layout="vertical")
