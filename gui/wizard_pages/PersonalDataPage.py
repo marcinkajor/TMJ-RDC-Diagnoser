@@ -2,6 +2,15 @@ from gui.wizard_pages.BaseWizardPage import BasePage
 from gui.wizard_pages.WizardPagesHelpers import *
 
 
+'''
+Fields:
+    - "Name"
+    - "Surname"
+    - "Age"
+    - "Sex"
+'''
+
+
 class PersonalDataPage(BasePage):
     def __init__(self, database):
         super().__init__()

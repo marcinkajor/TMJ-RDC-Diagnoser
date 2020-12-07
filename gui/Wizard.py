@@ -35,6 +35,18 @@ class Wizard(QWizard):
         self.addPage(PalpationPainJointPainPage(self.database))
         self.addPage(PalpationPainIntraoralPainPage(self.database))
 
+    def getFieldsNames(self):
+        fields = []
+        for pageId in self.visitedPages():
+            fields += self.page(pageId).fields
+        return fields
+
+    def getFieldsMap(self):
+        fieldsDir = {}
+        for name in self.getFieldsNames():
+            fieldsDir[name] = self.field(name)
+        return fieldsDir
+
     def _onNextCLicked(self):
         currentPage = self.page(self.currentId() - 1)
         currentPage.onNextClicked()
