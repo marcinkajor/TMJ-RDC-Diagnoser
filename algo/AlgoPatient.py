@@ -5,7 +5,7 @@ Created on Mon Mar 23 21:31:50 2020
 @author: Marcin
 """
 
-from qhelpers import SoundType
+from algo.AlgoHelpers import SoundType
 
 class Diagnosis:
     pass

@@ -5,7 +5,7 @@ Created on Sun Mar 29 20:18:40 2020
 @author: Marcin
 """
 import re
-from qhelpers import parseRLExamination, SoundType
+from algo.AlgoHelpers import parseRLExamination, SoundType
 
 class AxisOne:
     ''' A Ex list wrapper. C'tor accepts a list of Ex objects'''
