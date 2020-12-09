@@ -18,7 +18,12 @@ class AbductionMovementPage(BasePage):
         self.setTitle("2. Abduction movement")
 
         self.movementBox = ButtonGroupBox("Abduction movement", self.Mapping.keys(), layout="vertical")
+        self.registerField("Abduction movement", self.movementBox,
+                           property="checkedButton",
+                           changedSignal=self.movementBox.buttonClicked)
+
         self.otherDescription = QLineEdit()
+        self.registerField("Specific description", self.otherDescription)
         self.otherDescription.setObjectName("Please specify")
         self.otherDescription.setEnabled(False)
         self.movementBox.registerClickCallback(self._onButtonGroupChanged)

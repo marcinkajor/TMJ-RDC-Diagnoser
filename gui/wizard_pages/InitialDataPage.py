@@ -90,9 +90,3 @@ class InitialDataPage(BasePage):
         self.painAreaBox = QGroupBox("Pain area")
         self.painAreaBox.setLayout(self.optionsGridLayout)
         return self.painAreaBox
-
-    def onNextClicked(self):
-        try:
-            print(self.wizard().getFieldsMap())
-        except Exception as e:
-            print(e)
