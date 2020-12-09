@@ -56,6 +56,9 @@ class ButtonGroupBox(QWidget):
     def onButtonClicked(self, buttonId):
         self.buttonClicked.emit()
 
+    def getName(self):
+        return self.box.title()
+
 
 class MmInputs:
     def __init__(self, inputs, name, font):
@@ -67,6 +70,7 @@ class MmInputs:
         for idx, mmInput in enumerate(inputs):
             label = QLabel(mmInput)
             self.inputs[mmInput] = QLineEdit()
+            self.inputs[mmInput].setObjectName(mmInput + ' mm')  # make the name unique by adding 'mm'
             self.inputs[mmInput].setValidator(mmValidator)
             self.layout.addWidget(label, idx, 0)
             self.layout.addWidget(self.inputs[mmInput], idx, 1)
