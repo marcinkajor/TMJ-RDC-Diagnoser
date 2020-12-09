@@ -3,9 +3,9 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 '''
 Fields:
-    - "Pain side"
-    - "Right pain area"
-    - "Left pain area"
+    - "InitialDataPage/Pain_side"
+    - "InitialDataPage/Right_pain_area"
+    - "InitialDataPage/Left_pain_area"
 '''
 
 

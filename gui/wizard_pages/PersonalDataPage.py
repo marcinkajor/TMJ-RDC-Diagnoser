@@ -4,10 +4,10 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 '''
 Fields:
-    - "Name"
-    - "Surname"
-    - "Age"
-    - "Sex"
+    - "PersonalDataPage/Name"
+    - "PersonalDataPage/Surname"
+    - "PersonalDataPage/Age"
+    - "PersonalDataPage/Sex"
 '''
 
 
