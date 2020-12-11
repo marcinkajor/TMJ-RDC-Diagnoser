@@ -26,10 +26,3 @@ class IncisorsGapPage(BasePage):
         mainLayout.addWidget(self.mm.getWidget(), 0, 0)
         mainLayout.addLayout(rightLayout, 0, 1)
         self.setLayout(mainLayout)
-
-    # TODO: remove, it's only for fields testing
-    def onNextClicked(self):
-        try:
-            print(self.wizard().getFieldsMap())
-        except Exception as e:
-            print(e)

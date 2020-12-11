@@ -12,12 +12,28 @@ class SoundsInJointAbductionPage(BasePage):
                            "Click position - mm",
                            self.defaultFont)
 
-        self.clickEliminationOptions = Options("Click elimination", ["Left: opening", "Left: closing", "Right: opening",
-                                                                     "Right: closing"],
+        mmLineEdits = self.mm.getAllLineEdits()
+        for lineEditName in mmLineEdits:
+            self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName])
+
+        self.clickEliminationOptions = Options("Click elimination", ["Left opening", "Left closing", "Right opening",
+                                                                     "Right closing"],
                                                ["No", "Yes", "Not applicable"], self.defaultFont)
 
-        self.soundsOptions = Options("Sounds", ["Left: opening", "Left: closing", "Right: opening", "Right: closing"],
+        rawClickEliminationOptions = self.clickEliminationOptions.getOptions()
+        for option in rawClickEliminationOptions:
+            buttonGroup = rawClickEliminationOptions[option]
+            self.registerField(option + ' click elimination', buttonGroup, property="checkedButton",
+                               changedSignal=buttonGroup.buttonClicked)
+
+        self.soundsOptions = Options("Sounds", ["Left opening", "Left closing", "Right opening", "Right closing"],
                                      ["None", "Click", "Clear crepitations", "Slight crepitations"], self.defaultFont)
+
+        rawSoundsOptions = self.clickEliminationOptions.getOptions()
+        for option in rawSoundsOptions:
+            buttonGroup = rawSoundsOptions[option]
+            self.registerField(option + ' sound', buttonGroup, property="checkedButton",
+                               changedSignal=buttonGroup.buttonClicked)
 
         additionalInfo = QLabel("(2 ouf of 3 attempts, palpation during abduction)")
         additionalInfo.setFont(self.defaultFont)
@@ -30,4 +46,11 @@ class SoundsInJointAbductionPage(BasePage):
         mainLayout.addLayout(self.clickEliminationOptions.getLayout(), 1, 2)
 
         self.setLayout(mainLayout)
+
+    # TODO: remove, it's only for fields testing
+    def onNextClicked(self):
+        try:
+            print(self.wizard().getFieldsMap())
+        except Exception as e:
+            print(e)
 
