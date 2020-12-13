@@ -1,5 +1,6 @@
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtWidgets import QWizardPage
+from gui.wizard_pages.WizardPagesHelpers import SideOptions
 
 
 class BasePage(QWizardPage):
@@ -28,3 +29,22 @@ class BasePage(QWizardPage):
 
     def getClassName(self):
         return self.__class__.__name__.split('.')[-1]
+
+
+class PageWithSideOptions(BasePage):
+    def __init__(self):
+        self.painOptions = SideOptions([], [], None)  # filled in each subclass
+        super().__init__()
+
+    def registerSideOptions(self):
+        if self.painOptions:
+            rightOptions = self.painOptions.getRightOptions().getOptions()
+            for rightOptionName in rightOptions:
+                rightButtonGroup = rightOptions[rightOptionName]
+                self.registerField(rightOptionName + ' right', rightButtonGroup, property="checkedButton",
+                                   changedSignal=rightButtonGroup.buttonClicked)
+            leftOptions = self.painOptions.getLeftOptions().getOptions()
+            for leftOptionName in leftOptions:
+                leftButtonGroup = leftOptions[leftOptionName]
+                self.registerField(leftOptionName + ' left', leftButtonGroup, property="checkedButton",
+                                   changedSignal=leftButtonGroup.buttonClicked)

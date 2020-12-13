@@ -1,4 +1,4 @@
-from gui.wizard_pages.BaseWizardPage import BasePage
+from gui.wizard_pages.BaseWizardPage import PageWithSideOptions
 from gui.wizard_pages.WizardPagesHelpers import *
 
 '''
@@ -14,7 +14,7 @@ Fields:
 '''
 
 
-class VerticalMovementRangePage(BasePage):
+class VerticalMovementRangePage(PageWithSideOptions):
     def __init__(self, database):
         super().__init__()
         self.setTitle("3. Vertical movement range")
@@ -35,18 +35,7 @@ class VerticalMovementRangePage(BasePage):
         rightLayout = QHBoxLayout()
         self.painOptions = SideOptions(["Max active opening", "Max passive opening"],
                                        ["None", "Muscle", "Join", "Both"], self.defaultFont)
-
-        rightOptions = self.painOptions.getRightOptions().getOptions()
-        for rightOptionName in rightOptions:
-            rightButtonGroup = rightOptions[rightOptionName]
-            self.registerField(rightOptionName + ' right', rightButtonGroup, property="checkedButton",
-                               changedSignal=rightButtonGroup.buttonClicked)
-
-        leftOptions = self.painOptions.getLeftOptions().getOptions()
-        for leftOptionName in leftOptions:
-            leftButtonGroup = leftOptions[leftOptionName]
-            self.registerField(leftOptionName + ' left', leftButtonGroup, property="checkedButton",
-                               changedSignal=leftButtonGroup.buttonClicked)
+        self.registerSideOptions()
 
         rightLayout.addLayout(self.painOptions.getLayout())
         mainLayout = QGridLayout()

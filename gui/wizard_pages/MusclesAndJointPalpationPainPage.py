@@ -1,29 +1,18 @@
-from gui.wizard_pages.BaseWizardPage import BasePage
+from gui.wizard_pages.BaseWizardPage import PageWithSideOptions
 from gui.wizard_pages.WizardPagesHelpers import *
 from PyQt5.QtGui import QFont
 
 painSeverities = ["No pain", "Mild pain", "Moderate pain", "Severe pain"]
 
 
-class PalpationPainPage(BasePage):
+class PalpationPainPage(PageWithSideOptions):
     def __init__(self, database, options, label):
         super().__init__()
         self.setTitle("7. Muscles & joint palpation pain")
         self.database = database
 
         self.painOptions = SideOptions(options, painSeverities, self.defaultFont, "BKD protocol")
-
-        rightOptions = self.painOptions.getRightOptions().getOptions()
-        for rightOptionName in rightOptions:
-            rightButtonGroup = rightOptions[rightOptionName]
-            self.registerField(rightOptionName + ' right', rightButtonGroup, property="checkedButton",
-                               changedSignal=rightButtonGroup.buttonClicked)
-
-        leftOptions = self.painOptions.getLeftOptions().getOptions()
-        for leftOptionName in leftOptions:
-            leftButtonGroup = leftOptions[leftOptionName]
-            self.registerField(leftOptionName + ' left', leftButtonGroup, property="checkedButton",
-                               changedSignal=leftButtonGroup.buttonClicked)
+        self.registerSideOptions()
 
         additionalInfo = QLabel(label)
         additionalInfo.setFont(QFont("Arial", 11, QFont.Bold))
