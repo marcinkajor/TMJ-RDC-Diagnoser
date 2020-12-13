@@ -13,6 +13,18 @@ class PalpationPainPage(BasePage):
 
         self.painOptions = SideOptions(options, painSeverities, self.defaultFont, "BKD protocol")
 
+        rightOptions = self.painOptions.getRightOptions().getOptions()
+        for rightOptionName in rightOptions:
+            rightButtonGroup = rightOptions[rightOptionName]
+            self.registerField(rightOptionName + ' right', rightButtonGroup, property="checkedButton",
+                               changedSignal=rightButtonGroup.buttonClicked)
+
+        leftOptions = self.painOptions.getLeftOptions().getOptions()
+        for leftOptionName in leftOptions:
+            leftButtonGroup = leftOptions[leftOptionName]
+            self.registerField(leftOptionName + ' left', leftButtonGroup, property="checkedButton",
+                               changedSignal=leftButtonGroup.buttonClicked)
+
         additionalInfo = QLabel(label)
         additionalInfo.setFont(QFont("Arial", 11, QFont.Bold))
 
@@ -26,7 +38,7 @@ class PalpationPainPage(BasePage):
 
 class PalpationPainNoPainPage(PalpationPainPage):
     def __init__(self, database):
-        options = "Mastoid process (lateral upper part)", "Frontal (pupil line, beneath hair))",\
+        options = "Mastoid process (lateral upper part)", "Frontal (pupil line, beneath hair)",\
                   "Vertex (1 cm lateral from skull prominence)"
         label = "No pain areas"
         super().__init__(database, options, label)

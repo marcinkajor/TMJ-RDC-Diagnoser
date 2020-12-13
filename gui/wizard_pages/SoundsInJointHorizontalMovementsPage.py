@@ -11,6 +11,18 @@ class SoundsInJointHorizontalMovementsPage(BasePage):
         self.painOptions = SideOptions(["Right side", "Left side", "Forward"],
                                        ["None", "Click", "Clear crepitations", "Slight crepitations"], self.defaultFont)
 
+        rightOptions = self.painOptions.getRightOptions().getOptions()
+        for rightOptionName in rightOptions:
+            rightButtonGroup = rightOptions[rightOptionName]
+            self.registerField(rightOptionName + ' right', rightButtonGroup, property="checkedButton",
+                               changedSignal=rightButtonGroup.buttonClicked)
+
+        leftOptions = self.painOptions.getLeftOptions().getOptions()
+        for leftOptionName in leftOptions:
+            leftButtonGroup = leftOptions[leftOptionName]
+            self.registerField(leftOptionName + ' left', leftButtonGroup, property="checkedButton",
+                               changedSignal=leftButtonGroup.buttonClicked)
+
         additionalInfo = QLabel("(>=2 x 3 attempts, during movement)")
         additionalInfo.setFont(self.defaultFont)
         rightLayout = QHBoxLayout()
@@ -19,4 +31,3 @@ class SoundsInJointHorizontalMovementsPage(BasePage):
         mainLayout.addWidget(additionalInfo, 0, 0)
         mainLayout.addLayout(rightLayout, 1, 0)
         self.setLayout(mainLayout)
-
