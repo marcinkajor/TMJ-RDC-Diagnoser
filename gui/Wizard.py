@@ -41,6 +41,12 @@ class Wizard(QWizard):
             fields += self.page(pageId).fields
         return fields
 
+    def getFieldsNames(self):
+        fields = []
+        for pageId in self.pageIds():
+            fields += self.page(pageId).fields
+        return fields
+
     def getFieldsMap(self):
         fieldsDir = {}
         for name in self.getFieldsNames():

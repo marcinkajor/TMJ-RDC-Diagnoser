@@ -20,6 +20,7 @@ class BasePage(QWizardPage):
         cleanName = cleanName.replace('(', "")
         cleanName = cleanName.replace(')', "")
         cleanName = cleanName.replace(',', "")
+        cleanName = cleanName.replace(':', "")
         cleanName = cleanName.replace('/', "_")
         cleanName = cleanName.lower()
         nameSplit = cleanName.split()
