@@ -14,7 +14,14 @@ class BasePage(QWizardPage):
         pass
 
     def registerField(self, name, widget, property=None, changedSignal=None):
-        nameSplit = name.split()
+        cleanName = name.replace('"', "")
+        cleanName = cleanName.replace('-', "")
+        cleanName = cleanName.replace('(', "")
+        cleanName = cleanName.replace(')', "")
+        cleanName = cleanName.replace(',', "")
+        cleanName = cleanName.replace('/', "_")
+        cleanName = cleanName.lower()
+        nameSplit = cleanName.split()
         extendedName = self.getClassName() + '/' + "_".join(nameSplit)
         super().registerField(extendedName, widget, property=property, changedSignal=changedSignal)
         self.fields.append(extendedName)

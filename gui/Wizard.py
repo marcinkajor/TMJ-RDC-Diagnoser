@@ -15,7 +15,7 @@ class Wizard(QWizard):
         super().__init__()
         self.database = database
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
-        self.button(QWizard.FinishButton).clicked.connect(self.restart)
+        self.button(QWizard.FinishButton).clicked.connect(self._onFinishedClicked)
         self.setWindowTitle("Add patient record")
         self.setWizardStyle(QWizard.ModernStyle)
         self.setWindowIcon(QIcon('../tooth.png'))
@@ -50,3 +50,10 @@ class Wizard(QWizard):
     def _onNextCLicked(self):
         currentPage = self.page(self.currentId() - 1)
         currentPage.onNextClicked()
+
+    def _onFinishedClicked(self):
+        try:
+            print(self.getFieldsMap())
+        except Exception as e:
+            print(e)
+        self.restart()
