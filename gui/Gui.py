@@ -29,9 +29,9 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.database = Database()
+        self.database = Database('database123')
         self.database.connect()
-        self.database.createPatientTable()
+        self.database.createPatientTable('patients')
 
         self.setGeometry(50, 50, 500, 300)
         self.setWindowTitle("TMJ RDC Diagnoser")

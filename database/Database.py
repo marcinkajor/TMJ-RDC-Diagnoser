@@ -3,28 +3,31 @@ import sqlite3
 
 
 class Database(PatientDatabaseInterface):
-    def __init__(self):
+    def __init__(self, name):
         super().__init__()
         self.connection = None
         self.executor = None
+        self.name = name
+        tables = []
 
     def connect(self):
         try:
-            self.connection = sqlite3.connect('../database.db')
+            databaseName = self.name + '.db'
+            self.connection = sqlite3.connect('../{}'.format(databaseName))
             self.executor = self.connection.cursor()
         except Exception as e:
             print("Cannot connect to the DB: {}".format(e))
 
-    def createPatientTable(self):
+    def createPatientTable(self, name):
         with self.connection:
-            self.executor.execute('''CREATE TABLE IF NOT EXISTS patients (
+            self.executor.execute('''CREATE TABLE IF NOT EXISTS {} (
                           patient_id INTEGER PRIMARY KEY,
                           name TEXT,
                           surname TEXT,
                           age INTEGER,
                           sex TEXT,
                           timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-                          )''')
+                          )'''.format(name))
 
     def addNewPatientRecord(self, patientRecord):
         cmdSchema = 'INSERT INTO patients VALUES ({})'
