@@ -1,17 +1,18 @@
-from gui.wizard_pages.BaseWizardPage import BasePage
+from gui.wizard_pages.BaseWizardPage import PageWithSideOptions
 from gui.wizard_pages.WizardPagesHelpers import *
 from PyQt5.QtGui import QFont
 
 painSeverities = ["No pain", "Mild pain", "Moderate pain", "Severe pain"]
 
 
-class PalpationPainPage(BasePage):
+class PalpationPainPage(PageWithSideOptions):
     def __init__(self, database, options, label):
         super().__init__()
         self.setTitle("7. Muscles & joint palpation pain")
         self.database = database
 
         self.painOptions = SideOptions(options, painSeverities, self.defaultFont, "BKD protocol")
+        self.registerSideOptions()
 
         additionalInfo = QLabel(label)
         additionalInfo.setFont(QFont("Arial", 11, QFont.Bold))
@@ -26,7 +27,7 @@ class PalpationPainPage(BasePage):
 
 class PalpationPainNoPainPage(PalpationPainPage):
     def __init__(self, database):
-        options = "Mastoid process (lateral upper part)", "Frontal (pupil line, beneath hair))",\
+        options = "Mastoid process (lateral upper part)", "Frontal (pupil line, beneath hair)",\
                   "Vertex (1 cm lateral from skull prominence)"
         label = "No pain areas"
         super().__init__(database, options, label)

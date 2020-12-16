@@ -1,8 +1,8 @@
-from gui.wizard_pages.BaseWizardPage import BasePage
+from gui.wizard_pages.BaseWizardPage import PageWithSideOptions
 from gui.wizard_pages.WizardPagesHelpers import *
 
 
-class SoundsInJointHorizontalMovementsPage(BasePage):
+class SoundsInJointHorizontalMovementsPage(PageWithSideOptions):
     def __init__(self, database):
         super().__init__()
         self.setTitle("6. Sounds in the joint: horizontal movements")
@@ -10,6 +10,7 @@ class SoundsInJointHorizontalMovementsPage(BasePage):
 
         self.painOptions = SideOptions(["Right side", "Left side", "Forward"],
                                        ["None", "Click", "Clear crepitations", "Slight crepitations"], self.defaultFont)
+        self.registerSideOptions()
 
         additionalInfo = QLabel("(>=2 x 3 attempts, during movement)")
         additionalInfo.setFont(self.defaultFont)
@@ -19,4 +20,3 @@ class SoundsInJointHorizontalMovementsPage(BasePage):
         mainLayout.addWidget(additionalInfo, 0, 0)
         mainLayout.addLayout(rightLayout, 1, 0)
         self.setLayout(mainLayout)
-

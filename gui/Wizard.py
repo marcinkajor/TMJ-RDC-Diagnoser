@@ -15,7 +15,7 @@ class Wizard(QWizard):
         super().__init__()
         self.database = database
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
-        self.button(QWizard.FinishButton).clicked.connect(self.restart)
+        self.button(QWizard.FinishButton).clicked.connect(self._onFinishedClicked)
         self.setWindowTitle("Add patient record")
         self.setWizardStyle(QWizard.ModernStyle)
         self.setWindowIcon(QIcon('../tooth.png'))
@@ -35,6 +35,31 @@ class Wizard(QWizard):
         self.addPage(PalpationPainJointPainPage(self.database))
         self.addPage(PalpationPainIntraoralPainPage(self.database))
 
+    def getFieldsNames(self):
+        fields = []
+        for pageId in self.visitedPages():
+            fields += self.page(pageId).fields
+        return fields
+
+    def getFieldsNames(self):
+        fields = []
+        for pageId in self.pageIds():
+            fields += self.page(pageId).fields
+        return fields
+
+    def getFieldsMap(self):
+        fieldsDir = {}
+        for name in self.getFieldsNames():
+            fieldsDir[name] = self.field(name)
+        return fieldsDir
+
     def _onNextCLicked(self):
         currentPage = self.page(self.currentId() - 1)
         currentPage.onNextClicked()
+
+    def _onFinishedClicked(self):
+        try:
+            print(self.getFieldsMap())
+        except Exception as e:
+            print(e)
+        self.restart()

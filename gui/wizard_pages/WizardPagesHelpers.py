@@ -56,6 +56,9 @@ class ButtonGroupBox(QWidget):
     def onButtonClicked(self, buttonId):
         self.buttonClicked.emit()
 
+    def getName(self):
+        return self.box.title()
+
 
 class MmInputs:
     def __init__(self, inputs, name, font):
@@ -67,6 +70,7 @@ class MmInputs:
         for idx, mmInput in enumerate(inputs):
             label = QLabel(mmInput)
             self.inputs[mmInput] = QLineEdit()
+            self.inputs[mmInput].setObjectName(mmInput + ' mm')  # make the name unique by adding 'mm'
             self.inputs[mmInput].setValidator(mmValidator)
             self.layout.addWidget(label, idx, 0)
             self.layout.addWidget(self.inputs[mmInput], idx, 1)
@@ -112,12 +116,18 @@ class SideOptions:
     def __init__(self,  movements, options, font, additionalInfo=None):
         rightLabel = "Right side pain ({})".format(additionalInfo) if additionalInfo else "Right side pain"
         leftLabel = "Left side pain ({})".format(additionalInfo) if additionalInfo else "Left side pain"
-        self.rightOptions = Options(rightLabel, movements, options, font)
-        self.leftOptions = Options(leftLabel, movements, options, font)
+        self.rightOptions = None
+        self.leftOptions = None
+        self.mainLayout = None
+        if movements and options and font:
+            self.rightOptions = Options(rightLabel, movements, options, font)
+            self.leftOptions = Options(leftLabel, movements, options, font)
+            self.mainLayout = QHBoxLayout()
+            self.mainLayout.addLayout(self.rightOptions.getLayout())
+            self.mainLayout.addLayout(self.leftOptions.getLayout())
 
-        self.mainLayout = QHBoxLayout()
-        self.mainLayout.addLayout(self.rightOptions.getLayout())
-        self.mainLayout.addLayout(self.leftOptions.getLayout())
+    def __bool__(self):
+        return self.rightOptions is not None and self.leftOptions is not None and self.mainLayout is not None
 
     def getLayout(self):
         return self.mainLayout
