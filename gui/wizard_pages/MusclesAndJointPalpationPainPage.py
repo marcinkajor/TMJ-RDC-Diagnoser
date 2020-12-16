@@ -6,10 +6,9 @@ painSeverities = ["No pain", "Mild pain", "Moderate pain", "Severe pain"]
 
 
 class PalpationPainPage(PageWithSideOptions):
-    def __init__(self, database, options, label):
+    def __init__(self, options, label):
         super().__init__()
         self.setTitle("7. Muscles & joint palpation pain")
-        self.database = database
 
         self.painOptions = SideOptions(options, painSeverities, self.defaultFont, "BKD protocol")
         self.registerSideOptions()
@@ -26,15 +25,15 @@ class PalpationPainPage(PageWithSideOptions):
 
 
 class PalpationPainNoPainPage(PalpationPainPage):
-    def __init__(self, database):
+    def __init__(self):
         options = "Mastoid process (lateral upper part)", "Frontal (pupil line, beneath hair)",\
                   "Vertex (1 cm lateral from skull prominence)"
         label = "No pain areas"
-        super().__init__(database, options, label)
+        super().__init__(options, label)
 
 
 class PalpationPainExtraoralMusclesPage(PalpationPainPage):
-    def __init__(self, database):
+    def __init__(self):
         options = ['''Temporalis (posterior) - "Back of temple"''',
                                         '''Temporalis (middle) - "Middle of temple"''',
                                         '''Temporalis (anterior) - "Front of temple"''',
@@ -44,18 +43,18 @@ class PalpationPainExtraoralMusclesPage(PalpationPainPage):
                                         '''Posterior mandibular region - "Jaw/throat region"''',
                                         '''Submandibular region - "Under chin"''']
         label = "Extraoral muscle pain"
-        super().__init__(database, options, label)
+        super().__init__(options, label)
 
 
 class PalpationPainJointPainPage(PalpationPainPage):
-    def __init__(self, database):
+    def __init__(self):
         options = ['''Lateral pole - "outside"''', '''Posterior attachment - "inside ear"''']
         label = "Joint pain"
-        super().__init__(database, options, label)
+        super().__init__(options, label)
 
 
 class PalpationPainIntraoralPainPage(PalpationPainPage):
-    def __init__(self, database):
+    def __init__(self):
         options = ['''Lateral pterygoid area - "Behind upper molars"''', '''Tendon of temporalis - "Tendon"''']
         label = "Intraoral muscle pain"
-        super().__init__(database, options, label)
+        super().__init__(options, label)

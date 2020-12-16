@@ -3,10 +3,9 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 
 class IncisorsGapPage(BasePage):
-    def __init__(self, database):
+    def __init__(self):
         super().__init__()
         self.setTitle("4. Incisors gap")
-        self.database = database
 
         self.mm = MmInputs(["Vertical", "Horizontal", "Middle line"], "mm", self.defaultFont)
         mmLineEdits = self.mm.getAllLineEdits()

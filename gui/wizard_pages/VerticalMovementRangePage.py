@@ -15,10 +15,9 @@ Fields:
 
 
 class VerticalMovementRangePage(PageWithSideOptions):
-    def __init__(self, database):
+    def __init__(self):
         super().__init__()
         self.setTitle("3. Vertical movement range")
-        self.database = database
 
         self.usedForetooth = ButtonGroupBox("Used foretooth", ["11", "21"], layout='horizontal')
         self.registerField("Used foretooth", self.usedForetooth,

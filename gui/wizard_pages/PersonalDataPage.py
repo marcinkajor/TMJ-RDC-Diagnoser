@@ -12,9 +12,8 @@ Fields:
 
 
 class PersonalDataPage(BasePage):
-    def __init__(self, database):
+    def __init__(self):
         super().__init__()
-        self.database = database
         self.setTitle("Personal patient data")
         # generate all needed QLineEdits with corresponding validators
         self.formItems = self._generateForm([("Name", None), ("Surname", None), ("Age", QIntValidator(18, 120))])
@@ -43,8 +42,4 @@ class PersonalDataPage(BasePage):
         return formItems
 
     def onNextClicked(self):
-        try:
-            self.database.addNewPatientRecord(
-                (self.formItems["Name"].text(), self.formItems["Surname"].text(), self.formItems["Age"].text(), "MALE"))
-        except Exception as e:
-            print(e)
+        pass
