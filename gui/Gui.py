@@ -16,7 +16,7 @@ import csv
 import os
 import ctypes
 from gui.Wizard import Wizard
-from database import Database
+from database import *
 
 # needed for custom toolbar icon
 # https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105#1552105
@@ -26,10 +26,10 @@ if os.name == 'nt':  # 'nt' - Windows, 'posix' - Linux
 
 
 class Window(QMainWindow):
-    def __init__(self):
+    def __init__(self, database: DatabaseInterface):
         super().__init__()
 
-        self.database = Database('database123')
+        self.database = database
         self.database.connect()
         self.database.createPatientTable('patients')
 
@@ -168,7 +168,7 @@ class Window(QMainWindow):
 
 def run():
     app = QtWidgets.QApplication(sys.argv)
-    window = Window()
+    window = Window(DatabaseJson('patient_database'))
     app.exec_()
 
 

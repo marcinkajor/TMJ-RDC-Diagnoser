@@ -1,4 +1,4 @@
-class PatientDatabaseInterface:
+class DatabaseInterface:
     def __init__(self):
         pass
 
@@ -8,7 +8,7 @@ class PatientDatabaseInterface:
     def createPatientTable(self, name):
         pass
 
-    def addNewPatientRecord(self, patientRecord):
+    def storePatientRecord(self, patientRecord: dict):
         pass
 
     def updatePatientRecord(self, patientId, patientData):

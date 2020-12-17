@@ -35,7 +35,7 @@ class Wizard(QWizard):
         self.addPage(PalpationPainJointPainPage())
         self.addPage(PalpationPainIntraoralPainPage())
 
-    def getFieldsNames(self):
+    def getVisitedFieldsNames(self):
         fields = []
         for pageId in self.visitedPages():
             fields += self.page(pageId).fields
@@ -47,19 +47,24 @@ class Wizard(QWizard):
             fields += self.page(pageId).fields
         return fields
 
-    def getFieldsMap(self):
-        fieldsDir = {}
-        for name in self.getFieldsNames():
-            fieldsDir[name] = self.field(name)
-        return fieldsDir
+    def getParametersMap(self):
+        parametersMap = {}
+        for name in self.getVisitedFieldsNames():
+            splitName = name.split('/')
+            pageName = splitName[0]
+            parameterName = splitName[1]
+            subMapName = pageName[:-4] if pageName.endswith('Page') else pageName
+            try:
+                parametersMap[subMapName][parameterName] = self.field(name)
+            except KeyError:
+                parametersMap[subMapName] = {}
+                parametersMap[subMapName][parameterName] = self.field(name)
+        return parametersMap
 
     def _onNextCLicked(self):
         currentPage = self.page(self.currentId() - 1)
         currentPage.onNextClicked()
 
     def _onFinishedClicked(self):
-        try:
-            print(self.getFieldsMap())
-        except Exception as e:
-            print(e)
+        self.database.storePatientRecord(self.getParametersMap())
         self.restart()

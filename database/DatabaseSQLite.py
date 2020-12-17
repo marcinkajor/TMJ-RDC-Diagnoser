@@ -1,8 +1,8 @@
-from database.DatabaseInterface import PatientDatabaseInterface
+from database import DatabaseInterface
 import sqlite3
 
 
-class Database(PatientDatabaseInterface):
+class DatabaseSQLite(DatabaseInterface):
     def __init__(self, name):
         super().__init__()
         self.connection = None
@@ -29,7 +29,7 @@ class Database(PatientDatabaseInterface):
                           timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                           )'''.format(name))
 
-    def addNewPatientRecord(self, patientRecord):
+    def storePatientRecord(self, patientRecord):
         cmdSchema = 'INSERT INTO patients VALUES ({})'
         questionMarks = ('?,' * len(patientRecord))[:-1]
         cmd = cmdSchema.format(questionMarks)
