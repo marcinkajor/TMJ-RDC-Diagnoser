@@ -9,7 +9,13 @@ class DatabaseSQLite(DatabaseInterface):
         self.connection = None
         self.executor = None
         self.name = name
-        tables = []
+        # TODO: What about other SQL column attributes?
+        self.inputs = {"name": "TEXT",
+                       "surname": "TEXT",
+                       "age": "INTEGER",
+                       "PESEL": "INTEGER",
+                       "sex": "TEXT",
+                       "diagnostic_data": "TEXT"}
 
     def connect(self):
         try:
@@ -20,16 +26,16 @@ class DatabaseSQLite(DatabaseInterface):
             print("Cannot connect to the DB: {}".format(e))
 
     def createPatientTable(self, name):
+        inputs = []
+        for inputName in self.inputs:
+            inputs.append(inputName + ' ' + self.inputs[inputName])
+        inputsAndTypes = ", ".join(inputs)
         with self.connection:
             self.executor.execute('''CREATE TABLE IF NOT EXISTS {} (
                           patient_id INTEGER PRIMARY KEY,
-                          name TEXT,
-                          surname TEXT,
-                          age INTEGER,
-                          sex TEXT,
-                          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                          diagnostic_data TEXT
-                          )'''.format(name))
+                          {},
+                          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                          )'''.format(name, inputsAndTypes))
 
     def storePatientRecord(self, patientRecord: dict):
         personalData = patientRecord['PersonalData']
@@ -45,8 +51,9 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute(cmd, patientRecord)
         except sqlite3.OperationalError as e:
             if str(e).find("table has") and str(e).find("supplied"):  # TODO: regex?
-                cmdSchema = 'INSERT INTO patients (name, surname, age, sex, diagnostic_data) VALUES ({})'
-                cmd = cmdSchema.format(questionMarks)
+                names = ",".join(self.inputs.keys())
+                cmdSchema = 'INSERT INTO patients ({}) VALUES ({})'
+                cmd = cmdSchema.format(names, questionMarks)
                 with self.connection:
                     self.executor.execute(cmd, values)
 

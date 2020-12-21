@@ -1,4 +1,6 @@
 from gui.wizard_pages.BaseWizardPage import BasePage
+from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtCore import QRegExp
 from gui.wizard_pages.WizardPagesHelpers import *
 
 
@@ -16,7 +18,8 @@ class PersonalDataPage(BasePage):
         super().__init__()
         self.setTitle("Personal patient data")
         # generate all needed QLineEdits with corresponding validators
-        self.formItems = self._generateForm([("Name", None), ("Surname", None), ("Age", QIntValidator(18, 120))])
+        self.formItems = self._generateForm([("Name", None), ("Surname", None), ("Age", QIntValidator(18, 120)),
+                                             ("PESEL", QRegExpValidator(QRegExp("^\d{11}$")))])
         self.vboxLayout = QVBoxLayout()
         for formItemName in self.formItems:
             self.vboxLayout.addWidget(QLabel(formItemName))
