@@ -65,9 +65,18 @@ class Wizard(QWizard):
         currentPage = self.page(self.currentId() - 1)
         currentPage.onNextClicked()
 
+    def _clearAllPages(self):
+        for pageId in self.pageIds():
+            try:
+                self.page(pageId).clearAll()
+                self.page(pageId).cleanupPage()
+            except Exception as e:
+                print(e)
+
     def _onFinishedClicked(self):
         try:
             self.database.storePatientRecord(self.getParametersMap())
         except Exception as e:
             print(e)
+        self._clearAllPages()
         self.restart()

@@ -44,3 +44,6 @@ class VerticalMovementRangePage(PageWithSideOptions):
         mainLayout.addLayout(rightLayout, 1, 1)
         self.setLayout(mainLayout)
 
+    def clearAll(self):
+        self.painOptions.clearAll()
+        self.usedForetooth.clearAll()

@@ -89,3 +89,7 @@ class InitialDataPage(BasePage):
         self.painAreaBox = QGroupBox("Pain area")
         self.painAreaBox.setLayout(self.optionsGridLayout)
         return self.painAreaBox
+
+    def clearAll(self):
+        self.painSideBox.clearAll()
+        self._enablePainOptions(False, False)

@@ -46,3 +46,7 @@ class AbductionMovementPage(BasePage):
         else:
             self.otherDescription.clear()
             self.otherDescription.setEnabled(False)
+
+    def clearAll(self):
+        self.movementBox.clearAll()
+        self.otherDescription.setEnabled(False)

@@ -111,6 +111,11 @@ class Options:
     def getOptions(self):
         return self.options
 
+    def cleaAll(self):
+        options = self.getOptions()
+        for move in options:
+            options[move].clearAll()
+
 
 class SideOptions:
     def __init__(self,  movements, options, font, additionalInfo=None):
@@ -137,3 +142,7 @@ class SideOptions:
 
     def getLeftOptions(self):
         return self.leftOptions
+
+    def clearAll(self):
+        self.getLeftOptions().cleaAll()
+        self.getRightOptions().cleaAll()
