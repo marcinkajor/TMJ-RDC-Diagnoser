@@ -1,14 +1,14 @@
-class PatientDatabaseInterface:
+class DatabaseInterface:
     def __init__(self):
         pass
 
     def connect(self):
         pass
 
-    def createPatientTable(self):
+    def createPatientTable(self, name):
         pass
 
-    def addNewPatientRecord(self, patientRecord):
+    def storePatientRecord(self, patientRecord: dict):
         pass
 
     def updatePatientRecord(self, patientId, patientData):
@@ -27,6 +27,12 @@ class PatientDatabaseInterface:
         pass
 
     def removeRecordOnId(self, patientId):
+        pass
+
+    def getPatientRecordById(self, patientId):
+        pass
+
+    def getPatientRecordByPesel(self, pesel):
         pass
 
     def drop(self):

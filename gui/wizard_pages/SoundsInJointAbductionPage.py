@@ -3,10 +3,9 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 
 class SoundsInJointAbductionPage(BasePage):
-    def __init__(self, database):
+    def __init__(self):
         super().__init__()
         self.setTitle("6. Sounds in the joint: abduction")
-        self.database = database
 
         self.mm = MmInputs(["Left: opening", "Left: closing", "Right: opening", "Right: closing"],
                            "Click position - mm",

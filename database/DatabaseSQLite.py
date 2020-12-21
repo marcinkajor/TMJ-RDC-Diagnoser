@@ -1,44 +1,54 @@
-from database.DatabaseInterface import PatientDatabaseInterface
+from database import DatabaseInterface
 import sqlite3
+import json
 
 
-class Database(PatientDatabaseInterface):
-    def __init__(self):
+class DatabaseSQLite(DatabaseInterface):
+    def __init__(self, name):
         super().__init__()
         self.connection = None
         self.executor = None
+        self.name = name
+        tables = []
 
     def connect(self):
         try:
-            self.connection = sqlite3.connect('../database.db')
+            databaseName = self.name + '.db'
+            self.connection = sqlite3.connect('../{}'.format(databaseName))
             self.executor = self.connection.cursor()
         except Exception as e:
             print("Cannot connect to the DB: {}".format(e))
 
-    def createPatientTable(self):
+    def createPatientTable(self, name):
         with self.connection:
-            self.executor.execute('''CREATE TABLE IF NOT EXISTS patients (
+            self.executor.execute('''CREATE TABLE IF NOT EXISTS {} (
                           patient_id INTEGER PRIMARY KEY,
                           name TEXT,
                           surname TEXT,
                           age INTEGER,
                           sex TEXT,
-                          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-                          )''')
+                          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                          diagnostic_data TEXT
+                          )'''.format(name))
 
-    def addNewPatientRecord(self, patientRecord):
+    def storePatientRecord(self, patientRecord: dict):
+        personalData = patientRecord['PersonalData']
+        basicData = list(personalData.values())
+        del(patientRecord['PersonalData'])
+        values = basicData
+        values.append(json.dumps(patientRecord))
         cmdSchema = 'INSERT INTO patients VALUES ({})'
-        questionMarks = ('?,' * len(patientRecord))[:-1]
+        questionMarks = ('?,' * len(values))[:-1]
         cmd = cmdSchema.format(questionMarks)
         try:
             with self.connection:
                 self.executor.execute(cmd, patientRecord)
         except sqlite3.OperationalError as e:
             if str(e).find("table has") and str(e).find("supplied"):  # TODO: regex?
-                cmdSchema = 'INSERT INTO patients (name, surname, age, sex) VALUES ({})'
+                cmdSchema = 'INSERT INTO patients (name, surname, age, sex, diagnostic_data) VALUES ({})'
                 cmd = cmdSchema.format(questionMarks)
                 with self.connection:
-                    self.executor.execute(cmd, patientRecord)
+                    self.executor.execute(cmd, values)
 
     def updatePatientRecord(self, patientId, patientData):
         keys = patientData.keys()

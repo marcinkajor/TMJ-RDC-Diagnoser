@@ -13,7 +13,7 @@ class AbductionMovementPage(BasePage):
         "Other": 5
     }
 
-    def __init__(self, database):
+    def __init__(self):
         super().__init__()
         self.setTitle("2. Abduction movement")
 

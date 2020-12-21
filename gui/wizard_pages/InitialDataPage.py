@@ -10,10 +10,9 @@ Fields:
 
 
 class InitialDataPage(BasePage):
-    def __init__(self, database):
+    def __init__(self):
         super().__init__()
 
-        self.database = database
         self.NO_PAIN = "NO PAIN"
         self.RIGHT = "RIGHT"
         self.LEFT = "LEFT"

@@ -3,10 +3,9 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 
 class VerticalMandibleMovementsPage(PageWithSideOptions):
-    def __init__(self, database):
+    def __init__(self):
         super().__init__()
         self.setTitle("5. Vertical mandible movements")
-        self.database = database
 
         self.mm = MmInputs(["Right side", "Left side", "Forward"], "mm", self.defaultFont)
         mmLineEdits = self.mm.getAllLineEdits()
