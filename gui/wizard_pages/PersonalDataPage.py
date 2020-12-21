@@ -4,15 +4,6 @@ from PyQt5.QtCore import QRegExp
 from gui.wizard_pages.WizardPagesHelpers import *
 
 
-'''
-Fields:
-    - "PersonalDataPage/Name"
-    - "PersonalDataPage/Surname"
-    - "PersonalDataPage/Age"
-    - "PersonalDataPage/Sex"
-'''
-
-
 class PersonalDataPage(BasePage):
     def __init__(self):
         super().__init__()

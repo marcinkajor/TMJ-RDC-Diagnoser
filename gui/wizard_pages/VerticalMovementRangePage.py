@@ -1,18 +1,6 @@
 from gui.wizard_pages.BaseWizardPage import PageWithSideOptions
 from gui.wizard_pages.WizardPagesHelpers import *
 
-'''
-Fields:
-    - "VerticalMovementRangePage/Used_foretooth"
-    - "VerticalMovementRangePage/No_pain_opening_mm"
-    - "VerticalMovementRangePage/Max_active_opening_mm"
-    - "VerticalMovementRangePage/Max_passive_opening_mm"
-    - "VerticalMovementRangePage/Max_active_opening_right"
-    - "VerticalMovementRangePage/Max_passive_opening_right"
-    - "VerticalMovementRangePage/Max_active_opening_mm"
-    - "VerticalMovementRangePage/Max_active_opening_left"
-'''
-
 
 class VerticalMovementRangePage(PageWithSideOptions):
     def __init__(self):

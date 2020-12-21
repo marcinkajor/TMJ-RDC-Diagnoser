@@ -1,13 +1,6 @@
 from gui.wizard_pages.BaseWizardPage import BasePage
 from gui.wizard_pages.WizardPagesHelpers import *
 
-'''
-Fields:
-    - "InitialDataPage/Pain_side"
-    - "InitialDataPage/Right_pain_area"
-    - "InitialDataPage/Left_pain_area"
-'''
-
 
 class InitialDataPage(BasePage):
     def __init__(self):
