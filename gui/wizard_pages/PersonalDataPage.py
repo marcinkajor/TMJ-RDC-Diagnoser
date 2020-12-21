@@ -43,3 +43,6 @@ class PersonalDataPage(BasePage):
 
     def onNextClicked(self):
         pass
+
+    def clearAll(self):
+        self.sexButtonGroup.clearAll()

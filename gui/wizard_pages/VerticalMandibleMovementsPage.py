@@ -23,3 +23,6 @@ class VerticalMandibleMovementsPage(PageWithSideOptions):
         mainLayout.addLayout(rightLayout, 0, 1)
         self.setLayout(mainLayout)
 
+    def clearAll(self):
+        self.painOptions.clearAll()
+

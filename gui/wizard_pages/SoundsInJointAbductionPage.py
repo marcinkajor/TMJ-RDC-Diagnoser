@@ -46,4 +46,6 @@ class SoundsInJointAbductionPage(BasePage):
 
         self.setLayout(mainLayout)
 
-
+    def clearAll(self):
+        self.clickEliminationOptions.cleaAll()
+        self.soundsOptions.cleaAll()

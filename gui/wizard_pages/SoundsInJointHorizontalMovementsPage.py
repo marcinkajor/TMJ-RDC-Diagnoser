@@ -19,3 +19,6 @@ class SoundsInJointHorizontalMovementsPage(PageWithSideOptions):
         mainLayout.addWidget(additionalInfo, 0, 0)
         mainLayout.addLayout(rightLayout, 1, 0)
         self.setLayout(mainLayout)
+
+    def clearAll(self):
+        self.painOptions.clearAll()

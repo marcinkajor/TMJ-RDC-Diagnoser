@@ -31,6 +31,9 @@ class BasePage(QWizardPage):
     def getClassName(self):
         return self.__class__.__name__.split('.')[-1]
 
+    def clearAll(self):
+        pass
+
 
 class PageWithSideOptions(BasePage):
     def __init__(self):

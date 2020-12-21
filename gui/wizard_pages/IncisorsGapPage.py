@@ -25,3 +25,6 @@ class IncisorsGapPage(BasePage):
         mainLayout.addWidget(self.mm.getWidget(), 0, 0)
         mainLayout.addLayout(rightLayout, 0, 1)
         self.setLayout(mainLayout)
+
+    def clearAll(self):
+        self.middleLineAlignment.clearAll()

@@ -23,6 +23,9 @@ class PalpationPainPage(PageWithSideOptions):
         mainLayout.addLayout(rightLayout, 1, 0)
         self.setLayout(mainLayout)
 
+    def clearAll(self):
+        self.painOptions.clearAll()
+
 
 class PalpationPainNoPainPage(PalpationPainPage):
     def __init__(self):
