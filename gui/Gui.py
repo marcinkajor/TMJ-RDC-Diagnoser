@@ -168,7 +168,7 @@ class Window(QMainWindow):
 
 def run():
     app = QtWidgets.QApplication(sys.argv)
-    window = Window(DatabaseJson('patient_database'))
+    window = Window(DatabaseSQLite('patients_database'))
     app.exec_()
 
 

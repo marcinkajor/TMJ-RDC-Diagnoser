@@ -66,5 +66,8 @@ class Wizard(QWizard):
         currentPage.onNextClicked()
 
     def _onFinishedClicked(self):
-        self.database.storePatientRecord(self.getParametersMap())
+        try:
+            self.database.storePatientRecord(self.getParametersMap())
+        except Exception as e:
+            print(e)
         self.restart()
