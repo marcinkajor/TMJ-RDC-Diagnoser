@@ -126,7 +126,7 @@ class Window(QMainWindow):
                 idx = patient.idx
                 name = patient.personalData.name
                 surname = patient.personalData.surname
-                diag11 = patient.getAsixI1Diagnosis()
+                diag11 = patient.getAxisI1Diagnosis()
                 diag12left = patient.getAxisI2Diagnosis("left")
                 diag12right = patient.getAxisI2Diagnosis("right")
                 diag13left = patient.getAxisI3Diagnosis("left")
@@ -140,7 +140,7 @@ class Window(QMainWindow):
             idx = patient.idx
             name = patient.personalData.name
             surname = patient.personalData.surname
-            diag11 = patient.getAsixI1Diagnosis()
+            diag11 = patient.getAxisI1Diagnosis()
             diag12left = patient.getAxisI2Diagnosis("left")
             diag12right = patient.getAxisI2Diagnosis("right")
             diag13left = patient.getAxisI3Diagnosis("left")
