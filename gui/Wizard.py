@@ -16,6 +16,7 @@ class Wizard(QWizard):
         self.database = database
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
         self.button(QWizard.FinishButton).clicked.connect(self._onFinishedClicked)
+        self.button(QWizard.CancelButton).clicked.connect(self._onCancelClicked)
         self.setWindowTitle("Add patient record")
         self.setWizardStyle(QWizard.ModernStyle)
         self.setWindowIcon(QIcon('../tooth.png'))
@@ -78,5 +79,9 @@ class Wizard(QWizard):
             self.database.storePatientRecord(self.getParametersMap())
         except Exception as e:
             print(e)
+        self._clearAllPages()
+        self.restart()
+
+    def _onCancelClicked(self):
         self._clearAllPages()
         self.restart()
