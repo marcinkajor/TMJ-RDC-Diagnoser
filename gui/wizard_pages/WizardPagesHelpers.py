@@ -59,6 +59,11 @@ class ButtonGroupBox(QWidget):
     def getName(self):
         return self.box.title()
 
+    def isChecked(self):
+        for button in self.buttonGroup.buttons():
+            if button.isChecked():
+                return True
+        return False
 
 class MmInputs:
     def __init__(self, inputs, name, font):
