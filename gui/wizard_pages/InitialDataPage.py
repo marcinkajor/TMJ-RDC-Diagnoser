@@ -36,6 +36,28 @@ class InitialDataPage(BasePage):
         self.grid.addWidget(self.majorBox)
         self.setLayout(self.grid)
 
+    def _customIsComplete(self):
+        if self.painSideBox.isChecked():
+            currentOption = self.painSideBox.checkedButton
+            if currentOption == self.NO_PAIN:
+                return True
+            elif currentOption == self.RIGHT:
+                return True if self.rightOptionsGroup.isChecked() else False
+            elif currentOption == self.LEFT:
+                return True if self.leftOptionsGroup.isChecked() else False
+            elif currentOption == self.BOTH:
+                return True if self.rightOptionsGroup.isChecked() and self.leftOptionsGroup.isChecked() else False
+            else:
+                return False
+        else:
+            return False
+
+    def isComplete(self):
+        try:
+            return self._customIsComplete()
+        except Exception as e:
+            print(e)
+
     def _onButtonGroupChanged(self):
         currentOption = self.painSideBox.checkedButton
         if currentOption is None:
@@ -50,6 +72,7 @@ class InitialDataPage(BasePage):
                 self._enablePainOptions(right=True, left=True)
         else:
             self._enablePainOptions(left=False, right=False)
+        self.completeChanged.emit()
 
     def _enablePainOptions(self, right, left):
         if right and not left:
@@ -67,11 +90,13 @@ class InitialDataPage(BasePage):
         self.optionsGridLayout = QHBoxLayout()
 
         self.rightOptionsGroup = ButtonGroupBox("Right", options, layout='horizontal')
+        self.rightOptionsGroup.registerClickCallback(self.completeChanged.emit)
         self.registerField("Right pain area", self.rightOptionsGroup,
                            property="checkedButton",
                            changedSignal=self.rightOptionsGroup.buttonClicked)
 
         self.leftOptionsGroup = ButtonGroupBox("Left", options, layout='horizontal')
+        self.leftOptionsGroup.registerClickCallback(self.completeChanged.emit)
         self.registerField("Left pain area", self.leftOptionsGroup,
                            property="checkedButton",
                            changedSignal=self.leftOptionsGroup.buttonClicked)
