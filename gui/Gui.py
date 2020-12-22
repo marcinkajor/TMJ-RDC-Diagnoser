@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May  5 19:49:43 2020
-
-@author: Marcin
-"""
-
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog
 import sys
@@ -85,7 +78,7 @@ class Window(QMainWindow):
 
     def _openDiagnosticFile(self):
         fileName, fileFilter = QFileDialog.getOpenFileName(self, 'Open File',
-                                                           filter="Excel files (*.xlsx)")
+                                                           filter="Excel files (*.xls)")
         try:
             # Import datasets as separate spreadsheets
             axis1_sheet = pd.read_excel(fileName, sheet_name='axis I')
@@ -106,7 +99,8 @@ class Window(QMainWindow):
             QMessageBox.question(self, "TMJ RDC Diagnoser", "File loaded properly",
                                  QMessageBox.Ok, QMessageBox.Ok)
             printDiagnosis(patients)
-        except:
+        except Exception as e:
+            print(e)
             QMessageBox.question(self, "TMJ RDC Diagnoser", "Wrong file format!",
                                  QMessageBox.Ok, QMessageBox.Ok)
 
@@ -118,7 +112,10 @@ class Window(QMainWindow):
         if fileExtension == ".csv":
             self._saveDataToCsv(path)
         elif fileExtension == ".xlsx":
-            self._saveDataToXlsx(path)
+            try:
+                self._saveDataToXlsx(path)
+            except Exception as e:
+                print(e)
 
     def _saveDataToCsv(self, path):
         with open(path, mode='w', newline='') as file:
@@ -153,16 +150,8 @@ class Window(QMainWindow):
 
         df = pd.DataFrame(data, columns=['Id', 'Name', 'Surname', 'Axis I1', 'Axis I2 left',
                                          'Axis I2 right', 'Axis I3 left', 'Axis I3 right'])
-        writer = pd.ExcelWriter(path, engine='xlsxwriter')
+        writer = pd.ExcelWriter(path)
         df.to_excel(writer, sheet_name='Diagnosis', index=False)
-        # adjust the columns width
-        worksheet = writer.sheets['Diagnosis']
-        for idx, col in enumerate(df):
-            series = df[col]
-            maxLen = max((series.astype(str).map(len).max(), len(str(series.name)))) + 1
-            # width is in 1 unit per font character width
-            # Default font is Calibri 11px which boils down to ~8.5 pixels per unit
-            worksheet.set_column(idx, idx, width=maxLen)
         writer.save()
 
 
