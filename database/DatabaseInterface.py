@@ -35,5 +35,8 @@ class DatabaseInterface:
     def getPatientRecordByPesel(self, pesel):
         pass
 
+    def getColumnNames(self):
+        pass
+
     def drop(self):
         pass

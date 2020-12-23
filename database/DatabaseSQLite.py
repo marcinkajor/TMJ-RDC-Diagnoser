@@ -109,5 +109,25 @@ class DatabaseSQLite(DatabaseInterface):
         except Exception as e:
             print(e)
 
+    def getPatientRecordByPesel(self, pesel):
+        try:
+            with self.connection:
+                self.executor.execute('''SELECT * FROM patients WHERE PESEL=?''', (pesel,))
+                return self.executor.fetchall()
+        except Exception as e:
+            print(e)
+
+    def getColumnNames(self):
+        columnNames = []
+        try:
+            with self.connection:
+                self.executor.execute('''PRAGMA table_info(patients)''')
+                tableData = self.executor.fetchall()
+                for column in tableData:
+                    columnNames.append(column[1])
+                return columnNames
+        except Exception as e:
+            print(e)
+
     def drop(self):
         self.executor.execute('''DROP TABLE IF EXISTS patients''')
