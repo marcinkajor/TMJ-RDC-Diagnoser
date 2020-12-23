@@ -5,6 +5,7 @@ import pandas as pd
 from algo.AlgoHelpers import removeEmpty, printDiagnosis
 from algo.AlgoPatient import formPatientsDict
 from algo.AlgoParser import parseDatabase
+from algo.DatabaseMapper import DatabaseMapper
 import csv
 import os
 import ctypes
@@ -25,6 +26,7 @@ class Window(QMainWindow):
         self.database = database
         self.database.connect()
         self.database.createPatientTable('patients')
+        self.databaseMapper = DatabaseMapper(self.database)
 
         self.setGeometry(50, 50, 500, 300)
         self.setWindowTitle("TMJ RDC Diagnoser")
@@ -50,6 +52,11 @@ class Window(QMainWindow):
         generateDiagnosisAction.setStatusTip('Generate the diagnosis based on the the examination file')
         generateDiagnosisAction.triggered.connect(self._generateDiagnosticReport)
 
+        parsePatientRecord = QAction("Parse patient record", self)
+        parsePatientRecord.setShortcut("Ctrl+r")
+        parsePatientRecord.setStatusTip('Parse patient record')
+        parsePatientRecord.triggered.connect(self._parsePatientRecord)
+
         self.statusBar()
 
         mainMenu = self.menuBar()
@@ -58,6 +65,7 @@ class Window(QMainWindow):
         fileMenu.addAction(openAction)
         fileMenu.addAction(generateDiagnosisAction)
         fileMenu.addAction(addRecord)
+        fileMenu.addAction(parsePatientRecord)
 
         self.navigator = Wizard(self.database)
 
@@ -153,6 +161,9 @@ class Window(QMainWindow):
         writer = pd.ExcelWriter(path)
         df.to_excel(writer, sheet_name='Diagnosis', index=False)
         writer.save()
+
+    def _parsePatientRecord(self):
+        self.databaseMapper.parseDatabaseRecord("91121108014")
 
 
 def run():
