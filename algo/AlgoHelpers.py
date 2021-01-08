@@ -18,7 +18,7 @@ def validRLResult(resultString):
 
 
 # Return a tuple of integers representing a pain (strength/type) on right and left side (rightPain, leftPain)
-def parseRLExamination(painRepr):
+def parseRLExamination(painRepr) -> (int, int):
     pPain = 0
     lPain = 0
     if not validRLResult(painRepr):

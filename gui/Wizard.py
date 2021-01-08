@@ -47,7 +47,7 @@ class Wizard(QWizard):
             fields += self.page(pageId).fields
         return fields
 
-    def getParametersMap(self):
+    def getParametersMap(self) -> dict:
         parametersMap = {}
         for name in self.getVisitedFieldsNames():
             splitName = name.split('/')

@@ -28,7 +28,7 @@ class AxisOne:
 
 
 class E2:
-    def __init__(self, painSource):
+    def __init__(self, painSource: int):
         self._sourceMap = {
             0: "none",
             1: "right",

@@ -163,8 +163,10 @@ class Window(QMainWindow):
         writer.save()
 
     def _parsePatientRecord(self):
-        self.databaseMapper.parseDatabaseRecord("91121108014")
-
+        try:
+            mapped = self.databaseMapper.mapDiagnosticDataIntoAlgoRepresentation("91121108014")
+        except Exception as e:
+            print(e)
 
 def run():
     app = QtWidgets.QApplication(sys.argv)
