@@ -75,6 +75,26 @@ class TestMapper(unittest.TestCase):
             self.assertEqual(obtained, expected, "Unexpected E4 value after mapping")
         database.drop()
 
+    def testE5Mapper(self):
+        valuesToTest = [0, 1, 123, 9999]
+        database = DatabaseSQLite('patients_test_database')
+        database.connect(temporaryDatabase=True)
+        database.createPatientTable('patients')
+        PESEL = "0123456789{}"
+        for index, valueToTest in enumerate(valuesToTest):
+            PESELtoTest = PESEL.format(str(index))
+            # we need to test values as strings
+            strValueToTest = str(valueToTest)
+            database.storePatientRecord(json.loads(generateTestRecordE5(PESELtoTest, strValueToTest, strValueToTest)))
+            mapper = DatabaseMapper(database)
+            jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
+            diagnosticDataDict = json.loads(jsonStr)
+            values = mapper.diagnosticDataToE5(diagnosticDataDict)
+            expected = valueToTest
+            for value in values:
+                self.assertEqual(value, expected, "Unexpected E5 value after mapping")
+        database.drop()
+
 
 if __name__ == '__main__':
     unittest.main()

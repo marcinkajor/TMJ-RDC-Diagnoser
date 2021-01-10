@@ -32,6 +32,9 @@ class DatabaseMapper:
     def diagnosticDataToE4(self, fromDatabase) -> int:
         return MapperE4(fromDatabase).get()
 
+    def diagnosticDataToE5(self, fromDatabase) -> (int, int, int, int):
+        return MapperE5(fromDatabase).get()
+
 
 class MapperE2:
     def __init__(self, fromDatabase: dict):
@@ -59,7 +62,7 @@ class MapperE3:
         self.e3right = self.mapping[fromDatabase["InitialData"]["right_pain_area"]]
         self.e3left = self.mapping[fromDatabase["InitialData"]["left_pain_area"]]
 
-    def get(self):
+    def get(self) -> (int, int):
         return self.e3right, self.e3left
 
 
@@ -75,5 +78,16 @@ class MapperE4:
         }
         self.e4 = self.mapping[fromDatabase["AbductionMovement"]["abduction_movement"]]
 
-    def get(self):
+    def get(self) -> int:
         return self.e4
+
+
+class MapperE5:
+    def __init__(self, fromDatabase: dict):
+        self.e5a = int(fromDatabase["VerticalMovementRange"]["no_pain_opening_mm"])
+        self.e5b = int(fromDatabase["VerticalMovementRange"]["max_active_opening_mm"])
+        self.e5c = int(fromDatabase["VerticalMovementRange"]["max_passive_opening_mm"])
+        self.e5d = int(fromDatabase["IncisorsGap"]["vertical_mm"])
+
+    def get(self) -> (int, int, int, int):
+        return self.e5a, self.e5b, self.e5c, self.e5d
