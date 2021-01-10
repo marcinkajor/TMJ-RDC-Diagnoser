@@ -22,11 +22,15 @@ class DatabaseMapper:
         e3.addPain("left", e3left)
         e3.addPain("right", e3right)
 
+    # TODO: replace beneath methods with a dict?
     def diagnosticDataToE2(self, fromDatabase) -> int:
         return MapperE2(fromDatabase).get()
 
     def diagnosticDataToE3(self, fromDatabase) -> (int, int):
         return MapperE3(fromDatabase).get()
+
+    def diagnosticDataToE4(self, fromDatabase) -> int:
+        return MapperE4(fromDatabase).get()
 
 
 class MapperE2:
@@ -57,3 +61,19 @@ class MapperE3:
 
     def get(self):
         return self.e3right, self.e3left
+
+
+class MapperE4:
+    def __init__(self, fromDatabase: dict):
+        self.mapping = {
+            "Straight": 0,
+            "Right Lateral Deviation (uncorrected)": 1,
+            "Right Corrected ('S') Deviation": 2,
+            "Left Lateral Deviation (uncorrected)": 3,
+            "Left Corrected ('S') Deviation": 4,
+            "Other Type": 5
+        }
+        self.e4 = self.mapping[fromDatabase["AbductionMovement"]["abduction_movement"]]
+
+    def get(self):
+        return self.e4

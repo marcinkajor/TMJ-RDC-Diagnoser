@@ -5,7 +5,7 @@ TEST_PERSONAL_DATA = '''"PersonalData": {"name": "John", "surname": "Wick", "age
 
 TEST_DIAGNOSTIC_DATA = '''"InitialData": {"pain_side": "TEST_pain_side", "right_pain_area": "TEST_right_pain_area",
 "left_pain_area": "TEST_left_pain_area"},
-"AbductionMovement": {"abduction_movement": "'S' left corrected deviation", "specific_description": ""},
+"AbductionMovement": {"abduction_movement": "TEST_abduction_movement", "specific_description": ""},
 "VerticalMovementRange": {"used_foretooth": "21", "no_pain_opening_mm": "1", "max_active_opening_mm": "2",
 "max_passive_opening_mm": "3", "max_active_opening_right": "None", "max_passive_opening_right": "Muscle",
 "max_active_opening_left": "Muscle", "max_passive_opening_left": "Join"}, "IncisorsGap": {"vertical_mm": "55",
@@ -50,3 +50,7 @@ def generateTestRecordE2(pesel: str, painSide: str):
 def generateTestRecordE3(pesel: str, option: str):
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_right_pain_area", option).\
         replace("TEST_left_pain_area", option)
+
+
+def generateTestRecordE4(pesel: str, option: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_abduction_movement", option)
