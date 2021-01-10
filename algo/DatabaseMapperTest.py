@@ -8,10 +8,10 @@ import json
 class TestMapper(unittest.TestCase):
     def testE2Mapper(self):
         optionsToTest = {
-            "NO PAIN" : 0,
-            "RIGHT": 1,
-            "LEFT": 2,
-            "BOTH": 3
+            "None": 0,
+            "Right": 1,
+            "Left": 2,
+            "Both": 3
         }
         database = DatabaseSQLite('patients_test_database')
         database.connect(temporaryDatabase=True)
@@ -31,8 +31,8 @@ class TestMapper(unittest.TestCase):
     def testE3Mapper(self):
         optionsToTest = {
             "": 0,
-            "Muscle": 1,
-            "Join": 2,
+            "Muscles": 1,
+            "Jaw Joint": 2,
             "Both": 3
         }
         database = DatabaseSQLite('patients_test_database')

@@ -32,11 +32,12 @@ class DatabaseMapper:
 class MapperE2:
     def __init__(self, fromDatabase: dict):
         self.mapping = {
-            "NO PAIN": 0,
-            "RIGHT": 1,
-            "LEFT": 2,
-            "BOTH": 3
+            "None": 0,
+            "Right": 1,
+            "Left": 2,
+            "Both": 3
         }
+
         self.e2 = self.mapping[fromDatabase["InitialData"]["pain_side"]]
 
     def get(self):
@@ -47,8 +48,8 @@ class MapperE3:
     def __init__(self, fromDatabase: dict):
         self.mapping = {
             "": 0,
-            "Muscle": 1,
-            "Join": 2,
+            "Muscles": 1,
+            "Jaw Joint": 2,
             "Both": 3
         }
         self.e3right = self.mapping[fromDatabase["InitialData"]["right_pain_area"]]

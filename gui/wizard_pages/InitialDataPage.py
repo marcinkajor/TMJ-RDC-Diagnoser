@@ -6,10 +6,10 @@ class InitialDataPage(BasePage):
     def __init__(self):
         super().__init__()
 
-        self.NO_PAIN = "NO PAIN"
-        self.RIGHT = "RIGHT"
-        self.LEFT = "LEFT"
-        self.BOTH = "BOTH"
+        self.NO_PAIN = "None"
+        self.RIGHT = "Right"
+        self.LEFT = "Left"
+        self.BOTH = "Both"
 
         self.mapping = {
             self.NO_PAIN: 0,
