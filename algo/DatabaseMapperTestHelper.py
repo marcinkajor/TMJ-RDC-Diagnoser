@@ -8,10 +8,10 @@ TEST_DIAGNOSTIC_DATA = '''"InitialData": {"pain_side": "TEST_pain_side", "right_
 "AbductionMovement": {"abduction_movement": "TEST_abduction_movement", "specific_description": ""},
 "VerticalMovementRange": {"used_foretooth": "21", "no_pain_opening_mm": "TEST_vertical_movement_range_mm",
 "max_active_opening_mm": "TEST_vertical_movement_range_mm",
-"max_passive_opening_mm": "TEST_vertical_movement_range_mm", "max_active_opening_right": "None",
-"max_passive_opening_right": "Muscle",
-"max_active_opening_left": "Muscle", "max_passive_opening_left": "Join"}, "IncisorsGap":
-{"vertical_mm": "TEST_incisal_overlap",
+"max_passive_opening_mm": "TEST_vertical_movement_range_mm", "max_active_opening_right": "TEST_opening",
+"max_passive_opening_right": "TEST_opening",
+"max_active_opening_left": "TEST_opening", "max_passive_opening_left": "TEST_opening"},
+"IncisorsGap": {"vertical_mm": "TEST_incisal_overlap",
 "horizontal_mm": "34", "middle_line_mm": "123", "middle_line_alignment_relative_to_the_jaw": "R"},
 "VerticalMandibleMovements": {"right_side_mm": "45", "left_side_mm": "45", "forward_mm": "66",
 "right_side_right": "None", "left_side_right": "Muscle", "forward_right": "Join", "right_side_left": "Muscle",
@@ -59,6 +59,10 @@ def generateTestRecordE4(pesel: str, option: str):
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_abduction_movement", option)
 
 
-def generateTestRecordE5(pesel: str, value: str, overlap: str):
+def generateTestRecordE5Mm(pesel: str, value: str, overlap: str):
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_vertical_movement_range_mm", value).\
         replace("TEST_incisal_overlap", overlap)
+
+
+def generateTestRecordE5Pain(pesel: str, pain: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_opening", pain)

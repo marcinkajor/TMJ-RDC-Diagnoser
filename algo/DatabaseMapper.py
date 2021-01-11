@@ -32,8 +32,14 @@ class DatabaseMapper:
     def diagnosticDataToE4(self, fromDatabase) -> int:
         return MapperE4(fromDatabase).get()
 
-    def diagnosticDataToE5(self, fromDatabase) -> (int, int, int, int):
-        return MapperE5(fromDatabase).get()
+    def diagnosticDataToE5Mm(self, fromDatabase) -> (int, int, int, int):
+        return MapperE5Mm(fromDatabase).get()
+
+    def diagnosticDataToE5PassivePain(self, fromDatabase) -> (int, int):
+        return MapperE5Pain(fromDatabase).getPainPassive()
+
+    def diagnosticDataToE5ActivePain(self, fromDatabase) -> (int, int):
+        return MapperE5Pain(fromDatabase).getPainActive()
 
 
 class MapperE2:
@@ -82,7 +88,7 @@ class MapperE4:
         return self.e4
 
 
-class MapperE5:
+class MapperE5Mm:
     def __init__(self, fromDatabase: dict):
         self.e5a = int(fromDatabase["VerticalMovementRange"]["no_pain_opening_mm"])
         self.e5b = int(fromDatabase["VerticalMovementRange"]["max_active_opening_mm"])
@@ -91,3 +97,23 @@ class MapperE5:
 
     def get(self) -> (int, int, int, int):
         return self.e5a, self.e5b, self.e5c, self.e5d
+
+
+class MapperE5Pain:
+    def __init__(self, fromDatabase: dict):
+        painMap = {
+            "None": 0,
+            "Muscle": 1,
+            "Joint": 2,
+            "Both": 3
+        }
+        self.e5PassiveRight = painMap[fromDatabase["VerticalMovementRange"]["max_passive_opening_right"]]
+        self.e5PassiveLeft = painMap[fromDatabase["VerticalMovementRange"]["max_passive_opening_left"]]
+        self.e5ActiveRight = painMap[fromDatabase["VerticalMovementRange"]["max_active_opening_right"]]
+        self.e5ActiveLeft = painMap[fromDatabase["VerticalMovementRange"]["max_active_opening_left"]]
+
+    def getPainPassive(self) -> (int, int):
+        return self.e5PassiveRight, self.e5PassiveLeft
+
+    def getPainActive(self) -> (int, int):
+        return self.e5ActiveRight, self.e5ActiveLeft
