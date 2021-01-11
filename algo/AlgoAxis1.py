@@ -99,10 +99,9 @@ class E5:
         if typeIndex not in self.openings:
             self.openings[typeIndex] = motionRange  # mm
 
-    def addOpeningPain(self, passiveOrActive, examination):
+    def addOpeningPain(self, passiveOrActive, right: int, left: int):
         if passiveOrActive not in ["passive", "active"]:
             raise Exception("Allowed E5 opening types is \"passive\" or \"active\"")
-        right, left = parseRLExamination(examination)
         if passiveOrActive in self.pain:
             current = self.pain[passiveOrActive]
             current.update({"right": right, "left": left})
