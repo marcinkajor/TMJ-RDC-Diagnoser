@@ -21,7 +21,7 @@ class VerticalMovementRangePage(PageWithSideOptions):
 
         rightLayout = QHBoxLayout()
         self.painOptions = SideOptions(["Max active opening", "Max passive opening"],
-                                       ["None", "Muscle", "Join", "Both"], self.defaultFont)
+                                       ["None", "Muscle", "Joint", "Both"], self.defaultFont)
         self.registerSideOptions()
 
         rightLayout.addLayout(self.painOptions.getLayout())
