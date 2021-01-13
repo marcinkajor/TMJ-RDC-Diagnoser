@@ -23,7 +23,7 @@ class TestMapper(unittest.TestCase):
             mapper = DatabaseMapper(database)
             jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
             diagnosticDataDict = json.loads(jsonStr)
-            obtained = mapper.diagnosticDataToE2(diagnosticDataDict)
+            obtained = mapper.diagnosticDataToE2(diagnosticDataDict)["E2"]
             expected = optionsToTest[option]
             self.assertEqual(obtained, expected, "Unexpected E2 value after mapping")
         database.drop()
@@ -45,10 +45,10 @@ class TestMapper(unittest.TestCase):
             mapper = DatabaseMapper(database)
             jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
             diagnosticDataDict = json.loads(jsonStr)
-            obtainedLeft, obtainedRight = mapper.diagnosticDataToE3(diagnosticDataDict)
-            for obtainedSide in [obtainedLeft, obtainedRight]:
+            obtained = mapper.diagnosticDataToE3(diagnosticDataDict)
+            for side in obtained:
                 expected = optionsToTest[option]
-                self.assertEqual(obtainedSide, expected, "Unexpected E3 value after mapping")
+                self.assertEqual(obtained[side], expected, "Unexpected E3 value after mapping")
         database.drop()
 
     def testE4Mapper(self):
@@ -70,32 +70,13 @@ class TestMapper(unittest.TestCase):
             mapper = DatabaseMapper(database)
             jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
             diagnosticDataDict = json.loads(jsonStr)
-            obtained = mapper.diagnosticDataToE4(diagnosticDataDict)
+            obtained = mapper.diagnosticDataToE4(diagnosticDataDict)["E4"]
             expected = optionsToTest[option]
             self.assertEqual(obtained, expected, "Unexpected E4 value after mapping")
         database.drop()
 
-    def testE5MapperMm(self):
-        valuesToTest = [0, 1, 123, 9999]
-        database = DatabaseSQLite('patients_test_database')
-        database.connect(temporaryDatabase=True)
-        database.createPatientTable('patients')
-        PESEL = "0123456789{}"
-        for index, valueToTest in enumerate(valuesToTest):
-            PESELtoTest = PESEL.format(str(index))
-            # we need to test values as strings
-            strValueToTest = str(valueToTest)
-            database.storePatientRecord(json.loads(generateTestRecordE5Mm(PESELtoTest, strValueToTest, strValueToTest)))
-            mapper = DatabaseMapper(database)
-            jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
-            diagnosticDataDict = json.loads(jsonStr)
-            values = mapper.diagnosticDataToE5Mm(diagnosticDataDict)
-            expected = valueToTest
-            for value in values:
-                self.assertEqual(value, expected, "Unexpected E5 mm value after mapping")
-        database.drop()
-
-    def testE5MapperPain(self):
+    def testE5Mapper(self):
+        mmToTest = [0, 1, 123, 9999]
         painToTest = {
             "None": 0,
             "Muscle": 1,
@@ -106,19 +87,21 @@ class TestMapper(unittest.TestCase):
         database.connect(temporaryDatabase=True)
         database.createPatientTable('patients')
         PESEL = "0123456789{}"
-        for index, valueToTest in enumerate(painToTest):
+        for index, pain in enumerate(painToTest):
             PESELtoTest = PESEL.format(str(index))
             # we need to test values as strings
-            database.storePatientRecord(json.loads(generateTestRecordE5Pain(PESELtoTest, valueToTest)))
+            database.storePatientRecord(json.loads(generateTestRecordE5(PESELtoTest, str(mmToTest[index]), pain)))
             mapper = DatabaseMapper(database)
             jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
             diagnosticDataDict = json.loads(jsonStr)
-            passivePainValues = mapper.diagnosticDataToE5PassivePain(diagnosticDataDict)
-            for idx, value in enumerate(passivePainValues):
-                self.assertEqual(value, painToTest[valueToTest], "Unexpected E5 passive pain value after mapping")
-            activePainValues = mapper.diagnosticDataToE5ActivePain(diagnosticDataDict)
-            for idx, value in enumerate(activePainValues):
-                self.assertEqual(value, painToTest[valueToTest], "Unexpected E5 active pain value after mapping")
+            e5 = mapper.diagnosticDataToE5(diagnosticDataDict)
+            obtainedMm = e5["E5mm"]
+            obtainedPains = e5["E5pain"]
+            for idx, key in enumerate(obtainedMm):
+                self.assertEqual(obtainedMm[key], mmToTest[index], "Unexpected E5 value after mapping")
+            for obtainedPain in obtainedPains:
+                self.assertEqual(obtainedPains[obtainedPain], painToTest[pain], "Unexpected E5 active pain value "
+                                                                                "after mapping")
         database.drop()
 
 

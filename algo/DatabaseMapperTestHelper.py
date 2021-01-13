@@ -59,10 +59,6 @@ def generateTestRecordE4(pesel: str, option: str):
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_abduction_movement", option)
 
 
-def generateTestRecordE5Mm(pesel: str, value: str, overlap: str):
-    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_vertical_movement_range_mm", value).\
-        replace("TEST_incisal_overlap", overlap)
-
-
-def generateTestRecordE5Pain(pesel: str, pain: str):
-    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_opening", pain)
+def generateTestRecordE5(pesel: str, mm: str, pain: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_vertical_movement_range_mm", mm).\
+        replace("TEST_incisal_overlap", mm).replace("TEST_opening", pain)
