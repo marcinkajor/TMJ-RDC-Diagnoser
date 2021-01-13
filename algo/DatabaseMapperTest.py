@@ -1,7 +1,8 @@
 import unittest
 from database import DatabaseSQLite
 from algo.DatabaseMapperTestHelper import *
-from algo.DatabaseMapper import DatabaseMapper
+from algo.DatabaseMapper import *
+from algo.DatabaseDeserializer import DatabaseDeserializer
 import json
 
 
@@ -20,10 +21,10 @@ class TestMapper(unittest.TestCase):
         for index, option in enumerate(optionsToTest):
             PESELtoTest = PESEL.format(str(index))
             database.storePatientRecord(json.loads(generateTestRecordE2(PESELtoTest, option)))
-            mapper = DatabaseMapper(database)
-            jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
-            diagnosticDataDict = json.loads(jsonStr)
-            obtained = mapper.diagnosticDataToE2(diagnosticDataDict)["E2"]
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(MapperE2(diagnosticRecord))
+            obtained = mapper.dataMappedToAlgoInterface()["E2"]
             expected = optionsToTest[option]
             self.assertEqual(obtained, expected, "Unexpected E2 value after mapping")
         database.drop()
@@ -42,10 +43,10 @@ class TestMapper(unittest.TestCase):
         for index, option in enumerate(optionsToTest):
             PESELtoTest = PESEL.format(str(index))
             database.storePatientRecord(json.loads(generateTestRecordE3(PESELtoTest, option)))
-            mapper = DatabaseMapper(database)
-            jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
-            diagnosticDataDict = json.loads(jsonStr)
-            obtained = mapper.diagnosticDataToE3(diagnosticDataDict)
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(MapperE3(diagnosticRecord))
+            obtained = mapper.dataMappedToAlgoInterface()
             for side in obtained:
                 expected = optionsToTest[option]
                 self.assertEqual(obtained[side], expected, "Unexpected E3 value after mapping")
@@ -67,10 +68,10 @@ class TestMapper(unittest.TestCase):
         for index, option in enumerate(optionsToTest):
             PESELtoTest = PESEL.format(str(index))
             database.storePatientRecord(json.loads(generateTestRecordE4(PESELtoTest, option)))
-            mapper = DatabaseMapper(database)
-            jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
-            diagnosticDataDict = json.loads(jsonStr)
-            obtained = mapper.diagnosticDataToE4(diagnosticDataDict)["E4"]
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(MapperE4(diagnosticRecord))
+            obtained = mapper.dataMappedToAlgoInterface()["E4"]
             expected = optionsToTest[option]
             self.assertEqual(obtained, expected, "Unexpected E4 value after mapping")
         database.drop()
@@ -91,10 +92,10 @@ class TestMapper(unittest.TestCase):
             PESELtoTest = PESEL.format(str(index))
             # we need to test values as strings
             database.storePatientRecord(json.loads(generateTestRecordE5(PESELtoTest, str(mmToTest[index]), pain)))
-            mapper = DatabaseMapper(database)
-            jsonStr = mapper.getPatientDiagnosticDataByPesel(PESELtoTest)
-            diagnosticDataDict = json.loads(jsonStr)
-            e5 = mapper.diagnosticDataToE5(diagnosticDataDict)
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(MapperE5(diagnosticRecord))
+            e5 = mapper.dataMappedToAlgoInterface()
             obtainedMm = e5["E5mm"]
             obtainedPains = e5["E5pain"]
             for idx, key in enumerate(obtainedMm):

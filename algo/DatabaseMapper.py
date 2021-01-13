@@ -1,51 +1,4 @@
-from database import DatabaseInterface
-from algo.AlgoAxis1 import E2, E3, E4, E5, E6, E7, E8
-import json
-
-
-class DatabaseMapper:
-    def __init__(self, database: DatabaseInterface):
-        self.database = database
-        self.columnNames = self.database.getColumnNames()
-
-    def getPatientDiagnosticDataByPesel(self, patientPesel):
-        return self.deserializeDatabaseRecord(patientPesel)[self.columnNames.index('diagnostic_data')]
-
-    def deserializeDatabaseRecord(self, patientPesel) -> str:
-        return self.database.getPatientRecordByPesel(patientPesel)
-
-    def mapDiagnosticDataIntoAlgoRepresentation(self, pesel: str):
-        diagnosticDataDict = json.loads(self.getPatientDiagnosticDataByPesel(pesel))
-        e2 = E2(self.diagnosticDataToE2(diagnosticDataDict))
-        e3left, e3right = self.diagnosticDataToE3(diagnosticDataDict)
-        e3 = E3()
-        e3.addPain("left", e3left)
-        e3.addPain("right", e3right)
-
-    # TODO: replace beneath methods with a dict?
-    def diagnosticDataToE2(self, fromDatabase) -> int:
-        return MapperE2(fromDatabase).get()
-
-    def diagnosticDataToE3(self, fromDatabase) -> (int, int):
-        return MapperE3(fromDatabase).get()
-
-    def diagnosticDataToE4(self, fromDatabase) -> int:
-        return MapperE4(fromDatabase).get()
-
-    def diagnosticDataToE5Mm(self, fromDatabase) -> (int, int, int, int):
-        return MapperE5Mm(fromDatabase).get()
-
-    def diagnosticDataToE5PassivePain(self, fromDatabase) -> (int, int):
-        return MapperE5Pain(fromDatabase).getPainPassive()
-
-    def diagnosticDataToE5ActivePain(self, fromDatabase) -> (int, int):
-        return MapperE5Pain(fromDatabase).getPainActive()
-
-    def diagnosticDataToE5(self, fromDatabase) -> dict:
-        return MapperE5(fromDatabase).get()
-
-
-class Mapper:
+class MapperStrategy:
     def __init__(self, fromDatabase: dict):
         pass
 
@@ -53,7 +6,7 @@ class Mapper:
         pass
 
 
-class MapperE2(Mapper):
+class MapperE2(MapperStrategy):
     def __init__(self, fromDatabase: dict):
         self.mapping = {
             "None": 0,
@@ -67,7 +20,7 @@ class MapperE2(Mapper):
         return {"E2": self.e2}
 
 
-class MapperE3(Mapper):
+class MapperE3(MapperStrategy):
     def __init__(self, fromDatabase: dict):
         self.mapping = {
             "": 0,
@@ -82,7 +35,7 @@ class MapperE3(Mapper):
         return {"E3right": self.e3right, "E3left": self.e3left}
 
 
-class MapperE4(Mapper):
+class MapperE4(MapperStrategy):
     def __init__(self, fromDatabase: dict):
         self.mapping = {
             "Straight": 0,
@@ -98,7 +51,7 @@ class MapperE4(Mapper):
         return {"E4": self.e4}
 
 
-class MapperE5(Mapper):
+class MapperE5(MapperStrategy):
     def __init__(self, fromDatabase: dict):
         self.mm = MapperE5.Mm(fromDatabase)
         self.pain = MapperE5.Pain(fromDatabase)
@@ -133,3 +86,11 @@ class MapperE5(Mapper):
         def get(self) -> dict:
             return {"passive_right": self.e5PassiveRight, "passive_left": self.e5PassiveLeft,
                     "active_right": self.e5ActiveRight, "active_left": self.e5ActiveLeft}
+
+
+class DatabaseRecordMapper:
+    def __init__(self, mappingStrategy: MapperStrategy):
+        self.mapper = mappingStrategy
+
+    def dataMappedToAlgoInterface(self) -> dict:
+        return self.mapper.get()
