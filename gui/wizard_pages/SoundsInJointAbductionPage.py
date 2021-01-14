@@ -8,16 +8,16 @@ class SoundsInJointAbductionPage(BasePage):
         self.setTitle("6. Sounds in the joint: abduction")
 
         self.mm = MmInputs(["Left: opening", "Left: closing", "Right: opening", "Right: closing"],
-                           "Click position - mm",
+                           "Measurement of Click - mm",
                            self.defaultFont)
 
         mmLineEdits = self.mm.getAllLineEdits()
         for lineEditName in mmLineEdits:
             self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName])
 
-        self.clickEliminationOptions = Options("Click elimination", ["Left opening", "Left closing", "Right opening",
-                                                                     "Right closing"],
-                                               ["No", "Yes", "Not applicable"], self.defaultFont)
+        self.clickEliminationOptions = Options("Reciprocal click eliminated on protrusive opening",
+                                               ["Left opening", "Left closing", "Right opening", "Right closing"],
+                                               ["No", "Yes", "Not Applicable"], self.defaultFont)
 
         rawClickEliminationOptions = self.clickEliminationOptions.getOptions()
         for option in rawClickEliminationOptions:
@@ -26,7 +26,7 @@ class SoundsInJointAbductionPage(BasePage):
                                changedSignal=buttonGroup.buttonClicked)
 
         self.soundsOptions = Options("Sounds", ["Left opening", "Left closing", "Right opening", "Right closing"],
-                                     ["None", "Click", "Clear crepitations", "Slight crepitations"], self.defaultFont)
+                                     ["None", "Click", "Coarse Crepitus", "Fine Crepitus"], self.defaultFont)
 
         rawSoundsOptions = self.clickEliminationOptions.getOptions()
         for option in rawSoundsOptions:
