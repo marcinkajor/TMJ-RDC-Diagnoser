@@ -5,7 +5,6 @@ import pandas as pd
 from algo.AlgoHelpers import removeEmpty, printDiagnosis
 from algo.AlgoPatient import formPatientsDict
 from algo.AlgoParser import parseDatabase
-from algo.DatabaseMapper import DatabaseMapper
 import csv
 import os
 import ctypes
@@ -26,7 +25,6 @@ class Window(QMainWindow):
         self.database = database
         self.database.connect()
         self.database.createPatientTable('patients')
-        self.databaseMapper = DatabaseMapper(self.database)
 
         self.setGeometry(50, 50, 500, 300)
         self.setWindowTitle("TMJ RDC Diagnoser")
@@ -164,7 +162,7 @@ class Window(QMainWindow):
 
     def _parsePatientRecord(self):
         try:
-            mapped = self.databaseMapper.mapDiagnosticDataIntoAlgoRepresentation("91121108014")
+            pass # TODO: verify mapper class
         except Exception as e:
             print(e)
 
