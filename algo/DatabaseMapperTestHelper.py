@@ -15,11 +15,13 @@ TEST_DIAGNOSTIC_DATA = '''"InitialData": {"pain_side": "TEST_pain_side", "right_
 "horizontal_mm": "34", "middle_line_mm": "123", "middle_line_alignment_relative_to_the_jaw": "R"},
 "VerticalMandibleMovements": {"right_side_mm": "45", "left_side_mm": "45", "forward_mm": "66",
 "right_side_right": "None", "left_side_right": "Muscle", "forward_right": "Join", "right_side_left": "Muscle",
-"left_side_left": "Join", "forward_left": "Both"}, "SoundsInJointAbduction": {"left_opening_mm": "1",
-"left_closing_mm": "2", "right_opening_mm": "3", "right_closing_mm": "4", "left_opening_click_elimination": "No",
-"left_closing_click_elimination": "Yes", "right_opening_click_elimination": "Not applicable",
-"right_closing_click_elimination": "Yes", "left_opening_sound": "No", "left_closing_sound": "Yes",
-"right_opening_sound": "Not applicable", "right_closing_sound": "Yes"}, "SoundsInJointHorizontalMovements":
+"left_side_left": "Join", "forward_left": "Both"}, "SoundsInJointAbduction": {"left_opening_mm": "TEST_abduction_mm",
+"left_closing_mm": "TEST_abduction_mm", "right_opening_mm": "TEST_abduction_mm", "right_closing_mm": "TEST_abduction_mm",
+"left_opening_click_elimination": "TEST_elimination",
+"left_closing_click_elimination": "TEST_elimination", "right_opening_click_elimination": "TEST_elimination",
+"right_closing_click_elimination": "TEST_elimination", "left_opening_sound": "TEST_abduction_sound",
+"left_closing_sound": "TEST_abduction_sound", "right_opening_sound": "TEST_abduction_sound",
+"right_closing_sound": "TEST_abduction_sound"}, "SoundsInJointHorizontalMovements":
 {"right_side_right": "None", "left_side_right": "Clear crepitations", "forward_right": "Slight crepitations",
 "right_side_left": "Slight crepitations", "left_side_left": "Clear crepitations", "forward_left": "Click"},
 "PalpationPainNoPain": {"mastoid_process_lateral_upper_part_right": "No pain",
@@ -62,3 +64,8 @@ def generateTestRecordE4(pesel: str, option: str):
 def generateTestRecordE5(pesel: str, mm: str, pain: str):
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_vertical_movement_range_mm", mm).\
         replace("TEST_incisal_overlap", mm).replace("TEST_opening", pain)
+
+
+def generateTestRecordE6(pesel: str, mm: str, elimination: str, sound: str):
+     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_abduction_mm", mm).\
+        replace("TEST_elimination", elimination).replace("TEST_abduction_sound", sound)

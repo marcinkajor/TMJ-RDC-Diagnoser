@@ -88,6 +88,61 @@ class MapperE5(MapperStrategy):
                     "active_right": self.e5ActiveRight, "active_left": self.e5ActiveLeft}
 
 
+class MapperE6(MapperStrategy):
+    def __init__(self, fromDatabase: dict):
+        self.sound = MapperE6.Sound(fromDatabase)
+        self.mm = MapperE6.Mm(fromDatabase)
+        self.elimination = MapperE6.Elimination(fromDatabase)
+
+    def get(self):
+        return {"E6sounds": self.sound.get(), "E6mm": self.mm.get(), "E6eliminations": self.elimination.get()}
+
+    # helper classes:
+    class Sound:
+        def __init__(self, fromDatabase: dict):
+            soundsMap = {
+                "None": 0,
+                "Click": 1,
+                "Coarse Crepitus": 2,
+                "Fine Crepitus": 3
+            }
+            self.e6OpeningRight = soundsMap[fromDatabase["SoundsInJointAbduction"]["right_opening_sound"]]
+            self.e6OpeningLeft = soundsMap[fromDatabase["SoundsInJointAbduction"]["left_opening_sound"]]
+            self.e6ClosingRight = soundsMap[fromDatabase["SoundsInJointAbduction"]["right_closing_sound"]]
+            self.e6ClosingLeft = soundsMap[fromDatabase["SoundsInJointAbduction"]["left_closing_sound"]]
+
+        def get(self) -> dict:
+            return {"opening_right": self.e6OpeningRight, "opening_left": self.e6OpeningLeft,
+                    "closing_right": self.e6ClosingRight, "closing_left": self.e6ClosingLeft}
+
+    class Mm:
+        def __init__(self, fromDatabase: dict):
+            self.e6OpeningRight = int(fromDatabase["SoundsInJointAbduction"]["right_opening_mm"])
+            self.e6OpeningLeft = int(fromDatabase["SoundsInJointAbduction"]["left_opening_mm"])
+            self.e6ClosingRight = int(fromDatabase["SoundsInJointAbduction"]["right_closing_mm"])
+            self.e6ClosingLeft = int(fromDatabase["SoundsInJointAbduction"]["left_closing_mm"])
+
+        def get(self) -> dict:
+            return {"opening_right": self.e6OpeningRight, "opening_left": self.e6OpeningLeft,
+                    "closing_right": self.e6ClosingRight, "closing_left": self.e6ClosingLeft}
+
+    class Elimination:
+        def __init__(self, fromDatabase: dict):
+            clickEliminationMap = {
+                "No": 0,
+                "Yes": 1,
+                "Not Applicable": 8
+            }
+            self.e6OpeningRight = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["right_opening_click_elimination"]]
+            self.e6OpeningLeft = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["left_opening_click_elimination"]]
+            self.e6ClosingRight = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["right_closing_click_elimination"]]
+            self.e6ClosingLeft = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["left_closing_click_elimination"]]
+
+        def get(self) -> dict:
+            return {"opening_right": self.e6OpeningRight, "opening_left": self.e6OpeningLeft,
+                    "closing_right": self.e6ClosingRight, "closing_left": self.e6ClosingLeft}
+
+
 class DatabaseRecordMapper:
     def __init__(self, mappingStrategy: MapperStrategy):
         self.mapper = mappingStrategy

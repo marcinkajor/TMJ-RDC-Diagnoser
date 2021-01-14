@@ -105,6 +105,46 @@ class TestMapper(unittest.TestCase):
                                                                                 "after mapping")
         database.drop()
 
+    def testE6Mapper(self):
+        mmToTest = [0, 1, 123, 9999]
+        soundsToTest = {
+            "None": 0,
+            "Click": 1,
+            "Coarse Crepitus": 2,
+            "Fine Crepitus": 3
+        }
+        clickEliminationToTest = {
+            "No": 0,
+            "Yes": 1,
+            "Not Applicable": 8
+        }
+        mmToTest = [0, 1, 123, 9999]
+        database = DatabaseSQLite('patients_test_database')
+        database.connect(temporaryDatabase=True)
+        database.createPatientTable('patients')
+        PESEL = "0123456789{}"
+        for index, sound in enumerate(soundsToTest):
+            PESELtoTest = PESEL.format(str(index))
+            for pseudoRandomValue, elimination in enumerate(clickEliminationToTest):
+                testRecord = json.loads(generateTestRecordE6(PESELtoTest, str(mmToTest[index]), elimination, sound))
+                database.storePatientRecord(testRecord)
+                deserializer = DatabaseDeserializer(database)
+                diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+                mapper = DatabaseRecordMapper(MapperE6(diagnosticRecord))
+                e6 = mapper.dataMappedToAlgoInterface()
+                obtainedSounds = e6["E6sounds"]
+                obtainedMm = e6["E6mm"]
+                obtainedEliminations = e6["E6eliminations"]
+                for idx, obtainedSound in enumerate(obtainedSounds):
+                    self.assertEqual(obtainedSounds[obtainedSound], soundsToTest[sound], "Unexpected E6 value after mapping")
+                for idx, mm in enumerate(obtainedMm):
+                    self.assertEqual(obtainedMm[mm], mmToTest[index], "Unexpected E6 value after mapping")
+                for obtainedElimination in obtainedEliminations:
+                    self.assertEqual(obtainedEliminations[obtainedElimination], clickEliminationToTest[elimination],
+                                     "Unexpected E6 active pain value after mapping")
+                database.removeRecordOnId(1)
+        database.drop()
+
 
 if __name__ == '__main__':
     unittest.main()
