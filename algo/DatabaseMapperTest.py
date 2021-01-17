@@ -145,6 +145,35 @@ class TestMapper(unittest.TestCase):
                 database.removeRecordOnId(1)
         database.drop()
 
+    def testE7Mapper(self):
+        mmToTest = [0, 1, 123, 9999]
+        sideToTest = ["L", "R"]
+        database = DatabaseSQLite('patients_test_database')
+        database.connect(temporaryDatabase=True)
+        database.createPatientTable('patients')
+        PESEL = "0123456789{}"
+        for index, mm in enumerate(mmToTest):
+            PESELtoTest = PESEL.format(str(index))
+            sideIdx = index % 2
+            database.storePatientRecord(json.loads(generateTestRecordE7(PESELtoTest, str(mm),
+                                                                        sideToTest[sideIdx])))
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(MapperE7(diagnosticRecord))
+            e7 = mapper.dataMappedToAlgoInterface()
+            obtainedMm = e7["E7mm"]  # keys: 'left' and 'right'
+            obtainedMiddleLine = e7["E7middleLine"]  # keys: 'left' or 'right'
+            self.assertEqual(obtainedMm["right"], mm, "Unexpected E7 value after mapping")
+            self.assertEqual(obtainedMm["left"], mm, "Unexpected E7 value after mapping")
+            obtainedMiddleLineSide = list(obtainedMiddleLine.keys())[0]
+            obtainedMiddleLineMm = obtainedMiddleLine[obtainedMiddleLineSide]
+            toTest = "left"
+            if sideToTest[sideIdx] == "R":
+                toTest = "right"
+            self.assertEqual(obtainedMiddleLineSide, toTest, "Unexpected E7 value after mapping")
+            self.assertEqual(obtainedMiddleLineMm, mm, "Unexpected E7 value after mapping")
+        database.drop()
+
 
 if __name__ == '__main__':
     unittest.main()

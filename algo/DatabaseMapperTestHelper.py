@@ -12,8 +12,10 @@ TEST_DIAGNOSTIC_DATA = '''"InitialData": {"pain_side": "TEST_pain_side", "right_
 "max_passive_opening_right": "TEST_opening",
 "max_active_opening_left": "TEST_opening", "max_passive_opening_left": "TEST_opening"},
 "IncisorsGap": {"vertical_mm": "TEST_incisal_overlap",
-"horizontal_mm": "34", "middle_line_mm": "123", "middle_line_alignment_relative_to_the_jaw": "R"},
-"VerticalMandibleMovements": {"right_side_mm": "45", "left_side_mm": "45", "forward_mm": "66",
+"horizontal_mm": "34", "middle_line_mm": "TEST_middle_line_mm",
+"middle_line_alignment_relative_to_the_jaw": "TEST_middle_line_side"},
+"VerticalMandibleMovements": {"right_side_mm": "TEST_vertical_mandible_mm", "left_side_mm": "TEST_vertical_mandible_mm",
+"forward_mm": "66",
 "right_side_right": "None", "left_side_right": "Muscle", "forward_right": "Join", "right_side_left": "Muscle",
 "left_side_left": "Join", "forward_left": "Both"}, "SoundsInJointAbduction": {"left_opening_mm": "TEST_abduction_mm",
 "left_closing_mm": "TEST_abduction_mm", "right_opening_mm": "TEST_abduction_mm", "right_closing_mm": "TEST_abduction_mm",
@@ -67,5 +69,11 @@ def generateTestRecordE5(pesel: str, mm: str, pain: str):
 
 
 def generateTestRecordE6(pesel: str, mm: str, elimination: str, sound: str):
-     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_abduction_mm", mm).\
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_abduction_mm", mm).\
         replace("TEST_elimination", elimination).replace("TEST_abduction_sound", sound)
+
+
+def generateTestRecordE7(pesel: str, mm: str, middleLineSide: str):
+    assert(middleLineSide in ["L", "R"])
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_vertical_mandible_mm", mm). \
+        replace("TEST_middle_line_mm", mm).replace("TEST_middle_line_side", middleLineSide)

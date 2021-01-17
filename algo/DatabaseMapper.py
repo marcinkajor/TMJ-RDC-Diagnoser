@@ -143,6 +143,25 @@ class MapperE6(MapperStrategy):
                     "closing_right": self.e6ClosingRight, "closing_left": self.e6ClosingLeft}
 
 
+class MapperE7(MapperStrategy):
+    def __init__(self, fromDatabase: dict):
+        self.mapping = {
+            "L": "left",
+            "R": "right"
+        }
+        self.middleLineMm = int(fromDatabase["IncisorsGap"]["middle_line_mm"])
+        self.rightMm = int(fromDatabase["VerticalMandibleMovements"]["right_side_mm"])
+        self.leftMm = int(fromDatabase["VerticalMandibleMovements"]["left_side_mm"])
+        readAlignmentSide = fromDatabase["IncisorsGap"]["middle_line_alignment_relative_to_the_jaw"]
+        self.side = self.mapping[readAlignmentSide]
+
+    def get(self):
+        return {
+                "E7mm": {"right": self.rightMm, "left": self.leftMm},
+                "E7middleLine": {self.side: self.middleLineMm}
+        }
+
+
 class DatabaseRecordMapper:
     def __init__(self, mappingStrategy: MapperStrategy):
         self.mapper = mappingStrategy
