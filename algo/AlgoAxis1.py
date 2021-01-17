@@ -180,32 +180,31 @@ class E6:
 class E7:
     # Nested private struct-like class 7d (midline deviation)
     class _7d:
-        def __init__(self, side, mm):
-            self.side = side
-            self.mm = mm
+        def __init__(self, e7dict: dict):
+            self.side = list(e7dict.keys())[0]
+            self.mm = e7dict[self.side]
 
-    def __init__(self, a, b, d):
+    def __init__(self, a, b, d: dict):
         if not isinstance(a + b, int):
             raise Exception("7a and 7b must be integers [mm]")
         self.a7 = a
         self.b7 = b
-        if not isinstance(d, str):
-            raise Exception("7d must be a string object")
-        self.d7 = self._validateAndParse7d(d)
+        self.d7 = self._7d(d)
 
-    def _validateAndParse7d(self, d):
+    @staticmethod
+    def validateAndParse7d(d):
         rgx = re.compile("^(?:\d|)\d[L|R]|^0$")
         if not rgx.match(d):
             raise Exception("7d must be formed by (R or L) and int [mm]")
         if d == "0":
             # TODO: replace side string with Optional utility
-            return self._7d("right", 0)
+            return {"right": 0}
         if "R" in d:
             mm, rest = d.split("R")
-            return self._7d("right", int(mm))
+            return {"right": int(mm)}
         else:
             mm, rest = d.split("L")
-        return self._7d("left", int(mm))
+        return {"left": int(mm)}
 
     def correctedExcursion(self, side):
         if side not in ["left", "right"]:
