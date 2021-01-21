@@ -237,8 +237,8 @@ class E8:
     def __init__(self):
         self.horizontalMoves = {"left": {}, "right": {}, "protrusion": {}}
 
-    def addSideMoveSound(self, symptom, examination):
-        right, left = parseRLExamination(examination)
+    def addSideMoveSound(self, symptom: str, examination: (int, int)):
+        right, left = examination
         self.horizontalMoves[symptom] = {"right": right, "left": left}
 
     def getSound(self, symptom, side):

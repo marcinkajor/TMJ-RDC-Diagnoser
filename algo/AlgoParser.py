@@ -43,9 +43,12 @@ def parseDatabase(axis1_data, palpation_data, q_data):
         e7d = E7.validateAndParse7d(str(axis1Row[Keys.Axis1.E7d]))
         e7 = E7(int(axis1Row[Keys.Axis1.E7a]), int(axis1Row[Keys.Axis1.E7b]), e7d)
         e8 = E8()
-        e8.addSideMoveSound("right", str(axis1Row[Keys.Axis1.E8R]))
-        e8.addSideMoveSound("left", str(axis1Row[Keys.Axis1.E8L]))
-        e8.addSideMoveSound("protrusion", str(axis1Row[Keys.Axis1.E8Pr]))
+        e8right = parseRLExamination(str(axis1Row[Keys.Axis1.E8R]))
+        e8left = parseRLExamination(str(axis1Row[Keys.Axis1.E8L]))
+        e8protrusion = parseRLExamination(str(axis1Row[Keys.Axis1.E8Pr]))
+        e8.addSideMoveSound("right", e8right)
+        e8.addSideMoveSound("left", e8left)
+        e8.addSideMoveSound("protrusion", e8protrusion)
         axis1_whole = AxisOne([e2, e3, e4, e5, e6, e7, e8])
         axisOnes[axis1Row[Keys.Axis1.ID]] = axis1_whole
         # parse and combine palpations
