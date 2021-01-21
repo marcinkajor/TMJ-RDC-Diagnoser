@@ -162,6 +162,32 @@ class MapperE7(MapperStrategy):
         }
 
 
+class MapperE8(MapperStrategy):
+    def __init__(self, fromDatabase: dict):
+        self.right = MapperE8.Movement("right_side", fromDatabase)
+        self.left = MapperE8.Movement("left_side", fromDatabase)
+        self.forward = MapperE8.Movement("forward", fromDatabase)
+
+    def get(self) -> dict:
+        return {"e8right": self.right.get(), "e8left": self.left.get(), "e8forward": self.forward.get()}
+
+    # helper class:
+    class Movement:
+        def __init__(self, movement: str, fromDatabase: dict):
+            self.mapping = {
+                "None": 0,
+                "Muscle": 1,
+                "Joint": 2,
+                "Both": 3
+            }
+            assert (movement in ["right_side", "left_side", "forward"])
+            self.right = self.mapping[fromDatabase["VerticalMandibleMovements"][movement + "_right"]]
+            self.left = self.mapping[fromDatabase["VerticalMandibleMovements"][movement + "_left"]]
+
+        def get(self) -> dict:
+            return {"right": self.right, "left": self.left}
+
+
 class DatabaseRecordMapper:
     def __init__(self, mappingStrategy: MapperStrategy):
         self.mapper = mappingStrategy

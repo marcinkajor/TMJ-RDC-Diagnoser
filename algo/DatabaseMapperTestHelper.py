@@ -16,8 +16,10 @@ TEST_DIAGNOSTIC_DATA = '''"InitialData": {"pain_side": "TEST_pain_side", "right_
 "middle_line_alignment_relative_to_the_jaw": "TEST_middle_line_side"},
 "VerticalMandibleMovements": {"right_side_mm": "TEST_vertical_mandible_mm", "left_side_mm": "TEST_vertical_mandible_mm",
 "forward_mm": "66",
-"right_side_right": "None", "left_side_right": "Muscle", "forward_right": "Join", "right_side_left": "Muscle",
-"left_side_left": "Join", "forward_left": "Both"}, "SoundsInJointAbduction": {"left_opening_mm": "TEST_abduction_mm",
+"right_side_right": "TEST_vertical_movement_pain", "left_side_right": "TEST_vertical_movement_pain",
+"forward_right": "TEST_vertical_movement_pain", "right_side_left": "TEST_vertical_movement_pain",
+"left_side_left": "TEST_vertical_movement_pain", "forward_left": "TEST_vertical_movement_pain"},
+"SoundsInJointAbduction": {"left_opening_mm": "TEST_abduction_mm",
 "left_closing_mm": "TEST_abduction_mm", "right_opening_mm": "TEST_abduction_mm", "right_closing_mm": "TEST_abduction_mm",
 "left_opening_click_elimination": "TEST_elimination",
 "left_closing_click_elimination": "TEST_elimination", "right_opening_click_elimination": "TEST_elimination",
@@ -77,3 +79,7 @@ def generateTestRecordE7(pesel: str, mm: str, middleLineSide: str):
     assert(middleLineSide in ["L", "R"])
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_vertical_mandible_mm", mm). \
         replace("TEST_middle_line_mm", mm).replace("TEST_middle_line_side", middleLineSide)
+
+
+def generateTestRecordE8(pesel: str, pain: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_vertical_movement_pain", pain)

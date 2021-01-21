@@ -174,6 +174,30 @@ class TestMapper(unittest.TestCase):
             self.assertEqual(obtainedMiddleLineMm, mm, "Unexpected E7 value after mapping")
         database.drop()
 
+    def testE8Mapper(self):
+        painToTest = {
+            "None": 0,
+            "Muscle": 1,
+            "Joint": 2,
+            "Both": 3
+        }
+        database = DatabaseSQLite('patients_test_database')
+        database.connect(temporaryDatabase=True)
+        database.createPatientTable('patients')
+        PESEL = "0123456789{}"
+        for index, pain in enumerate(painToTest):
+            PESELtoTest = PESEL.format(str(index))
+            # we need to test values as strings
+            database.storePatientRecord(json.loads(generateTestRecordE8(PESELtoTest, pain)))
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(MapperE8(diagnosticRecord))
+            e8 = mapper.dataMappedToAlgoInterface()
+            for movement in e8:
+                for side in e8[movement]:
+                    self.assertEqual(e8[movement][side], painToTest[pain], "Unexpected E8 value after mapping")
+        database.drop()
+
 
 if __name__ == '__main__':
     unittest.main()
