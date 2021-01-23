@@ -7,6 +7,33 @@ import json
 
 
 class TestMapper(unittest.TestCase):
+    def palpationTester(self, name, mapperBuilder, generator):
+        assert name in ["E9", "E10a", "E10b", "E11"]
+        painToTest = {
+            "No Pain": 0,
+            "Mild Pain": 1,
+            "Moderate Pain": 2,
+            "Severe Pain": 3
+        }
+        database = DatabaseSQLite('patients_test_database')
+        database.connect(temporaryDatabase=True)
+        database.createPatientTable('patients')
+        PESEL = "0123456789{}"
+        for index, pain in enumerate(painToTest):
+            PESELtoTest = PESEL.format(str(index))
+            database.storePatientRecord(json.loads(generator(PESELtoTest, pain)))
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(mapperBuilder(diagnosticRecord))
+            obtained = mapper.dataMappedToAlgoInterface()
+            right = obtained["right"]
+            left = obtained["left"]
+            self.assertEqual(len(right), len(left))
+            for idx in range(0, len(right) - 1):
+                self.assertEqual(right[idx], painToTest[pain], "Unexpected {} value after mapping".format(name))
+                self.assertEqual(left[idx], painToTest[pain], "Unexpected {} value after mapping".format(name))
+        database.drop()
+
     def testE2Mapper(self):
         optionsToTest = {
             "None": 0,
@@ -118,7 +145,6 @@ class TestMapper(unittest.TestCase):
             "Yes": 1,
             "Not Applicable": 8
         }
-        mmToTest = [0, 1, 123, 9999]
         database = DatabaseSQLite('patients_test_database')
         database.connect(temporaryDatabase=True)
         database.createPatientTable('patients')
@@ -197,6 +223,18 @@ class TestMapper(unittest.TestCase):
                 for side in e8[movement]:
                     self.assertEqual(e8[movement][side], painToTest[pain], "Unexpected E8 value after mapping")
         database.drop()
+
+    def testPalpationE9Mapper(self):
+        self.palpationTester("E9", MapperPalpationE9.build, generateTestRecordPalpationE9)
+
+    def testPalpationE10aMapper(self):
+        self.palpationTester("E10a", MapperPalpationE10a.build, generateTestRecordPalpationE10a)
+
+    def testPalpationE10bMapper(self):
+        self.palpationTester("E10b", MapperPalpationE10b.build, generateTestRecordPalpationE10b)
+
+    def testPalpationE11Mapper(self):
+        self.palpationTester("E11", MapperPalpationE11.build, generateTestRecordPalpationE11)
 
 
 if __name__ == '__main__':

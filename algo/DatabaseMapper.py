@@ -188,6 +188,110 @@ class MapperE8(MapperStrategy):
             return {"right": self.right, "left": self.left}
 
 
+class MapperPalpation(MapperStrategy):
+    def __init__(self):
+        self.mapping = {
+            "No Pain": 0,
+            "Mild Pain": 1,
+            "Moderate Pain": 2,
+            "Severe Pain": 3
+        }
+        self.right = []
+        self.left = []
+
+
+class MapperPalpationE9(MapperPalpation):
+    def __init__(self, fromDatabase: dict):
+        super().__init__()
+        self.keysNoPostfix = ["temporalis_posterior_back_of_temple_", "temporalis_middle_middle_of_temple_",
+                              "temporalis_anterior_front_of_temple_", "masseter_superior_cheek_under_cheekbone_",
+                              "masseter_middle_cheek_side_of_face_", "masseter_inferior_cheek_jawline_",
+                              "posterior_mandibular_region_jaw_throat_region_", "submandibular_region_under_chin_"
+                              ]
+        for key in self.keysNoPostfix:
+            rightValue = self.mapping[fromDatabase["PalpationPainExtraoralMuscles"][key + "right"]]
+            leftValue = self.mapping[fromDatabase["PalpationPainExtraoralMuscles"][key + "left"]]
+            self.right.append(rightValue)
+            self.left.append(leftValue)
+
+    def get(self):
+        return {"right": self.right, "left": self.left}
+
+    @staticmethod
+    def build(fromDatabase: dict):
+        return MapperPalpationE9(fromDatabase)
+
+
+# TODO: get rid of MapperPalpation boiler plate code:
+class MapperPalpationE10a(MapperPalpation):
+    def __init__(self, fromDatabase: dict):
+        super().__init__()
+        key = "lateral_pole_outside_"
+        rightValue = self.mapping[fromDatabase["PalpationPainJointPain"][key + "right"]]
+        leftValue = self.mapping[fromDatabase["PalpationPainJointPain"][key + "left"]]
+        self.right.append(rightValue)
+        self.left.append(leftValue)
+
+    def get(self):
+        return {"right": self.right, "left": self.left}
+
+    @staticmethod
+    def build(fromDatabase: dict):
+        return MapperPalpationE10a(fromDatabase)
+
+
+class MapperPalpationE10b(MapperPalpation):
+    def __init__(self, fromDatabase: dict):
+        super().__init__()
+        key = "lateral_pole_outside_"
+        rightValue = self.mapping[fromDatabase["PalpationPainJointPain"][key + "right"]]
+        leftValue = self.mapping[fromDatabase["PalpationPainJointPain"][key + "left"]]
+        self.right.append(rightValue)
+        self.left.append(leftValue)
+
+    def get(self):
+        return {"right": self.right, "left": self.left}
+
+    @staticmethod
+    def build(fromDatabase: dict):
+        return MapperPalpationE10a(fromDatabase)
+
+
+class MapperPalpationE10b(MapperPalpation):
+    def __init__(self, fromDatabase: dict):
+        super().__init__()
+        key = "posterior_attachment_inside_ear_"
+        rightValue = self.mapping[fromDatabase["PalpationPainJointPain"][key + "right"]]
+        leftValue = self.mapping[fromDatabase["PalpationPainJointPain"][key + "left"]]
+        self.right.append(rightValue)
+        self.left.append(leftValue)
+
+    def get(self):
+        return {"right": self.right, "left": self.left}
+
+    @staticmethod
+    def build(fromDatabase: dict):
+        return MapperPalpationE10b(fromDatabase)
+
+
+class MapperPalpationE11(MapperPalpation):
+    def __init__(self, fromDatabase: dict):
+        super().__init__()
+        self.keysNoPostfix = ["lateral_pterygoid_area_behind_upper_molars_", "tendon_of_temporalis_tendon_"]
+        for key in self.keysNoPostfix:
+            rightValue = self.mapping[fromDatabase["PalpationPainIntraoralPain"][key + "right"]]
+            leftValue = self.mapping[fromDatabase["PalpationPainIntraoralPain"][key + "left"]]
+            self.right.append(rightValue)
+            self.left.append(leftValue)
+
+    def get(self):
+        return {"right": self.right, "left": self.left}
+
+    @staticmethod
+    def build(fromDatabase: dict):
+        return MapperPalpationE11(fromDatabase)
+
+
 class DatabaseRecordMapper:
     def __init__(self, mappingStrategy: MapperStrategy):
         self.mapper = mappingStrategy

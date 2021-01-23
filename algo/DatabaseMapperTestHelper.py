@@ -32,22 +32,28 @@ TEST_DIAGNOSTIC_DATA = '''"InitialData": {"pain_side": "TEST_pain_side", "right_
 "frontal_pupil_line_beneath_hair_right": "Mild pain", "vertex_1_cm_lateral_from_skull_prominence_right":
 "Moderate pain", "mastoid_process_lateral_upper_part_left": "Severe pain",
 "frontal_pupil_line_beneath_hair_left": "Moderate pain", "vertex_1_cm_lateral_from_skull_prominence_left": "Mild pain"},
-"PalpationPainExtraoralMuscles": {"temporalis_posterior_back_of_temple_right": "No pain",
-"temporalis_middle_middle_of_temple_right": "Mild pain", "temporalis_anterior_front_of_temple_right": "Moderate pain",
-"masseter_superior_cheek_under_cheekbone_right": "Severe pain",
-"masseter_middle_cheek_side_of_face_right": "Moderate pain", "masseter_inferior_cheek_jawline_right": "Mild pain",
-"posterior_mandibular_region_jaw_throat_region_right": "No pain", "submandibular_region_under_chin_right": "Mild pain",
-"temporalis_posterior_back_of_temple_left": "No pain", "temporalis_middle_middle_of_temple_left": "Mild pain",
-"temporalis_anterior_front_of_temple_left": "Moderate pain",
-"masseter_superior_cheek_under_cheekbone_left": "Severe pain",
-"masseter_middle_cheek_side_of_face_left": "Moderate pain", "masseter_inferior_cheek_jawline_left": "Mild pain",
-"posterior_mandibular_region_jaw_throat_region_left": "No pain", "submandibular_region_under_chin_left": "Mild pain"},
-"PalpationPainJointPain": {"lateral_pole_outside_right": "No pain",
-"posterior_attachment_inside_ear_right": "Mild pain", "lateral_pole_outside_left": "Moderate pain",
-"posterior_attachment_inside_ear_left": "Severe pain"},
-"PalpationPainIntraoralPain": {"lateral_pterygoid_area_behind_upper_molars_right": "No pain",
-"tendon_of_temporalis_tendon_right": "Mild pain", "lateral_pterygoid_area_behind_upper_molars_left": "Moderate pain",
-"tendon_of_temporalis_tendon_left": "Severe pain"}'''
+"PalpationPainExtraoralMuscles": {"temporalis_posterior_back_of_temple_right": "TEST_palpation_E9",
+"temporalis_middle_middle_of_temple_right": "TEST_palpation_E9", "temporalis_anterior_front_of_temple_right":
+"TEST_palpation_E9", "masseter_superior_cheek_under_cheekbone_right": "TEST_palpation_E9",
+"masseter_middle_cheek_side_of_face_right": "TEST_palpation_E9",
+"masseter_inferior_cheek_jawline_right": "TEST_palpation_E9",
+"posterior_mandibular_region_jaw_throat_region_right": "TEST_palpation_E9",
+"submandibular_region_under_chin_right": "TEST_palpation_E9",
+"temporalis_posterior_back_of_temple_left": "TEST_palpation_E9",
+"temporalis_middle_middle_of_temple_left": "TEST_palpation_E9",
+"temporalis_anterior_front_of_temple_left": "TEST_palpation_E9",
+"masseter_superior_cheek_under_cheekbone_left": "TEST_palpation_E9",
+"masseter_middle_cheek_side_of_face_left": "TEST_palpation_E9",
+"masseter_inferior_cheek_jawline_left": "TEST_palpation_E9",
+"posterior_mandibular_region_jaw_throat_region_left": "TEST_palpation_E9",
+"submandibular_region_under_chin_left": "TEST_palpation_E9"},
+"PalpationPainJointPain": {"lateral_pole_outside_right": "TEST_palpation_E10a",
+"posterior_attachment_inside_ear_right": "TEST_palpation_E10b", "lateral_pole_outside_left": "TEST_palpation_E10a",
+"posterior_attachment_inside_ear_left": "TEST_palpation_E10b"},
+"PalpationPainIntraoralPain": {"lateral_pterygoid_area_behind_upper_molars_right": "TEST_palpation_E11",
+"tendon_of_temporalis_tendon_right": "TEST_palpation_E11",
+"lateral_pterygoid_area_behind_upper_molars_left": "TEST_palpation_E11",
+"tendon_of_temporalis_tendon_left": "TEST_palpation_E11"}'''
 
 TEST_RECORD = '''{{{}, {}}}'''.format(TEST_PERSONAL_DATA, TEST_DIAGNOSTIC_DATA)
 
@@ -83,3 +89,19 @@ def generateTestRecordE7(pesel: str, mm: str, middleLineSide: str):
 
 def generateTestRecordE8(pesel: str, pain: str):
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_vertical_movement_pain", pain)
+
+
+def generateTestRecordPalpationE9(pesel: str, pain: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_palpation_E9", pain)
+
+
+def generateTestRecordPalpationE10a(pesel: str, pain: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_palpation_E10a", pain)
+
+
+def generateTestRecordPalpationE10b(pesel: str, pain: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_palpation_E10b", pain)
+
+
+def generateTestRecordPalpationE11(pesel: str, pain: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_palpation_E11", pain)
