@@ -3,7 +3,8 @@
 TEST_PERSONAL_DATA = '''"PersonalData": {"name": "John", "surname": "Wick", "age": "45", "pesel": "TEST_pesel",
                         "sex": "Male"}'''
 
-TEST_DIAGNOSTIC_DATA = '''"InitialData": {"pain_side": "TEST_pain_side", "right_pain_area": "TEST_right_pain_area",
+TEST_DIAGNOSTIC_DATA = '''"Questionnaire": {"pain_symptoms": "TEST_Q", "opening_problems": "TEST_Q"},
+"InitialData": {"pain_side": "TEST_pain_side", "right_pain_area": "TEST_right_pain_area",
 "left_pain_area": "TEST_left_pain_area"},
 "AbductionMovement": {"abduction_movement": "TEST_abduction_movement", "specific_description": ""},
 "VerticalMovementRange": {"used_foretooth": "21", "no_pain_opening_mm": "TEST_vertical_movement_range_mm",
@@ -105,3 +106,7 @@ def generateTestRecordPalpationE10b(pesel: str, pain: str):
 
 def generateTestRecordPalpationE11(pesel: str, pain: str):
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_palpation_E11", pain)
+
+
+def generateTestRecordQ(pesel: str, q: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_Q", q)

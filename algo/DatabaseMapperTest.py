@@ -236,6 +236,26 @@ class TestMapper(unittest.TestCase):
     def testPalpationE11Mapper(self):
         self.palpationTester("E11", MapperPalpationE11.build, generateTestRecordPalpationE11)
 
+    def testQuestionnaireMapper(self):
+        toTest = {
+            "No": 0,
+            "Yes": 1,
+        }
+        database = DatabaseSQLite('patients_test_database')
+        database.connect(temporaryDatabase=True)
+        database.createPatientTable('patients')
+        PESEL = "0123456789{}"
+        for index, value in enumerate(toTest):
+            PESELtoTest = PESEL.format(str(index))
+            database.storePatientRecord(json.loads(generateTestRecordQ(PESELtoTest, value)))
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(MapperQ(diagnosticRecord))
+            q = mapper.dataMappedToAlgoInterface()
+            self.assertEqual(q["q3"], toTest[value], "Unexpected Q value after mapping")
+            self.assertEqual(q["q14"], toTest[value], "Unexpected Q value after mapping")
+        database.drop()
+
 
 if __name__ == '__main__':
     unittest.main()

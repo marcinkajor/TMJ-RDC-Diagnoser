@@ -292,6 +292,19 @@ class MapperPalpationE11(MapperPalpation):
         return MapperPalpationE11(fromDatabase)
 
 
+class MapperQ(MapperStrategy):
+    def __init__(self, fromDatabase: dict):
+        self.mapping = {
+            "No": 0,
+            "Yes": 1
+        }
+        self.q3 = self.mapping[fromDatabase["Questionnaire"]["pain_symptoms"]]
+        self.q14 = self.mapping[fromDatabase["Questionnaire"]["opening_problems"]]
+
+    def get(self):
+        return {"q3": self.q3, "q14": self.q14}
+
+
 class DatabaseRecordMapper:
     def __init__(self, mappingStrategy: MapperStrategy = None):
         self.mapper = mappingStrategy
