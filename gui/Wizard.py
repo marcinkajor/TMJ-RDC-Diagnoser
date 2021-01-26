@@ -23,6 +23,7 @@ class Wizard(QWizard):
         # self.setPixmap(QWizard.WatermarkPixmap, QPixmap('steth.png'))
         # TODO: add all necessary pages
         self.addPage(PersonalDataPage())
+        self.addPage(QuestionnairePage())
         self.addPage(InitialDataPage())
         self.addPage(AbductionMovementPage())
         self.addPage(VerticalMovementRangePage())
