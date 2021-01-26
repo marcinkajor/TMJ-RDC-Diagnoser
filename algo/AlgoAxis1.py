@@ -132,7 +132,7 @@ class E6:
             "close": "E6b"
         }
         self.sound = {}
-        self.clickElimination = None
+        self.clickElimination = {}
 
     def addSound(self, side, move, soundType, mm):
         if side not in ["left", "right"]:
@@ -151,10 +151,12 @@ class E6:
         else:
             self.sound[side] = {move: self.PatoSound(soundType, mm)}
 
-    def addClickElimination(self, state):
+    def addClickElimination(self, side, state):
         if state not in ["T", "N", "0"]:
             raise Exception("Click elimination must be T or N !(or 0)")
-        self.clickElimination = True if (state == "T") else False
+        if side not in ["left", "right"]:
+            raise Exception("Side must be left or right")
+        self.clickElimination[side] = True if (state == "T") else False
 
     def __getSound(self, side, move):
         if side not in ["left", "right"] or move not in ["open", "close"]:
@@ -162,8 +164,10 @@ class E6:
                             move must be either 'open' or 'close'")
         return self.sound[side][move]
 
-    def isClickElimination(self):
-        return self.clickElimination
+    def isClickElimination(self, side):
+        if side not in ["left", "right"]:
+            raise Exception("Side must be left or right")
+        return self.clickElimination[side]
 
     def isSound(self, side, move, soundType=SoundType.ANY):
         sound = self.__getSound(side, move)

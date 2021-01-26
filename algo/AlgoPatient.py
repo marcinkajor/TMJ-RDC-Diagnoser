@@ -60,7 +60,7 @@ class Patient:
         if opening and closing:
             diff = self.axisOne.E6.getMeasure(side, "open") - self.axisOne.E6.getMeasure(side, "close")
             if diff >= self.LIMIT_DIFF_E6:
-                if self.axisOne.E6.isClickElimination():
+                if self.axisOne.E6.isClickElimination(side):
                     return "IIa {} DD with reduction".format(side)
                 else:
                     if self.__isE8Relevant(side, SoundType.CLICK):

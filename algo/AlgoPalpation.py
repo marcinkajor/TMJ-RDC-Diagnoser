@@ -21,7 +21,7 @@ class Palpation:
 
 
 class Palpations:
-    def __init__(self, patientSurname, palpType):
+    def __init__(self, palpType, patientSurname=""):
         self.patientSurname = patientSurname
         self.allowedNames = ["E9", "E10a", "E10b", "E11"]
         if palpType not in self.allowedNames:

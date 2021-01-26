@@ -39,7 +39,9 @@ def parseDatabase(axis1_data, palpation_data, q_data):
         e6.addSound("left", "close", int(axis1Row[Keys.Axis1.E6bL]), int(axis1Row[Keys.Axis1.E6bLmm]))
         e6.addSound("right", "open", int(axis1Row[Keys.Axis1.E6aR]), int(axis1Row[Keys.Axis1.E6aRmm]))
         e6.addSound("right", "close", int(axis1Row[Keys.Axis1.E6bR]), int(axis1Row[Keys.Axis1.E6bRmm]))
-        e6.addClickElimination(str(axis1Row[Keys.Axis1.E6c]))
+        # TODO: the excel file does not distinguish side... one column is missing, so pass the same value for both sides
+        e6.addClickElimination("left", str(axis1Row[Keys.Axis1.E6c]))
+        e6.addClickElimination("right", str(axis1Row[Keys.Axis1.E6c]))
         e7d = E7.validateAndParse7d(str(axis1Row[Keys.Axis1.E7d]))
         e7 = E7(int(axis1Row[Keys.Axis1.E7a]), int(axis1Row[Keys.Axis1.E7b]), e7d)
         e8 = E8()

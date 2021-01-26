@@ -34,6 +34,7 @@ class Wizard(QWizard):
         self.addPage(PalpationPainExtraoralMusclesPage())
         self.addPage(PalpationPainJointPainPage())
         self.addPage(PalpationPainIntraoralPainPage())
+        self.addPage(DiagnosisPage())
 
     def getVisitedFieldsNames(self):
         fields = []

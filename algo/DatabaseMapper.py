@@ -135,12 +135,12 @@ class MapperE6(MapperStrategy):
             }
             self.e6OpeningRight = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["right_opening_click_elimination"]]
             self.e6OpeningLeft = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["left_opening_click_elimination"]]
-            self.e6ClosingRight = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["right_closing_click_elimination"]]
-            self.e6ClosingLeft = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["left_closing_click_elimination"]]
+            # TODO closing is supported only in Polish version of RDC form
+            # self.e6ClosingRight = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["right_closing_click_elimination"]]
+            # self.e6ClosingLeft = clickEliminationMap[fromDatabase["SoundsInJointAbduction"]["left_closing_click_elimination"]]
 
         def get(self) -> dict:
-            return {"opening_right": self.e6OpeningRight, "opening_left": self.e6OpeningLeft,
-                    "closing_right": self.e6ClosingRight, "closing_left": self.e6ClosingLeft}
+            return {"opening_right": self.e6OpeningRight, "opening_left": self.e6OpeningLeft}
 
 
 class MapperE7(MapperStrategy):
@@ -157,7 +157,7 @@ class MapperE7(MapperStrategy):
 
     def get(self):
         return {
-                "E7mm": {"right": self.rightMm, "left": self.leftMm},
+                "E7mm": {"right": self.rightMm, "left": self.leftMm},  # right - 7a, left - 7b
                 "E7middleLine": {self.side: self.middleLineMm}
         }
 
@@ -166,7 +166,7 @@ class MapperE8(MapperStrategy):
     def __init__(self, fromDatabase: dict):
         self.right = MapperE8.Movement("right_side", fromDatabase)
         self.left = MapperE8.Movement("left_side", fromDatabase)
-        self.forward = MapperE8.Movement("forward", fromDatabase)
+        self.forward = MapperE8.Movement("forward", fromDatabase)  # forward=protrusion
 
     def get(self) -> dict:
         return {"e8right": self.right.get(), "e8left": self.left.get(), "e8forward": self.forward.get()}
@@ -293,8 +293,12 @@ class MapperPalpationE11(MapperPalpation):
 
 
 class DatabaseRecordMapper:
-    def __init__(self, mappingStrategy: MapperStrategy):
+    def __init__(self, mappingStrategy: MapperStrategy = None):
         self.mapper = mappingStrategy
 
     def dataMappedToAlgoInterface(self) -> dict:
         return self.mapper.get()
+
+    def setMapper(self, mappingStrategy: MapperStrategy):
+        self.mapper = mappingStrategy
+        return self
