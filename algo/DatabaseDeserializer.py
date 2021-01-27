@@ -13,5 +13,8 @@ class DatabaseDeserializer:
     def getDiagnosticDataJsonStr(self, patientPesel: str) -> str:
         return self._deserializeDatabaseRecord(patientPesel)[self.columnNames.index('diagnostic_data')]
 
+    def getSurname(self, patientPesel: str) -> str:
+        return self._deserializeDatabaseRecord(patientPesel)[self.columnNames.index('surname')]
+
     def _deserializeDatabaseRecord(self, patientPesel) -> str:
         return self.database.getPatientRecordByPesel(patientPesel)
