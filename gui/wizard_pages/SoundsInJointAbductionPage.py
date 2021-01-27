@@ -28,7 +28,7 @@ class SoundsInJointAbductionPage(BasePage):
         self.soundsOptions = Options("Sounds", ["Left opening", "Left closing", "Right opening", "Right closing"],
                                      ["None", "Click", "Coarse Crepitus", "Fine Crepitus"], self.defaultFont)
 
-        rawSoundsOptions = self.clickEliminationOptions.getOptions()
+        rawSoundsOptions = self.soundsOptions.getOptions()
         for option in rawSoundsOptions:
             buttonGroup = rawSoundsOptions[option]
             self.registerField(option + ' sound', buttonGroup, property="checkedButton",
