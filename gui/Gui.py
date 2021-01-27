@@ -5,6 +5,9 @@ import pandas as pd
 from algo.AlgoHelpers import removeEmpty, printDiagnosis
 from algo.AlgoPatient import formPatientsDict
 from algo.AlgoParser import parseDatabase
+from algo.Diagnoser import Diagnoser
+from algo.DatabaseDeserializer import DatabaseDeserializer
+from algo.DatabaseMapper import DatabaseRecordMapper
 import csv
 import os
 import ctypes
@@ -25,6 +28,8 @@ class Window(QMainWindow):
         self.database = database
         self.database.connect()
         self.database.createPatientTable('patients')
+
+        self.diagnoser = Diagnoser(DatabaseRecordMapper(), DatabaseDeserializer(self.database))
 
         self.setGeometry(50, 50, 500, 300)
         self.setWindowTitle("TMJ RDC Diagnoser")
@@ -162,9 +167,11 @@ class Window(QMainWindow):
 
     def _parsePatientRecord(self):
         try:
-            pass # TODO: verify mapper class
+            diagnose = self.diagnoser.getPatientDiagnosis("91121108015", Diagnoser.DiagnosisType.AXIS_12_LEFT)
+            print(diagnose)
         except Exception as e:
             print(e)
+
 
 def run():
     app = QtWidgets.QApplication(sys.argv)
