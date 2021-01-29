@@ -36,7 +36,7 @@ class E2:
             3: "both",
         }
         if not isinstance(painSource, int) or painSource not in range(0, 4):
-            raise Exception("Pain source must be a integer in range (0,3)")
+            raise Exception("Pain source must be a integer in range <0,3>")
         self.painSourceNumeric = painSource
         self.painSide = self._sourceMap[painSource]
 
@@ -66,8 +66,8 @@ class E4:
     # A class representing lateral deviation as (0-5) integer
     def __init__(self, lateralDeviation):
         if (not isinstance(lateralDeviation, int)
-                or lateralDeviation not in range(0, 5)):
-            raise Exception("Lateral deviation must be an integer (0-5)")
+                or lateralDeviation not in range(0, 6)):
+            raise Exception("Lateral deviation must be an integer <0-5>")
             self.lateralDeviation = lateralDeviation
 
     def getRealDeviation(self):
@@ -141,8 +141,8 @@ class E6:
         if move not in ["open", "close"]:
             raise Exception("Invalid move: {}, allowed: {}"
                             .format(move, ["open", "closed"]))
-        if not isinstance(soundType, int) or soundType not in range(0, 3):
-            raise Exception("Sound type must be an integer (0:3)!")
+        if not isinstance(soundType, int) or soundType not in range(0, 4):
+            raise Exception("Sound type must be an integer <0:3>!")
         if not isinstance(mm, int):
             raise Exception("Range must be an integer!")
         if side in self.sound:
