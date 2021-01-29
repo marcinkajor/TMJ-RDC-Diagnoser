@@ -76,7 +76,7 @@ class Diagnoser:
         left = e9data["left"]
         if len(right) != len(left):
             raise Exception("Left size must equal right")
-        for i in len(r):
+        for i in range(0, len(right)):
             palpationsE9.addPalpation(Palpation(right[i], left[i]))
 
         palpationsE10a = Palpations("E10a")
@@ -85,7 +85,7 @@ class Diagnoser:
         left = e10aData["left"]
         if len(right) != len(left):
             raise Exception("Left size must equal right")
-        for i in len(r):
+        for i in range(0, len(right)):
             palpationsE10a.addPalpation(Palpation(right[i], left[i]))
 
         palpationsE10b = Palpations("E10b")
@@ -94,7 +94,7 @@ class Diagnoser:
         left = e10bData["left"]
         if len(right) != len(left):
             raise Exception("Left size must equal right")
-        for i in len(r):
+        for i in range(0, len(right)):
             palpationsE10b.addPalpation(Palpation(right[i], left[i]))
 
         palpationsE11 = Palpations("E11")
@@ -103,7 +103,7 @@ class Diagnoser:
         left = e11data["left"]
         if len(right) != len(left):
             raise Exception("Left size must equal right")
-        for i in len(r):
+        for i in range(0, len(right)):
             palpationsE11.addPalpation(Palpation(right[i], left[i]))
 
         palpations_whole = combinePalpations(palpationsE9, palpationsE10a, palpationsE10b, palpationsE11)
@@ -112,4 +112,4 @@ class Diagnoser:
         qData = self.mapper.setMapper(MapperQ(diagnosticRecord)).dataMappedToAlgoInterface()
         q = Q(self.deserializer.getSurname(pesel), qData["q3"], qData["q14"])
 
-        return Patient(personalData=None, axisOne=axis1_whole, palpations=palpations_whole, q=q)
+        return Patient(idx=None, personalData=None, axisOne=axis1_whole, palpations=palpations_whole, q=q)
