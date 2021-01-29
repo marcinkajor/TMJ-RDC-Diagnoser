@@ -12,7 +12,7 @@ class VerticalMandibleMovementsPage(PageWithSideOptions):
         for lineEditName in mmLineEdits:
             self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName])
 
-        self.painOptions = SideOptions(["Right side", "Left side", "Forward"], ["None", "Muscle", "Join", "Both"],
+        self.painOptions = SideOptions(["Right side", "Left side", "Forward"], ["None", "Muscle", "Joint", "Both"],
                                        self.defaultFont)
         self.registerSideOptions()
 

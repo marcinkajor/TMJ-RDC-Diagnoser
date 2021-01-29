@@ -63,7 +63,7 @@ class InitialDataPage(BasePage):
         self.leftOptionsGroup.enableAll(left)
 
     def _generatePainOptions(self):
-        options = ["Muscle", "Join", "Both"]
+        options = ["Muscles", "Jaw Joint", "Both"]
         self.optionsGridLayout = QHBoxLayout()
 
         self.rightOptionsGroup = ButtonGroupBox("Right", options, layout='horizontal')
