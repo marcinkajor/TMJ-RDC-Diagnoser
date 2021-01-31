@@ -11,7 +11,7 @@ class PalpationPainPage(PageWithSideOptions):
         self.setTitle("7. Muscles & joint palpation pain")
 
         self.painOptions = SideOptions(options, painSeverities, self.defaultFont, "BKD protocol")
-        self.registerSideOptions()
+        self.registerSideOptions(isMandatory=True)
 
         additionalInfo = QLabel(label)
         additionalInfo.setFont(QFont("Arial", 11, QFont.Bold))

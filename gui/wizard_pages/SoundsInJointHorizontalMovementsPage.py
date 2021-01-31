@@ -9,7 +9,7 @@ class SoundsInJointHorizontalMovementsPage(PageWithSideOptions):
 
         self.painOptions = SideOptions(["Right side", "Left side", "Forward"],
                                        ["None", "Click", "Coarse Crepitus", "Fine Crepitus"], self.defaultFont)
-        self.registerSideOptions()
+        self.registerSideOptions(isMandatory=True)
 
         additionalInfo = QLabel("(>=2 x 3 attempts, during movement)")
         additionalInfo.setFont(self.defaultFont)

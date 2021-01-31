@@ -18,7 +18,7 @@ class PersonalDataPage(BasePage):
         self.sexButtonGroup = ButtonGroupBox("Sex", ["Male", "Female"], layout='vertical')
         self.registerField("Sex", self.sexButtonGroup,
                            property="checkedButton",  # This is a property defined in ButtonGroupBox!!
-                           changedSignal=self.sexButtonGroup.buttonClicked)
+                           changedSignal=self.sexButtonGroup.buttonClicked, mandatory=True)
         self.vboxLayout.addWidget(self.sexButtonGroup.getWidget())
 
         self.setLayout(self.vboxLayout)
@@ -32,7 +32,7 @@ class PersonalDataPage(BasePage):
             newLineEdit.setObjectName(name)
             newLineEdit.setValidator(validator)
             formItems[item[0]] = newLineEdit
-            self.registerField(name, newLineEdit)
+            self.registerField(name, newLineEdit, mandatory=True)
         return formItems
 
     def onNextClicked(self):

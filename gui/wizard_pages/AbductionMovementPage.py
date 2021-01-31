@@ -19,7 +19,7 @@ class AbductionMovementPage(BasePage):
         self.movementBox = ButtonGroupBox("Abduction movement", self.Mapping.keys(), layout="vertical")
         self.registerField("Abduction movement", self.movementBox,
                            property="checkedButton",
-                           changedSignal=self.movementBox.buttonClicked)
+                           changedSignal=self.movementBox.buttonClicked, mandatory=True)
 
         self.otherDescription = QLineEdit()
         self.registerField("Specific description", self.otherDescription)
@@ -37,6 +37,8 @@ class AbductionMovementPage(BasePage):
         self.setLayout(layout)
 
     def _onButtonGroupChanged(self):
+        # TODO: This signal should be emitted automatically by Qt... but it's not when reentering the wizard
+        self.completeChanged.emit()
         currentOption = self.movementBox.checkedButton
         if currentOption is None:
             return

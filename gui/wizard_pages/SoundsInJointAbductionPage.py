@@ -23,7 +23,7 @@ class SoundsInJointAbductionPage(BasePage):
         for option in rawClickEliminationOptions:
             buttonGroup = rawClickEliminationOptions[option]
             self.registerField(option + ' click elimination', buttonGroup, property="checkedButton",
-                               changedSignal=buttonGroup.buttonClicked)
+                               changedSignal=buttonGroup.buttonClicked, mandatory=True)
 
         self.soundsOptions = Options("Sounds", ["Left opening", "Left closing", "Right opening", "Right closing"],
                                      ["None", "Click", "Coarse Crepitus", "Fine Crepitus"], self.defaultFont)
@@ -32,7 +32,7 @@ class SoundsInJointAbductionPage(BasePage):
         for option in rawSoundsOptions:
             buttonGroup = rawSoundsOptions[option]
             self.registerField(option + ' sound', buttonGroup, property="checkedButton",
-                               changedSignal=buttonGroup.buttonClicked)
+                               changedSignal=buttonGroup.buttonClicked, mandatory=True)
 
         additionalInfo = QLabel("(2 ouf of 3 attempts, palpation during abduction)")
         additionalInfo.setFont(self.defaultFont)
