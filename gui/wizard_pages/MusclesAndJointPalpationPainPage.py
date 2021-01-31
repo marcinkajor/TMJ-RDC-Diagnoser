@@ -2,7 +2,7 @@ from gui.wizard_pages.BaseWizardPage import PageWithSideOptions
 from gui.wizard_pages.WizardPagesHelpers import *
 from PyQt5.QtGui import QFont
 
-painSeverities = ["No pain", "Mild pain", "Moderate pain", "Severe pain"]
+painSeverities = ["No Pain", "Mild Pain", "Moderate Pain", "Severe Pain"]
 
 
 class PalpationPainPage(PageWithSideOptions):

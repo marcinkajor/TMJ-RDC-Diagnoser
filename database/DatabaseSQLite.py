@@ -17,10 +17,13 @@ class DatabaseSQLite(DatabaseInterface):
                        "sex": "TEXT",
                        "diagnostic_data": "TEXT"}
 
-    def connect(self):
+    def connect(self, temporaryDatabase=False):
         try:
-            databaseName = self.name + '.db'
-            self.connection = sqlite3.connect('../{}'.format(databaseName))
+            if not temporaryDatabase:
+                databaseName = self.name + '.db'
+                self.connection = sqlite3.connect('../{}'.format(databaseName))
+            else:
+                self.connection = sqlite3.connect(":memory:")
             self.executor = self.connection.cursor()
         except Exception as e:
             print("Cannot connect to the DB: {}".format(e))
@@ -106,6 +109,31 @@ class DatabaseSQLite(DatabaseInterface):
         try:
             with self.connection:
                 self.executor.execute('''DELETE FROM patients WHERE patient_id = ?''', (patientId,))
+        except Exception as e:
+            print(e)
+
+    def getPatientRecordByPesel(self, pesel):
+        try:
+            with self.connection:
+                self.executor.execute('''SELECT * FROM patients WHERE PESEL=?''', (pesel,))
+                records = self.executor.fetchall()
+                # fetchall returns all matching rows, assume that the PESEL number is unique
+                if len(records) > 1:
+                    raise Exception("Duplicated PESELs in the database")
+                else:
+                    return records[0]
+        except Exception as e:
+            print(e)
+
+    def getColumnNames(self):
+        columnNames = []
+        try:
+            with self.connection:
+                self.executor.execute('''PRAGMA table_info(patients)''')
+                tableData = self.executor.fetchall()
+                for column in tableData:
+                    columnNames.append(column[1])
+                return columnNames
         except Exception as e:
             print(e)
 

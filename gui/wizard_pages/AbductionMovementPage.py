@@ -3,14 +3,13 @@ from gui.wizard_pages.WizardPagesHelpers import *
 
 
 class AbductionMovementPage(BasePage):
-
     Mapping = {
         "Straight": 0,
-        "Uncorrected right deviation": 1,
-        "'S' left corrected deviation": 2,
-        "Non-corrected left deviation": 3,
-        "'S' left corrected deviation": 4,
-        "Other": 5
+        "Right Lateral Deviation (uncorrected)": 1,
+        "Right Corrected ('S') Deviation": 2,
+        "Left Lateral Deviation (uncorrected)": 3,
+        "Left Corrected ('S') Deviation": 4,
+        "Other Type": 5
     }
 
     def __init__(self):

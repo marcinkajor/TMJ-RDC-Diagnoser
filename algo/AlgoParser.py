@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 18 22:39:22 2020
-
-@author: Marcin
-"""
-
 from algo.AlgoHelpers import parseRLExamination
 from algo.AlgoAxis1 import E2, E3, E4, E5, E6, E7, E8
 from algo.AlgoAxis1 import AxisOne
@@ -27,7 +20,7 @@ def parseDatabase(axis1_data, palpation_data, q_data):
         # parse and combine AxisI data
         e2 = E2(int(axis1Row[Keys.Axis1.E2]))
         e3 = E3()
-        # TODO: encaplulate parseRLExamination in E3!
+        # TODO: encapsulate parseRLExamination in E3!
         e3left, e3right = parseRLExamination(str(axis1Row[Keys.Axis1.E3]))
         e3.addPain("left", e3left)
         e3.addPain("right", e3right)
@@ -37,20 +30,27 @@ def parseDatabase(axis1_data, palpation_data, q_data):
         e5.addOpening("E5b", int(axis1Row[Keys.Axis1.E5b]))
         e5.addOpening("E5c", int(axis1Row[Keys.Axis1.E5c]))
         e5.addOpening("E5d", int(axis1Row[Keys.Axis1.E5d]))
-        e5.addOpeningPain("passive", str(axis1Row[Keys.Axis1.E5cP]))
-        e5.addOpeningPain("active", str(axis1Row[Keys.Axis1.E5bA]))
+        e5passiveRight, e5passiveLeft = parseRLExamination(str(axis1Row[Keys.Axis1.E5cP]))
+        e5activeRight, e5activeLeft = parseRLExamination(str(axis1Row[Keys.Axis1.E5cP]))
+        e5.addOpeningPain("passive", e5passiveRight, e5passiveLeft)
+        e5.addOpeningPain("active", e5activeRight, e5activeLeft)
         e6 = E6()
         e6.addSound("left", "open", int(axis1Row[Keys.Axis1.E6aL]), int(axis1Row[Keys.Axis1.E6aLmm]))
         e6.addSound("left", "close", int(axis1Row[Keys.Axis1.E6bL]), int(axis1Row[Keys.Axis1.E6bLmm]))
         e6.addSound("right", "open", int(axis1Row[Keys.Axis1.E6aR]), int(axis1Row[Keys.Axis1.E6aRmm]))
         e6.addSound("right", "close", int(axis1Row[Keys.Axis1.E6bR]), int(axis1Row[Keys.Axis1.E6bRmm]))
-        e6.addClickEliminaton(str(axis1Row[Keys.Axis1.E6c]))
-        e7 = E7(int(axis1Row[Keys.Axis1.E7a]), int(axis1Row[Keys.Axis1.E7b]),
-                str(axis1Row[Keys.Axis1.E7d]))
+        # TODO: the excel file does not distinguish side... one column is missing, so pass the same value for both sides
+        e6.addClickElimination("left", str(axis1Row[Keys.Axis1.E6c]))
+        e6.addClickElimination("right", str(axis1Row[Keys.Axis1.E6c]))
+        e7d = E7.validateAndParse7d(str(axis1Row[Keys.Axis1.E7d]))
+        e7 = E7(int(axis1Row[Keys.Axis1.E7a]), int(axis1Row[Keys.Axis1.E7b]), e7d)
         e8 = E8()
-        e8.addSideMoveSound("right", str(axis1Row[Keys.Axis1.E8R]))
-        e8.addSideMoveSound("left", str(axis1Row[Keys.Axis1.E8L]))
-        e8.addSideMoveSound("protrusion", str(axis1Row[Keys.Axis1.E8Pr]))
+        e8right = parseRLExamination(str(axis1Row[Keys.Axis1.E8R]))
+        e8left = parseRLExamination(str(axis1Row[Keys.Axis1.E8L]))
+        e8protrusion = parseRLExamination(str(axis1Row[Keys.Axis1.E8Pr]))
+        e8.addSideMoveSound("right", e8right)
+        e8.addSideMoveSound("left", e8left)
+        e8.addSideMoveSound("protrusion", e8protrusion)
         axis1_whole = AxisOne([e2, e3, e4, e5, e6, e7, e8])
         axisOnes[axis1Row[Keys.Axis1.ID]] = axis1_whole
         # parse and combine palpations

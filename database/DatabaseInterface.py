@@ -2,7 +2,7 @@ class DatabaseInterface:
     def __init__(self):
         pass
 
-    def connect(self):
+    def connect(self, temporaryDatabase=False):
         pass
 
     def createPatientTable(self, name):
@@ -33,6 +33,9 @@ class DatabaseInterface:
         pass
 
     def getPatientRecordByPesel(self, pesel):
+        pass
+
+    def getColumnNames(self):
         pass
 
     def drop(self):

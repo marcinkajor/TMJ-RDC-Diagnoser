@@ -8,7 +8,7 @@ class SoundsInJointHorizontalMovementsPage(PageWithSideOptions):
         self.setTitle("6. Sounds in the joint: horizontal movements")
 
         self.painOptions = SideOptions(["Right side", "Left side", "Forward"],
-                                       ["None", "Click", "Clear crepitations", "Slight crepitations"], self.defaultFont)
+                                       ["None", "Click", "Coarse Crepitus", "Fine Crepitus"], self.defaultFont)
         self.registerSideOptions(isMandatory=True)
 
         additionalInfo = QLabel("(>=2 x 3 attempts, during movement)")

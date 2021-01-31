@@ -24,6 +24,7 @@ class Wizard(QWizard):
         # self.setPixmap(QWizard.WatermarkPixmap, QPixmap('steth.png'))
         # TODO: add all necessary pages
         self.addPage(PersonalDataPage())
+        self.addPage(QuestionnairePage())
         self.addPage(InitialDataPage())
         self.addPage(AbductionMovementPage())
         self.addPage(VerticalMovementRangePage())
@@ -35,6 +36,7 @@ class Wizard(QWizard):
         self.addPage(PalpationPainExtraoralMusclesPage())
         self.addPage(PalpationPainJointPainPage())
         self.addPage(PalpationPainIntraoralPainPage())
+        self.addPage(DiagnosisPage())
 
     def getVisitedFieldsNames(self):
         fields = []
@@ -48,7 +50,7 @@ class Wizard(QWizard):
             fields += self.page(pageId).fields
         return fields
 
-    def getParametersMap(self):
+    def getParametersMap(self) -> dict:
         parametersMap = {}
         for name in self.getVisitedFieldsNames():
             splitName = name.split('/')
