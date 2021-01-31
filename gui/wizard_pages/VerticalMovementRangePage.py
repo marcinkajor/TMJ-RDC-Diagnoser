@@ -10,19 +10,19 @@ class VerticalMovementRangePage(PageWithSideOptions):
         self.usedForetooth = ButtonGroupBox("Used foretooth", ["11", "21"], layout='horizontal')
         self.registerField("Used foretooth", self.usedForetooth,
                            property="checkedButton",
-                           changedSignal=self.usedForetooth.buttonClicked)
+                           changedSignal=self.usedForetooth.buttonClicked, mandatory=True)
         self.usedForetooth.getWidget().setFont(self.defaultFont)
 
         self.mm = MmInputs(["No pain opening", "Max active opening", "Max passive opening"], "mm", self.defaultFont)
 
         mmLineEdits = self.mm.getAllLineEdits()
         for lineEditName in mmLineEdits:
-            self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName])
+            self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName], mandatory=True)
 
         rightLayout = QHBoxLayout()
         self.painOptions = SideOptions(["Max active opening", "Max passive opening"],
                                        ["None", "Muscle", "Join", "Both"], self.defaultFont)
-        self.registerSideOptions()
+        self.registerSideOptions(isMandatory=True)
 
         rightLayout.addLayout(self.painOptions.getLayout())
         mainLayout = QGridLayout()

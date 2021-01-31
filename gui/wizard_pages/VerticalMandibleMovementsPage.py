@@ -10,11 +10,11 @@ class VerticalMandibleMovementsPage(PageWithSideOptions):
         self.mm = MmInputs(["Right side", "Left side", "Forward"], "mm", self.defaultFont)
         mmLineEdits = self.mm.getAllLineEdits()
         for lineEditName in mmLineEdits:
-            self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName])
+            self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName], mandatory=True)
 
         self.painOptions = SideOptions(["Right side", "Left side", "Forward"], ["None", "Muscle", "Join", "Both"],
                                        self.defaultFont)
-        self.registerSideOptions()
+        self.registerSideOptions(isMandatory=True)
 
         rightLayout = QHBoxLayout()
         rightLayout.addLayout(self.painOptions.getLayout())
