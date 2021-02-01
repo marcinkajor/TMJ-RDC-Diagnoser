@@ -6,7 +6,7 @@ Created on Thu Oct 22 23:01:01 2020
 """
 
 from PyQt5.QtWidgets import QWizard
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QCloseEvent
 from gui.wizard_pages import *
 
 
@@ -87,3 +87,7 @@ class Wizard(QWizard):
     def _onCancelClicked(self):
         self._clearAllPages()
         self.restart()
+
+    def closeEvent(self, event: QCloseEvent):
+        self._onCancelClicked()
+        event.accept()
