@@ -16,7 +16,7 @@ class QuestionnairePage(BasePage):
         self.painSymptomsBox = ButtonGroupBox("Pain symptoms", ["Yes", "No"], layout='horizontal')
         self.registerField("Pain symptoms", self.painSymptomsBox,
                            property="checkedButton",
-                           changedSignal=self.painSymptomsBox.buttonClicked)
+                           changedSignal=self.painSymptomsBox.buttonClicked, mandatory=True)
         self.painSymptomsBox.getWidget().setFont(self.defaultFont)
 
         self.label2 = QLabel("Has the patient ever had jaw lock or catch so that it won't open all the way?")
@@ -24,7 +24,7 @@ class QuestionnairePage(BasePage):
         self.openingProblemsBox = ButtonGroupBox("Opening problems", ["Yes", "No"], layout='horizontal')
         self.registerField("Opening problems", self.openingProblemsBox,
                            property="checkedButton",
-                           changedSignal=self.openingProblemsBox.buttonClicked)
+                           changedSignal=self.openingProblemsBox.buttonClicked, mandatory=True)
         self.openingProblemsBox.getWidget().setFont(self.defaultFont)
 
         self.layout.addWidget(self.label1)
