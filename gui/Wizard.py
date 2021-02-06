@@ -7,12 +7,14 @@ Created on Thu Oct 22 23:01:01 2020
 
 from PyQt5.QtWidgets import QWizard
 from PyQt5.QtGui import QIcon, QCloseEvent
+from algo.Diagnoser import Diagnoser
 from gui.wizard_pages import *
 
 
 class Wizard(QWizard):
-    def __init__(self, database):
+    def __init__(self, database, diagnoser: Diagnoser):
         super().__init__()
+        self.diagoser = diagnoser
         self.database = database
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
         self.button(QWizard.FinishButton).clicked.connect(self._onFinishedClicked)
@@ -36,7 +38,6 @@ class Wizard(QWizard):
         self.addPage(PalpationPainExtraoralMusclesPage())
         self.addPage(PalpationPainJointPainPage())
         self.addPage(PalpationPainIntraoralPainPage())
-        self.addPage(DiagnosisPage())
 
     def getVisitedFieldsNames(self):
         fields = []
@@ -78,8 +79,18 @@ class Wizard(QWizard):
 
     def _onFinishedClicked(self):
         try:
-            self.database.storePatientRecord(self.getParametersMap())
+            patientRecord = self.getParametersMap()
+            axis11 = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_11)
+            axis12r = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_12_RIGHT)
+            axis12l = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_12_LEFT)
+            axis13r = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_13_RIGHT)
+            axis13l = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_13_LEFT)
+            diagnosis = {"Axis11": axis11, "Axis12Right": axis12r, "Axis12Left": axis12l,
+                         "Axis13Right": axis13r, "Axis13Left": axis13l}
+            patientRecord["Diagnosis"] = diagnosis
+            self.database.storePatientRecord(patientRecord)
         except Exception as e:
+            self.database.storePatientRecord(self.getParametersMap())
             print(e)
         self._clearAllPages()
         self.restart()

@@ -10,11 +10,13 @@ class MapperStrategy:
             try:
                 value = main[minorKey]
                 if value is None or len(value) == 0:
-                    raise KeyError
-            except KeyError as e:
+                    # these 2 parameters may not be present if the 'pain_side' is 'None'
+                    if minorKey != "right_pain_area" and minorKey != "left_pain_area":
+                        raise KeyError
+            except KeyError:
                 print("Missing a valid value under minor key: {} in {}".format(minorKey, majorKey))
         except KeyError as e:
-            print("Missing major key: {}".format(majorKey))
+            print("Missing major key: {}, Error: {}".format(majorKey, str(e)))
         return value
 
     def get(self):

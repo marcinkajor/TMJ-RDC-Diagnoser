@@ -42,10 +42,11 @@ class Window(QtWidgets.QMainWindow):
 
         self.tableWidget = QtWidgets.QTableWidget()
         self.tableWidget.setRowCount(0)
-        self.tableWidget.setColumnCount(7)  # TODO: 8 in case the diagnostic data is included
+        self.tableWidget.setColumnCount(8)  # TODO: 9 in case the diagnostic data is included
         self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableWidget.setHorizontalHeaderLabels(["Patient ID", "Name", "Surname", "Age", "PESEL",
                                                     "Gender",
+                                                    "Diagnosis",
                                                     # "Diagnostic data", # TODO: for now skip diagnostic data
                                                     "Timestamp"])
         self.tableWidget.verticalHeader().setVisible(False)
@@ -87,7 +88,9 @@ class Window(QtWidgets.QMainWindow):
         fileMenu.addAction(addRecord)
         fileMenu.addAction(parsePatientRecord)
 
-        self.navigator = Wizard(self.database)
+        # TODO: avoid duplicating the database in the Wizard (Diagnoser already have it)
+        # maybe the Diagnoser shall not use the database object at all
+        self.navigator = Wizard(self.database, self.diagnoser)
 
         self.show()
 
@@ -189,11 +192,9 @@ class Window(QtWidgets.QMainWindow):
         if len(databaseData) == 0:
             self._emptyDatabaseNotification()
         for rowIdx, rowData in enumerate(databaseData):
-            # TODO: this is to exclude diagnostic data
-            lastColumn = rowData[-1]
-            rowData = rowData[:-2]
             rowData = list(rowData)
-            rowData.append(lastColumn)
+            # TODO: this is to exclude diagnostic data
+            del(rowData[6])
             #
             self.tableWidget.insertRow(rowIdx)
             for columnIdx, data in enumerate(rowData):

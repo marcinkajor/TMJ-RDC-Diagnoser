@@ -21,18 +21,15 @@ class Diagnoser:
         self.mapper = mapper
         self.deserializer = deserializer
 
-    def getPatientDiagnosis(self, pesel: str, diagnosisType: DiagnosisType):
-        patient = self._loadPatient(pesel)
-        return {
-            Diagnoser.DiagnosisType.AXIS_11: patient.getAxisI1Diagnosis(),
-            Diagnoser.DiagnosisType.AXIS_12_LEFT: patient.getAxisI2Diagnosis("left"),
-            Diagnoser.DiagnosisType.AXIS_12_RIGHT:  patient.getAxisI2Diagnosis("right"),
-            Diagnoser.DiagnosisType.AXIS_13_LEFT: patient.getAxisI3Diagnosis("left"),
-            Diagnoser.DiagnosisType.AXIS_13_RIGHT: patient.getAxisI3Diagnosis("right"),
-        }[diagnosisType]
+    def getPatientDiagnosisFromPesel(self, pesel: str, diagnosisType: DiagnosisType) -> str:
+        patient = self._loadPatientFromPesel(pesel)
+        return self._getDiagnosis(patient, diagnosisType)
 
-    def _loadPatient(self, pesel: str):
+    def _loadPatientFromPesel(self, pesel: str):
         diagnosticRecord = self.deserializer.getDiagnosticDataDict(pesel)
+        return self._loadPatient(diagnosticRecord)
+
+    def _loadPatient(self, diagnosticRecord: dict) -> Patient:
         # parse and combine AxisI data
         e2data = self.mapper.setMapper(MapperE2(diagnosticRecord)).dataMappedToAlgoInterface()
         e2 = E2(e2data["E2"])
@@ -110,6 +107,20 @@ class Diagnoser:
 
         # set q
         qData = self.mapper.setMapper(MapperQ(diagnosticRecord)).dataMappedToAlgoInterface()
-        q = Q(self.deserializer.getSurname(pesel), qData["q3"], qData["q14"])
+        q = Q(diagnosticRecord["PersonalData"]["surname"], qData["q3"], qData["q14"])
 
         return Patient(idx=None, personalData=None, axisOne=axis1_whole, palpations=palpations_whole, q=q)
+
+    @staticmethod
+    def _getDiagnosis(patient: Patient, diagnosisType: DiagnosisType) -> str:
+        return {
+            Diagnoser.DiagnosisType.AXIS_11: patient.getAxisI1Diagnosis(),
+            Diagnoser.DiagnosisType.AXIS_12_LEFT: patient.getAxisI2Diagnosis("left"),
+            Diagnoser.DiagnosisType.AXIS_12_RIGHT:  patient.getAxisI2Diagnosis("right"),
+            Diagnoser.DiagnosisType.AXIS_13_LEFT: patient.getAxisI3Diagnosis("left"),
+            Diagnoser.DiagnosisType.AXIS_13_RIGHT: patient.getAxisI3Diagnosis("right"),
+        }[diagnosisType]
+
+    def getPatientDiagnosisFromRecord(self, record: dict, diagnosisType: DiagnosisType) -> str:
+        patient = self._loadPatient(record)
+        return self._getDiagnosis(patient, diagnosisType)

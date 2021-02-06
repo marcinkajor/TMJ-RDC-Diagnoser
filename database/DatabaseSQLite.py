@@ -15,7 +15,8 @@ class DatabaseSQLite(DatabaseInterface):
                        "age": "INTEGER",
                        "PESEL": "INTEGER",
                        "sex": "TEXT",
-                       "diagnostic_data": "TEXT"}
+                       "diagnostic_data": "TEXT",
+                       "diagnosis": "TEXT"}
 
     def connect(self, temporaryDatabase=False):
         try:
@@ -42,10 +43,13 @@ class DatabaseSQLite(DatabaseInterface):
 
     def storePatientRecord(self, patientRecord: dict):
         personalData = patientRecord['PersonalData']
+        diagnosis = patientRecord['Diagnosis']
         basicData = list(personalData.values())
         del(patientRecord['PersonalData'])
+        del(patientRecord['Diagnosis'])
         values = basicData
         values.append(json.dumps(patientRecord))
+        values.append(json.dumps(diagnosis))
         cmdSchema = 'INSERT INTO patients VALUES ({})'
         questionMarks = ('?,' * len(values))[:-1]
         cmd = cmdSchema.format(questionMarks)
@@ -86,7 +90,7 @@ class DatabaseSQLite(DatabaseInterface):
         except Exception as e:
             print(e)
 
-    def addPatientSingleAttribute(self, patientId, attribute, value):
+    def addPatientSingleAttribute(self, attribute, value):
         try:
             with self.connection:
                 self.executor.execute('''INSERT INTO patients({}}) VALUES (?)'''.format(attribute), (value,))
