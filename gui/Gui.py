@@ -1,5 +1,4 @@
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog
 import sys
 import pandas as pd
 from algo.AlgoHelpers import removeEmpty, printDiagnosis
@@ -21,7 +20,7 @@ if os.name == 'nt':  # 'nt' - Windows, 'posix' - Linux
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
-class Window(QMainWindow):
+class Window(QtWidgets.QMainWindow):
     def __init__(self, database: DatabaseInterface):
         super().__init__()
 
@@ -31,34 +30,51 @@ class Window(QMainWindow):
 
         self.diagnoser = Diagnoser(DatabaseRecordMapper(), DatabaseDeserializer(self.database))
 
-        self.setGeometry(50, 50, 500, 300)
+        self.setGeometry(50, 50, 1500, 800)
         self.setWindowTitle("TMJ RDC Diagnoser")
         self.setWindowIcon(QtGui.QIcon('../tooth.png'))
         self.path = ""
 
-        openAction = QAction("Open", self)
+        self.centralWidget = QtWidgets.QWidget()
+        self.centralLayout = QtWidgets.QVBoxLayout(self.centralWidget)
+        self.setCentralWidget(self.centralWidget)
+
+        self.tableWidget = QtWidgets.QTableWidget()
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setColumnCount(7)  # TODO: 8 in case the diagnostic data is included
+        self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.tableWidget.setHorizontalHeaderLabels(["Patient ID", "Name", "Surname", "Age", "PESEL",
+                                                    "Gender",
+                                                    # "Diagnostic data", # TODO: for now skip diagnostic data
+                                                    "Timestamp"])
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.centralLayout.addWidget(self.tableWidget)
+
+        openAction = QtWidgets.QAction("Open", self)
         openAction.setShortcut("Ctrl+O")
         openAction.setStatusTip('Open the examination file')
         openAction.triggered.connect(self._openDiagnosticFile)
 
-        addRecord = QAction("Add patient record", self)
+        addRecord = QtWidgets.QAction("Add patient record", self)
         addRecord.setShortcut("Ctrl+p")
         addRecord.setStatusTip('Add patient record')
         addRecord.triggered.connect(self.addPatientRecord)
 
-        quitAction = QAction("Quit", self)
+        quitAction = QtWidgets.QAction("Quit", self)
         quitAction.setShortcut("Ctrl+Q")
         quitAction.setStatusTip('Quit the application')
         quitAction.triggered.connect(QtWidgets.QApplication.quit)
 
-        generateDiagnosisAction = QAction("Generate diagnostic file", self)
+        generateDiagnosisAction = QtWidgets.QAction("Generate diagnostic file", self)
         generateDiagnosisAction.setStatusTip('Generate the diagnosis based on the the examination file')
         generateDiagnosisAction.triggered.connect(self._generateDiagnosticReport)
 
-        parsePatientRecord = QAction("Parse patient record", self)
-        parsePatientRecord.setShortcut("Ctrl+r")
-        parsePatientRecord.setStatusTip('Parse patient record')
-        parsePatientRecord.triggered.connect(self._parsePatientRecord)
+        parsePatientRecord = QtWidgets.QAction("Show database", self)
+        parsePatientRecord.setShortcut("Ctrl+l")
+        parsePatientRecord.setStatusTip('Load patient database')
+        parsePatientRecord.triggered.connect(self._loadDatabase)
 
         self.statusBar()
 
@@ -79,16 +95,16 @@ class Window(QMainWindow):
 
     # handle close button of the main window (quit QApplication properly)
     def closeEvent(self, event):
-        reply = QMessageBox.question(self, "Window close", "Close the Diagnoser?",
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
+        reply = QtWidgets.QMessageBox.question(self, "Window close", "Close the Diagnoser?",
+                                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
             event.accept()
             QtWidgets.QApplication.quit()
         else:
             event.ignore()
 
     def _openDiagnosticFile(self):
-        fileName, fileFilter = QFileDialog.getOpenFileName(self, 'Open File',
+        fileName, fileFilter = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File',
                                                            filter="Excel files (*.xls)")
         try:
             # Import datasets as separate spreadsheets
@@ -107,16 +123,16 @@ class Window(QMainWindow):
             persons, axisOnes, palpations, qs = parseDatabase(axis1_data, palpation_data, q_data)
             patients = formPatientsDict(persons, axisOnes, palpations, qs)
             self.patients = patients
-            QMessageBox.question(self, "TMJ RDC Diagnoser", "File loaded properly",
-                                 QMessageBox.Ok, QMessageBox.Ok)
+            QtWidgets.QMessageBox.question(self, "TMJ RDC Diagnoser", "File loaded properly",
+                                           QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Ok)
             printDiagnosis(patients)
         except Exception as e:
             print(e)
-            QMessageBox.question(self, "TMJ RDC Diagnoser", "Wrong file format!",
-                                 QMessageBox.Ok, QMessageBox.Ok)
+            QtWidgets.QMessageBox.question(self, "TMJ RDC Diagnoser", "Wrong file format!",
+                                 QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Ok)
 
     def _generateDiagnosticReport(self):
-        path, fileFilter = QFileDialog.getSaveFileName(self, 'Save file',
+        path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file',
                                                        filter="Excel file (*.xlsx) ;; CSV (*.csv)")
 
         filename, fileExtension = os.path.splitext(path)
@@ -165,12 +181,19 @@ class Window(QMainWindow):
         df.to_excel(writer, sheet_name='Diagnosis', index=False)
         writer.save()
 
-    def _parsePatientRecord(self):
-        try:
-            diagnose = self.diagnoser.getPatientDiagnosis("91121108015", Diagnoser.DiagnosisType.AXIS_12_LEFT)
-            print(diagnose)
-        except Exception as e:
-            print(e)
+    def _loadDatabase(self):
+        self.tableWidget.setRowCount(0)
+        databaseData = self.database.getData()
+        for rowIdx, rowData in enumerate(databaseData):
+            # TODO: this is to exclude diagnostic data
+            lastColumn = rowData[-1]
+            rowData = rowData[:-2]
+            rowData = list(rowData)
+            rowData.append(lastColumn)
+            #
+            self.tableWidget.insertRow(rowIdx)
+            for columnIdx, data in enumerate(rowData):
+                self.tableWidget.setItem(rowIdx, columnIdx, QtWidgets.QTableWidgetItem(str(data)))
 
 
 def run():
