@@ -6,9 +6,9 @@ import json
 class DatabaseSQLite(DatabaseInterface):
     def __init__(self, name):
         super().__init__()
+        self.fileName = name
         self.connection = None
         self.executor = None
-        self.name = name
         # TODO: What about other SQL column attributes?
         self.inputs = {"name": "TEXT",
                        "surname": "TEXT",
@@ -20,7 +20,7 @@ class DatabaseSQLite(DatabaseInterface):
     def connect(self, temporaryDatabase=False):
         try:
             if not temporaryDatabase:
-                databaseName = self.name + '.db'
+                databaseName = self.fileName + '.db'
                 self.connection = sqlite3.connect('../{}'.format(databaseName))
             else:
                 self.connection = sqlite3.connect(":memory:")
@@ -136,6 +136,16 @@ class DatabaseSQLite(DatabaseInterface):
                 return columnNames
         except Exception as e:
             print(e)
+
+    def getData(self) -> list:
+        result = None
+        try:
+            with self.connection:
+                result = self.executor.execute('''SELECT * FROM (patients)''')
+                return result.fetchall()
+        except Exception as e:
+            print(e)
+            return result.fetchall()
 
     def drop(self):
         self.executor.execute('''DROP TABLE IF EXISTS patients''')
