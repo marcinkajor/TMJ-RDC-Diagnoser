@@ -32,7 +32,8 @@ class Window(QtWidgets.QMainWindow):
 
         self.setGeometry(50, 50, 1500, 800)
         self.setWindowTitle("TMJ RDC Diagnoser")
-        self.setWindowIcon(QtGui.QIcon('../tooth.png'))
+        self.icon = QtGui.QIcon('../tooth.png')
+        self.setWindowIcon(self.icon)
         self.path = ""
 
         self.centralWidget = QtWidgets.QWidget()
@@ -96,7 +97,8 @@ class Window(QtWidgets.QMainWindow):
     # handle close button of the main window (quit QApplication properly)
     def closeEvent(self, event):
         reply = QtWidgets.QMessageBox.question(self, "Window close", "Close the Diagnoser?",
-                                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             event.accept()
             QtWidgets.QApplication.quit()
@@ -129,7 +131,7 @@ class Window(QtWidgets.QMainWindow):
         except Exception as e:
             print(e)
             QtWidgets.QMessageBox.question(self, "TMJ RDC Diagnoser", "Wrong file format!",
-                                 QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Ok)
+                                           QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Ok)
 
     def _generateDiagnosticReport(self):
         path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file',
@@ -184,6 +186,8 @@ class Window(QtWidgets.QMainWindow):
     def _loadDatabase(self):
         self.tableWidget.setRowCount(0)
         databaseData = self.database.getData()
+        if len(databaseData) == 0:
+            self._emptyDatabaseNotification()
         for rowIdx, rowData in enumerate(databaseData):
             # TODO: this is to exclude diagnostic data
             lastColumn = rowData[-1]
@@ -194,6 +198,13 @@ class Window(QtWidgets.QMainWindow):
             self.tableWidget.insertRow(rowIdx)
             for columnIdx, data in enumerate(rowData):
                 self.tableWidget.setItem(rowIdx, columnIdx, QtWidgets.QTableWidgetItem(str(data)))
+
+    def _emptyDatabaseNotification(self):
+        message = QtWidgets.QMessageBox(self)
+        message.setWindowIcon(self.icon)
+        message.setWindowTitle("Info")
+        message.setText("Empty database")
+        message.exec_()
 
 
 def run():
