@@ -11,6 +11,7 @@ import csv
 import os
 import ctypes
 from gui.Wizard import Wizard
+import json
 from database import *
 
 # needed for custom toolbar icon
@@ -52,7 +53,12 @@ class Window(QtWidgets.QMainWindow):
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
         self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.tableWidget.cellDoubleClicked.connect(self._onCellDoubleClicked)
         self.centralLayout.addWidget(self.tableWidget)
+
+        self.diagnosticMessage = QtWidgets.QMessageBox(self)
+        self.diagnosticMessage.setWindowIcon(self.icon)
+        self.diagnosticMessage.setWindowTitle("TMJ RDC Diagnosis")
 
         openAction = QtWidgets.QAction("Open", self)
         openAction.setShortcut("Ctrl+O")
@@ -206,6 +212,32 @@ class Window(QtWidgets.QMainWindow):
         message.setWindowTitle("Info")
         message.setText("Empty database")
         message.exec_()
+
+    def _onCellDoubleClicked(self, row: int, column: int):
+        if self.tableWidget.horizontalHeaderItem(column).text() == "Diagnosis":
+            diagnosis = self.tableWidget.item(row, column).text()
+            self.diagnosticMessage.setText(self._formatDiagnosis(diagnosis))
+            self.diagnosticMessage.exec_()
+        else:  # Only show diagnosis
+            pass
+
+    @staticmethod
+    def _formatDiagnosis(jsonString: str) -> str:
+        outputFormat = '''<pre>
+                          <p>Axis I: Group I:<strong> {}</strong></p>
+                          <p>Axis I: Group II:</p>
+                          <p>  Right: <strong> {}</strong></p>
+                          <p>  Left:  <strong> {}</strong></p>
+                          <p>Axis I: Group III:</p>
+                          <p>  Right: <strong> {}</strong></p>
+                          <p>  Left:  <strong> {}</strong></p>'''
+        try:
+            diagnosticMap = json.loads(jsonString)
+            values = diagnosticMap.values()
+            return outputFormat.format(*values)
+        except Exception as e:
+            print(str(e))
+            return None
 
 
 def run():
