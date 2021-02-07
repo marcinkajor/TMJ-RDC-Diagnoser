@@ -31,7 +31,7 @@ class Window(QtWidgets.QMainWindow):
 
         self.diagnoser = Diagnoser(DatabaseRecordMapper(), DatabaseDeserializer(self.database))
 
-        self.setGeometry(50, 50, 1500, 800)
+        self.setGeometry(500, 150, 1000, 800)
         self.setWindowTitle("TMJ RDC Diagnoser")
         self.icon = QtGui.QIcon('../tooth.png')
         self.setWindowIcon(self.icon)
@@ -53,6 +53,8 @@ class Window(QtWidgets.QMainWindow):
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
         self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        DIAGNOSIS_COL_IDX = 6
+        self.tableWidget.horizontalHeader().setSectionResizeMode(DIAGNOSIS_COL_IDX, QtWidgets.QHeaderView.Interactive)
         self.tableWidget.cellDoubleClicked.connect(self._onCellDoubleClicked)
         self.centralLayout.addWidget(self.tableWidget)
 
