@@ -1,5 +1,5 @@
 from database import *
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 import json
 
 
@@ -26,6 +26,8 @@ class DataTable(QtWidgets.QTableWidget):
         self.diagnosticMessage = QtWidgets.QMessageBox(parent)
         self.diagnosticMessage.setWindowIcon(icon)
         self.diagnosticMessage.setWindowTitle("TMJ RDC Diagnosis")
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self._handleContextMenu)
 
     def loadDatabase(self):
         self.setRowCount(0)
@@ -55,6 +57,12 @@ class DataTable(QtWidgets.QTableWidget):
             self.diagnosticMessage.exec_()
         else:  # Only show diagnosis
             pass
+
+    def _handleContextMenu(self, pos: QtCore.QPoint):
+        item = self.itemAt(pos)
+        if item:
+            # TODO: implement a possibility of modification of patient record
+            print(item.text())
 
     @staticmethod
     def _formatDiagnosis(jsonString: str) -> str:
