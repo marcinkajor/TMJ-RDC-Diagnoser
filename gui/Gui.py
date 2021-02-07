@@ -7,11 +7,11 @@ from algo.AlgoParser import parseDatabase
 from algo.Diagnoser import Diagnoser
 from algo.DatabaseDeserializer import DatabaseDeserializer
 from algo.DatabaseMapper import DatabaseRecordMapper
+from DataTable import DataTable
 import csv
 import os
 import ctypes
 from gui.Wizard import Wizard
-import json
 from database import *
 
 # needed for custom toolbar icon
@@ -41,26 +41,8 @@ class Window(QtWidgets.QMainWindow):
         self.centralLayout = QtWidgets.QVBoxLayout(self.centralWidget)
         self.setCentralWidget(self.centralWidget)
 
-        self.tableWidget = QtWidgets.QTableWidget()
-        self.tableWidget.setRowCount(0)
-        self.tableWidget.setColumnCount(8)  # TODO: 9 in case the diagnostic data is included
-        self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.tableWidget.setHorizontalHeaderLabels(["Patient ID", "Name", "Surname", "Age", "PESEL",
-                                                    "Gender",
-                                                    "Diagnosis",
-                                                    # "Diagnostic data", # TODO: for now skip diagnostic data
-                                                    "Timestamp"])
-        self.tableWidget.verticalHeader().setVisible(False)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-        DIAGNOSIS_COL_IDX = 6
-        self.tableWidget.horizontalHeader().setSectionResizeMode(DIAGNOSIS_COL_IDX, QtWidgets.QHeaderView.Interactive)
-        self.tableWidget.cellDoubleClicked.connect(self._onCellDoubleClicked)
-        self.centralLayout.addWidget(self.tableWidget)
-
-        self.diagnosticMessage = QtWidgets.QMessageBox(self)
-        self.diagnosticMessage.setWindowIcon(self.icon)
-        self.diagnosticMessage.setWindowTitle("TMJ RDC Diagnosis")
+        self.table = DataTable(self,  self.database, self.icon)
+        self.centralLayout.addWidget(self.table)
 
         openAction = QtWidgets.QAction("Open", self)
         openAction.setShortcut("Ctrl+O")
@@ -81,10 +63,10 @@ class Window(QtWidgets.QMainWindow):
         generateDiagnosisAction.setStatusTip('Generate the diagnosis based on the the examination file')
         generateDiagnosisAction.triggered.connect(self._generateDiagnosticReport)
 
-        parsePatientRecord = QtWidgets.QAction("Show database", self)
-        parsePatientRecord.setShortcut("Ctrl+l")
-        parsePatientRecord.setStatusTip('Load patient database')
-        parsePatientRecord.triggered.connect(self._loadDatabase)
+        showDatabase = QtWidgets.QAction("Show database", self)
+        showDatabase.setShortcut("Ctrl+l")
+        showDatabase.setStatusTip('Load patient database')
+        showDatabase.triggered.connect(self.table.loadDatabase)
 
         self.statusBar()
 
@@ -94,11 +76,11 @@ class Window(QtWidgets.QMainWindow):
         fileMenu.addAction(openAction)
         fileMenu.addAction(generateDiagnosisAction)
         fileMenu.addAction(addRecord)
-        fileMenu.addAction(parsePatientRecord)
+        fileMenu.addAction(showDatabase)
 
         # TODO: avoid duplicating the database in the Wizard (Diagnoser already have it)
         # maybe the Diagnoser shall not use the database object at all
-        self.navigator = Wizard(self.database, self.diagnoser)
+        self.navigator = Wizard(self.database, self.diagnoser, self.table)
 
         self.show()
 
@@ -193,53 +175,6 @@ class Window(QtWidgets.QMainWindow):
         writer = pd.ExcelWriter(path)
         df.to_excel(writer, sheet_name='Diagnosis', index=False)
         writer.save()
-
-    def _loadDatabase(self):
-        self.tableWidget.setRowCount(0)
-        databaseData = self.database.getData()
-        if len(databaseData) == 0:
-            self._emptyDatabaseNotification()
-        for rowIdx, rowData in enumerate(databaseData):
-            rowData = list(rowData)
-            # TODO: this is to exclude diagnostic data
-            del(rowData[6])
-            #
-            self.tableWidget.insertRow(rowIdx)
-            for columnIdx, data in enumerate(rowData):
-                self.tableWidget.setItem(rowIdx, columnIdx, QtWidgets.QTableWidgetItem(str(data)))
-
-    def _emptyDatabaseNotification(self):
-        message = QtWidgets.QMessageBox(self)
-        message.setWindowIcon(self.icon)
-        message.setWindowTitle("Info")
-        message.setText("Empty database")
-        message.exec_()
-
-    def _onCellDoubleClicked(self, row: int, column: int):
-        if self.tableWidget.horizontalHeaderItem(column).text() == "Diagnosis":
-            diagnosis = self.tableWidget.item(row, column).text()
-            self.diagnosticMessage.setText(self._formatDiagnosis(diagnosis))
-            self.diagnosticMessage.exec_()
-        else:  # Only show diagnosis
-            pass
-
-    @staticmethod
-    def _formatDiagnosis(jsonString: str) -> str:
-        outputFormat = '''<pre>
-                          <p>Axis I: Group I:<strong> {}</strong></p>
-                          <p>Axis I: Group II:</p>
-                          <p>  Right: <strong> {}</strong></p>
-                          <p>  Left:  <strong> {}</strong></p>
-                          <p>Axis I: Group III:</p>
-                          <p>  Right: <strong> {}</strong></p>
-                          <p>  Left:  <strong> {}</strong></p>'''
-        try:
-            diagnosticMap = json.loads(jsonString)
-            values = diagnosticMap.values()
-            return outputFormat.format(*values)
-        except Exception as e:
-            print(str(e))
-            return None
 
 
 def run():

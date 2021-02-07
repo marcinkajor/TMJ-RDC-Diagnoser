@@ -9,13 +9,15 @@ from PyQt5.QtWidgets import QWizard
 from PyQt5.QtGui import QIcon, QCloseEvent
 from algo.Diagnoser import Diagnoser
 from gui.wizard_pages import *
+from gui.DataTable import DataTable
 
 
 class Wizard(QWizard):
-    def __init__(self, database, diagnoser: Diagnoser):
+    def __init__(self, database, diagnoser: Diagnoser, dataTable: DataTable):
         super().__init__()
-        self.diagoser = diagnoser
         self.database = database
+        self.diagoser = diagnoser
+        self.dataTable = dataTable
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
         self.button(QWizard.FinishButton).clicked.connect(self._onFinishedClicked)
         self.button(QWizard.CancelButton).clicked.connect(self._onCancelClicked)
@@ -89,6 +91,7 @@ class Wizard(QWizard):
                          "Axis13Right": axis13r, "Axis13Left": axis13l}
             patientRecord["Diagnosis"] = diagnosis
             self.database.storePatientRecord(patientRecord)
+            self.dataTable.loadDatabase()
         except Exception as e:
             self.database.storePatientRecord(self.getParametersMap())
             print(e)
