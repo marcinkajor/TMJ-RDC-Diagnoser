@@ -80,12 +80,15 @@ class Window(QtWidgets.QMainWindow):
 
         # TODO: avoid duplicating the database in the Wizard (Diagnoser already have it)
         # maybe the Diagnoser shall not use the database object at all
-        self.navigator = Wizard(self.database, self.diagnoser, self.table)
+        self.wizard = Wizard(self.database, self.diagnoser, self.table)
 
         self.show()
 
+    def getWizard(self) -> Wizard:
+        return self.wizard
+
     def addPatientRecord(self):
-        self.navigator.open()
+        self.wizard.open()
 
     # handle close button of the main window (quit QApplication properly)
     def closeEvent(self, event):

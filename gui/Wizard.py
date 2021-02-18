@@ -11,6 +11,9 @@ from algo.Diagnoser import Diagnoser
 from gui.wizard_pages import *
 from gui.DataTable import DataTable
 
+STORE = 0
+UPDATE = 1
+
 
 class Wizard(QWizard):
     def __init__(self, database, diagnoser: Diagnoser, dataTable: DataTable):
@@ -18,6 +21,8 @@ class Wizard(QWizard):
         self.database = database
         self.diagoser = diagnoser
         self.dataTable = dataTable
+        self.action = STORE
+        self.patientId = -1
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
         self.button(QWizard.FinishButton).clicked.connect(self._onFinishedClicked)
         self.button(QWizard.CancelButton).clicked.connect(self._onCancelClicked)
@@ -90,7 +95,13 @@ class Wizard(QWizard):
             diagnosis = {"Axis11": axis11, "Axis12Right": axis12r, "Axis12Left": axis12l,
                          "Axis13Right": axis13r, "Axis13Left": axis13l}
             patientRecord["Diagnosis"] = diagnosis
-            self.database.storePatientRecord(patientRecord)
+            if self.action is STORE and self.patientId == -1:
+                self.database.storePatientRecord(patientRecord)
+            elif self.action is UPDATE and self.patientId != -1:
+                self.database.updatePatientRecord(self.patientId, patientRecord)
+            else:
+
+                print("Unknown wizard finish action")
             self.dataTable.loadDatabase()
         except Exception as e:
             self.database.storePatientRecord(self.getParametersMap())
@@ -105,3 +116,8 @@ class Wizard(QWizard):
     def closeEvent(self, event: QCloseEvent):
         self._onCancelClicked()
         event.accept()
+
+    def open(self, action=STORE, patientId=-1):
+        self.action = action
+        self.patientId = patientId
+        super().open()

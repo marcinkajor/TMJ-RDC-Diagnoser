@@ -1,4 +1,5 @@
 from database import *
+import Wizard
 from PyQt5 import QtWidgets, QtGui, QtCore
 import json
 
@@ -7,7 +8,14 @@ class DataTable(QtWidgets.QTableWidget):
     def __init__(self, parent: QtWidgets.QMainWindow, database: DatabaseInterface, icon: QtGui.QIcon):
         super().__init__()
         DIAGNOSIS_COL_IDX = 6
+        self.mainWindow = parent
         self.database = database
+        self.latestPatientId = -1
+        self.contextMenu = QtWidgets.QMenu()
+        self.updateAction = QtWidgets.QAction("Edit patient record")
+        self.updateAction.triggered.connect(self._onPatientUpdateTriggered)
+        self.contextMenu.addAction(self.updateAction)
+
         self.setRowCount(0)
         self.setColumnCount(8)  # TODO: 9 in case the diagnostic data is included
         self.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -61,8 +69,15 @@ class DataTable(QtWidgets.QTableWidget):
     def _handleContextMenu(self, pos: QtCore.QPoint):
         item = self.itemAt(pos)
         if item:
-            # TODO: implement a possibility of modification of patient record
-            print(item.text())
+            PATIENT_ID_COL = 0
+            patientIdItem = self.item(item.row(), PATIENT_ID_COL)
+            if patientIdItem:
+                self.latestPatientId = patientIdItem.text()
+                self.contextMenu.popup(self.viewport().mapToGlobal(pos))
+
+    def _onPatientUpdateTriggered(self):
+        self.mainWindow.getWizard().open(action=Wizard.UPDATE,
+                                              patientId=self.latestPatientId)
 
     @staticmethod
     def _formatDiagnosis(jsonString: str) -> str:

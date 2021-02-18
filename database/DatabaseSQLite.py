@@ -64,11 +64,20 @@ class DatabaseSQLite(DatabaseInterface):
                 with self.connection:
                     self.executor.execute(cmd, values)
 
-    def updatePatientRecord(self, patientId, patientData):
-        keys = patientData.keys()
+    def updatePatientRecord(self, patientId, patientRecord):
+
+        personalData = patientRecord['PersonalData']
+        diagnosis = patientRecord['Diagnosis']
+        basicData = list(personalData.values())
+        del(patientRecord['PersonalData'])
+        del(patientRecord['Diagnosis'])
+        values = basicData
+        values.append(json.dumps(patientRecord))
+        values.append(json.dumps(diagnosis))
+
         query = '''UPDATE patients SET '''
         attributes = []
-        for key in keys:
+        for key in self.inputs.keys():
             attributes.append('{} = ?,'.format(key))
         # get rid of the trailing ','
         lastAttribute = attributes[-1]
@@ -78,7 +87,7 @@ class DatabaseSQLite(DatabaseInterface):
         query += ''' WHERE patient_id = ?'''
         try:
             with self.connection:
-                self.executor.execute(query, (tuple(patientData.values()) + (patientId,)))
+                self.executor.execute(query, (tuple(values) + (patientId,)))
         except Exception as e:
             print(e)
 
