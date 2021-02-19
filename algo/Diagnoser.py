@@ -8,8 +8,8 @@ from algo.AlgoPatient import Patient
 
 from enum import Enum
 
-class Diagnoser:
 
+class Diagnoser:
     class DiagnosisType(Enum):
         AXIS_11 = 1
         AXIS_12_LEFT = 2

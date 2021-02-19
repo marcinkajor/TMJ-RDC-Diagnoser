@@ -138,6 +138,15 @@ class DatabaseSQLite(DatabaseInterface):
         except Exception as e:
             print(e)
 
+    def getPatientRecordById(self, patientId: str):
+        try:
+            with self.connection:
+                self.executor.execute('''SELECT * FROM patients WHERE patient_id=?''', (patientId,))
+                records = self.executor.fetchall()
+                return records[0]
+        except Exception as e:
+            print(e)
+
     def getColumnNames(self):
         columnNames = []
         try:
