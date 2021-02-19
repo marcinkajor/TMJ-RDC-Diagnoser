@@ -26,7 +26,7 @@ class Wizard(QWizard):
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
         self.button(QWizard.FinishButton).clicked.connect(self._onFinishedClicked)
         self.button(QWizard.CancelButton).clicked.connect(self._onCancelClicked)
-        self.setWindowTitle("Add patient record")
+        self.setWindowTitle("Patient record")
         self.setWizardStyle(QWizard.ModernStyle)
         self.setWindowIcon(QIcon('../tooth.png'))
         # TODO: find out why only Watermark works here! Banner and Logo not working
@@ -100,7 +100,6 @@ class Wizard(QWizard):
             elif self.action is UPDATE and self.patientId != -1:
                 self.database.updatePatientRecord(self.patientId, patientRecord)
             else:
-
                 print("Unknown wizard finish action")
             self.dataTable.loadDatabase()
         except Exception as e:
@@ -113,6 +112,13 @@ class Wizard(QWizard):
         self._clearAllPages()
         self.restart()
 
+    def _loadWithDatabaseData(self, patientId: str):
+        for pageId in self.pageIds():
+            try:
+                self.page(pageId).loadWithData(patientId)
+            except Exception as e:
+                print(e)
+
     def closeEvent(self, event: QCloseEvent):
         self._onCancelClicked()
         event.accept()
@@ -120,4 +126,9 @@ class Wizard(QWizard):
     def open(self, action=STORE, patientId=-1):
         self.action = action
         self.patientId = patientId
+        if action == UPDATE:
+            self._loadWithDatabaseData(patientId)
         super().open()
+
+    def getDatabase(self):
+        return self.database

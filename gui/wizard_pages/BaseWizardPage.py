@@ -40,6 +40,13 @@ class BasePage(QWizardPage):
     def clearAll(self):
         pass
 
+    def loadWithData(self, patientID):
+        self.doLoadWithData(patientID)
+        self.completeChanged.emit()
+
+    def doLoadWithData(self, patientID):
+        pass
+
 
 class PageWithSideOptions(BasePage):
     def __init__(self):
