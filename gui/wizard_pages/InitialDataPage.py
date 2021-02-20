@@ -1,5 +1,6 @@
 from gui.wizard_pages.BaseWizardPage import BasePage
 from gui.wizard_pages.WizardPagesHelpers import *
+from algo.DatabaseDeserializer import DatabaseDeserializer
 
 
 class InitialDataPage(BasePage):
@@ -111,3 +112,18 @@ class InitialDataPage(BasePage):
     def clearAll(self):
         self.painSideBox.clearAll()
         self._enablePainOptions(False, False)
+
+    def doLoadWithData(self, patientId):
+        serializer = DatabaseDeserializer(self.wizard().getDatabase())
+        diagnosticData = serializer.getDiagnosticDataDictById(patientId)
+        initialData = diagnosticData["InitialData"]
+        painSide = initialData["pain_side"]
+        rightPainArea = initialData["right_pain_area"]
+        leftPainArea = initialData["left_pain_area"]
+
+        self.painSideBox.getButton(painSide).setChecked(True)
+        if rightPainArea:
+            self.rightOptionsGroup.getButton(rightPainArea).setChecked(True)
+        if leftPainArea:
+            self.leftOptionsGroup.getButton(leftPainArea).setChecked(True)
+        self._onButtonGroupChanged()
