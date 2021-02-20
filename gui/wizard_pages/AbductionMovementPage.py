@@ -1,5 +1,6 @@
 from gui.wizard_pages.BaseWizardPage import BasePage
 from gui.wizard_pages.WizardPagesHelpers import *
+from algo.DatabaseDeserializer import DatabaseDeserializer
 
 
 class AbductionMovementPage(BasePage):
@@ -42,7 +43,7 @@ class AbductionMovementPage(BasePage):
         currentOption = self.movementBox.checkedButton
         if currentOption is None:
             return
-        if currentOption == "Other":
+        if currentOption == "Other Type":
             self.otherDescription.setEnabled(True)
         else:
             self.otherDescription.clear()
@@ -51,3 +52,14 @@ class AbductionMovementPage(BasePage):
     def clearAll(self):
         self.movementBox.clearAll()
         self.otherDescription.setEnabled(False)
+
+    def doLoadWithData(self, patientId):
+        serializer = DatabaseDeserializer(self.wizard().getDatabase())
+        diagnosticData = serializer.getDiagnosticDataDictById(patientId)
+        abductionMovementData = diagnosticData["AbductionMovement"]
+        abductionMovement = abductionMovementData["abduction_movement"]
+        specificDescription = abductionMovementData["specific_description"]
+
+        self.movementBox.getButton(abductionMovement).setChecked(True)
+        self.otherDescription.setText(specificDescription)
+        self._onButtonGroupChanged()
