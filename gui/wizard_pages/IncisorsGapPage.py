@@ -1,5 +1,6 @@
 from gui.wizard_pages.BaseWizardPage import BasePage
 from gui.wizard_pages.WizardPagesHelpers import *
+from algo.DatabaseDeserializer import DatabaseDeserializer
 
 
 class IncisorsGapPage(BasePage):
@@ -28,3 +29,18 @@ class IncisorsGapPage(BasePage):
 
     def clearAll(self):
         self.middleLineAlignment.clearAll()
+
+    def doLoadWithData(self, patientId):
+        serializer = DatabaseDeserializer(self.wizard().getDatabase())
+        diagnosticData = serializer.getDiagnosticDataDictById(patientId)
+        incisorsGap = diagnosticData["IncisorsGap"]
+
+        verticalMm = incisorsGap["vertical_mm"]
+        horizontalMm = incisorsGap["horizontal_mm"]
+        middleLineMm = incisorsGap["middle_line_mm"]
+        middleLineRelative = incisorsGap["middle_line_alignment_relative_to_the_jaw"]
+
+        self.mm.getLineEdit("Vertical").setText(verticalMm)
+        self.mm.getLineEdit("Horizontal").setText(horizontalMm)
+        self.mm.getLineEdit("Middle line").setText(middleLineMm)
+        self.middleLineAlignment.getButton(middleLineRelative).setChecked(True)
