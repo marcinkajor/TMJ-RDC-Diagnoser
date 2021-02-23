@@ -14,7 +14,7 @@ class SoundsInJointAbductionPage(BasePage):
 
         mmLineEdits = self.mm.getAllLineEdits()
         for lineEditName in mmLineEdits:
-            self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName])
+            self.registerField(mmLineEdits[lineEditName].objectName(), mmLineEdits[lineEditName], mandatory=True)
 
         self.clickEliminationOptions = Options("Reciprocal click eliminated on protrusive opening",
                                                ["Left opening", "Left closing", "Right opening", "Right closing"],
