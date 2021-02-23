@@ -1,5 +1,6 @@
 from gui.wizard_pages.BaseWizardPage import PageWithSideOptions
 from gui.wizard_pages.WizardPagesHelpers import *
+from algo.DatabaseDeserializer import DatabaseDeserializer
 
 
 class SoundsInJointHorizontalMovementsPage(PageWithSideOptions):
@@ -22,3 +23,25 @@ class SoundsInJointHorizontalMovementsPage(PageWithSideOptions):
 
     def clearAll(self):
         self.painOptions.clearAll()
+
+    def doLoadWithData(self, patientId):
+        serializer = DatabaseDeserializer(self.wizard().getDatabase())
+        diagnosticData = serializer.getDiagnosticDataDictById(patientId)
+        soundsInJointHorizontalMovementsData = diagnosticData["SoundsInJointHorizontalMovements"]
+
+        rightRightSide = soundsInJointHorizontalMovementsData["right_side_right"]
+        leftRightSide = soundsInJointHorizontalMovementsData["left_side_right"]
+        forwardRight = soundsInJointHorizontalMovementsData["forward_right"]
+        rightSideLeft = soundsInJointHorizontalMovementsData["right_side_left"]
+        leftSideLeft = soundsInJointHorizontalMovementsData["left_side_left"]
+        forwardLeft = soundsInJointHorizontalMovementsData["forward_left"]
+
+        soundOptions = self.painOptions.getRightOptions().getOptions()
+        soundOptions["Right side"].getButton(rightRightSide).setChecked(True)
+        soundOptions["Left side"].getButton(leftRightSide).setChecked(True)
+        soundOptions["Forward"].getButton(forwardRight).setChecked(True)
+
+        soundOptions = self.painOptions.getLeftOptions().getOptions()
+        soundOptions["Right side"].getButton(rightSideLeft).setChecked(True)
+        soundOptions["Left side"].getButton(leftSideLeft).setChecked(True)
+        soundOptions["Forward"].getButton(forwardLeft).setChecked(True)
