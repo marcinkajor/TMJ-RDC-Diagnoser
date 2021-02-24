@@ -14,7 +14,10 @@ class DataTable(QtWidgets.QTableWidget):
         self.contextMenu = QtWidgets.QMenu()
         self.updateAction = QtWidgets.QAction("Edit patient record")
         self.updateAction.triggered.connect(self._onPatientUpdateTriggered)
+        self.deletePatient = QtWidgets.QAction("Delete patient record")
+        self.deletePatient.triggered.connect(self._onDeletePatientTriggered)
         self.contextMenu.addAction(self.updateAction)
+        self.contextMenu.addAction(self.deletePatient)
 
         self.setRowCount(0)
         self.setColumnCount(8)  # TODO: 9 in case the diagnostic data is included
@@ -32,7 +35,8 @@ class DataTable(QtWidgets.QTableWidget):
         self.cellDoubleClicked.connect(self._onCellDoubleClicked)
 
         self.diagnosticMessage = QtWidgets.QMessageBox(parent)
-        self.diagnosticMessage.setWindowIcon(icon)
+        self.icon = icon
+        self.diagnosticMessage.setWindowIcon(self.icon)
         self.diagnosticMessage.setWindowTitle("TMJ RDC Diagnosis")
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._handleContextMenu)
@@ -76,8 +80,11 @@ class DataTable(QtWidgets.QTableWidget):
                 self.contextMenu.popup(self.viewport().mapToGlobal(pos))
 
     def _onPatientUpdateTriggered(self):
-        self.mainWindow.getWizard().open(action=Wizard.UPDATE,
-                                              patientId=self.latestPatientId)
+        self.mainWindow.getWizard().open(action=Wizard.UPDATE, patientId=self.latestPatientId)
+
+    def _onDeletePatientTriggered(self):
+        self.database.removeRecordOnId(self.latestPatientId)
+        self.loadDatabase()
 
     @staticmethod
     def _formatDiagnosis(jsonString: str) -> str:
