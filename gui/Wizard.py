@@ -7,17 +7,26 @@ Created on Thu Oct 22 23:01:01 2020
 
 from PyQt5.QtWidgets import QWizard
 from PyQt5.QtGui import QIcon, QCloseEvent
+from algo.Diagnoser import Diagnoser
 from gui.wizard_pages import *
+from gui.DataTable import DataTable
+
+STORE = 0
+UPDATE = 1
 
 
 class Wizard(QWizard):
-    def __init__(self, database):
+    def __init__(self, database, diagnoser: Diagnoser, dataTable: DataTable):
         super().__init__()
         self.database = database
+        self.diagoser = diagnoser
+        self.dataTable = dataTable
+        self.action = STORE
+        self.patientId = -1
         self.button(QWizard.NextButton).clicked.connect(self._onNextCLicked)
         self.button(QWizard.FinishButton).clicked.connect(self._onFinishedClicked)
         self.button(QWizard.CancelButton).clicked.connect(self._onCancelClicked)
-        self.setWindowTitle("Add patient record")
+        self.setWindowTitle("Patient record")
         self.setWizardStyle(QWizard.ModernStyle)
         self.setWindowIcon(QIcon('../tooth.png'))
         # TODO: find out why only Watermark works here! Banner and Logo not working
@@ -36,7 +45,6 @@ class Wizard(QWizard):
         self.addPage(PalpationPainExtraoralMusclesPage())
         self.addPage(PalpationPainJointPainPage())
         self.addPage(PalpationPainIntraoralPainPage())
-        self.addPage(DiagnosisPage())
 
     def getVisitedFieldsNames(self):
         fields = []
@@ -78,8 +86,24 @@ class Wizard(QWizard):
 
     def _onFinishedClicked(self):
         try:
-            self.database.storePatientRecord(self.getParametersMap())
+            patientRecord = self.getParametersMap()
+            axis11 = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_11)
+            axis12r = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_12_RIGHT)
+            axis12l = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_12_LEFT)
+            axis13r = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_13_RIGHT)
+            axis13l = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_13_LEFT)
+            diagnosis = {"Axis11": axis11, "Axis12Right": axis12r, "Axis12Left": axis12l,
+                         "Axis13Right": axis13r, "Axis13Left": axis13l}
+            patientRecord["Diagnosis"] = diagnosis
+            if self.action is STORE and self.patientId == -1:
+                self.database.storePatientRecord(patientRecord)
+            elif self.action is UPDATE and self.patientId != -1:
+                self.database.updatePatientRecord(self.patientId, patientRecord)
+            else:
+                print("Unknown wizard finish action")
+            self.dataTable.loadDatabase()
         except Exception as e:
+            self.database.storePatientRecord(self.getParametersMap())
             print(e)
         self._clearAllPages()
         self.restart()
@@ -88,6 +112,23 @@ class Wizard(QWizard):
         self._clearAllPages()
         self.restart()
 
+    def _loadWithDatabaseData(self, patientId: str):
+        for pageId in self.pageIds():
+            try:
+                self.page(pageId).loadWithData(patientId)
+            except Exception as e:
+                print(e)
+
     def closeEvent(self, event: QCloseEvent):
         self._onCancelClicked()
         event.accept()
+
+    def open(self, action=STORE, patientId=-1):
+        self.action = action
+        self.patientId = patientId
+        if action == UPDATE:
+            self._loadWithDatabaseData(patientId)
+        super().open()
+
+    def getDatabase(self):
+        return self.database

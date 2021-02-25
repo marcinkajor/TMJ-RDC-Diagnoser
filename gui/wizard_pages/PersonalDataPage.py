@@ -2,6 +2,7 @@ from gui.wizard_pages.BaseWizardPage import BasePage
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtCore import QRegExp
 from gui.wizard_pages.WizardPagesHelpers import *
+from algo.DatabaseDeserializer import DatabaseDeserializer
 
 
 class PersonalDataPage(BasePage):
@@ -43,3 +44,16 @@ class PersonalDataPage(BasePage):
 
     def clearAll(self):
         self.sexButtonGroup.clearAll()
+
+    def doLoadWithData(self, patientID):
+        serializer = DatabaseDeserializer(self.wizard().getDatabase())
+        for formItemName in self.formItems:
+            if formItemName == "Name":
+                self.formItems[formItemName].setText(serializer.getNameById(patientID))
+            if formItemName == "Surname":
+                self.formItems[formItemName].setText(serializer.getSurnameById(patientID))
+            if formItemName == "Age":
+                self.formItems[formItemName].setText(str(serializer.getAgeById(patientID)))
+            if formItemName == "PESEL":
+                self.formItems[formItemName].setText(str(serializer.getPeselById(patientID)))
+        self.sexButtonGroup.getButton(serializer.getSexById(patientID)).setChecked(True)

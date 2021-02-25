@@ -6,21 +6,22 @@ import json
 class DatabaseSQLite(DatabaseInterface):
     def __init__(self, name):
         super().__init__()
+        self.fileName = name
         self.connection = None
         self.executor = None
-        self.name = name
         # TODO: What about other SQL column attributes?
         self.inputs = {"name": "TEXT",
                        "surname": "TEXT",
                        "age": "INTEGER",
                        "PESEL": "INTEGER",
                        "sex": "TEXT",
-                       "diagnostic_data": "TEXT"}
+                       "diagnostic_data": "TEXT",
+                       "diagnosis": "TEXT"}
 
     def connect(self, temporaryDatabase=False):
         try:
             if not temporaryDatabase:
-                databaseName = self.name + '.db'
+                databaseName = self.fileName + '.db'
                 self.connection = sqlite3.connect('../{}'.format(databaseName))
             else:
                 self.connection = sqlite3.connect(":memory:")
@@ -42,10 +43,13 @@ class DatabaseSQLite(DatabaseInterface):
 
     def storePatientRecord(self, patientRecord: dict):
         personalData = patientRecord['PersonalData']
+        diagnosis = patientRecord['Diagnosis']
         basicData = list(personalData.values())
         del(patientRecord['PersonalData'])
+        del(patientRecord['Diagnosis'])
         values = basicData
         values.append(json.dumps(patientRecord))
+        values.append(json.dumps(diagnosis))
         cmdSchema = 'INSERT INTO patients VALUES ({})'
         questionMarks = ('?,' * len(values))[:-1]
         cmd = cmdSchema.format(questionMarks)
@@ -60,11 +64,20 @@ class DatabaseSQLite(DatabaseInterface):
                 with self.connection:
                     self.executor.execute(cmd, values)
 
-    def updatePatientRecord(self, patientId, patientData):
-        keys = patientData.keys()
+    def updatePatientRecord(self, patientId, patientRecord):
+
+        personalData = patientRecord['PersonalData']
+        diagnosis = patientRecord['Diagnosis']
+        basicData = list(personalData.values())
+        del(patientRecord['PersonalData'])
+        del(patientRecord['Diagnosis'])
+        values = basicData
+        values.append(json.dumps(patientRecord))
+        values.append(json.dumps(diagnosis))
+
         query = '''UPDATE patients SET '''
         attributes = []
-        for key in keys:
+        for key in self.inputs.keys():
             attributes.append('{} = ?,'.format(key))
         # get rid of the trailing ','
         lastAttribute = attributes[-1]
@@ -74,7 +87,7 @@ class DatabaseSQLite(DatabaseInterface):
         query += ''' WHERE patient_id = ?'''
         try:
             with self.connection:
-                self.executor.execute(query, (tuple(patientData.values()) + (patientId,)))
+                self.executor.execute(query, (tuple(values) + (patientId,)))
         except Exception as e:
             print(e)
 
@@ -86,7 +99,7 @@ class DatabaseSQLite(DatabaseInterface):
         except Exception as e:
             print(e)
 
-    def addPatientSingleAttribute(self, patientId, attribute, value):
+    def addPatientSingleAttribute(self, attribute, value):
         try:
             with self.connection:
                 self.executor.execute('''INSERT INTO patients({}}) VALUES (?)'''.format(attribute), (value,))
@@ -125,6 +138,15 @@ class DatabaseSQLite(DatabaseInterface):
         except Exception as e:
             print(e)
 
+    def getPatientRecordById(self, patientId: str):
+        try:
+            with self.connection:
+                self.executor.execute('''SELECT * FROM patients WHERE patient_id=?''', (patientId,))
+                records = self.executor.fetchall()
+                return records[0]
+        except Exception as e:
+            print(e)
+
     def getColumnNames(self):
         columnNames = []
         try:
@@ -136,6 +158,16 @@ class DatabaseSQLite(DatabaseInterface):
                 return columnNames
         except Exception as e:
             print(e)
+
+    def getData(self) -> list:
+        result = None
+        try:
+            with self.connection:
+                result = self.executor.execute('''SELECT * FROM (patients)''')
+                return result.fetchall()
+        except Exception as e:
+            print(e)
+            return result.fetchall()
 
     def drop(self):
         self.executor.execute('''DROP TABLE IF EXISTS patients''')

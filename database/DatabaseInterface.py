@@ -38,5 +38,8 @@ class DatabaseInterface:
     def getColumnNames(self):
         pass
 
+    def getData(self) -> list:
+        pass
+
     def drop(self):
         pass

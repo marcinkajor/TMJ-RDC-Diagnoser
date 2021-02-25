@@ -1,5 +1,6 @@
 from gui.wizard_pages.BaseWizardPage import BasePage
 from gui.wizard_pages.WizardPagesHelpers import *
+from algo.DatabaseDeserializer import DatabaseDeserializer
 from PyQt5.QtGui import QFont
 
 
@@ -38,3 +39,13 @@ class QuestionnairePage(BasePage):
     def clearAll(self):
         self.painSymptomsBox.clearAll()
         self.openingProblemsBox.clearAll()
+
+    def doLoadWithData(self, patientId):
+        serializer = DatabaseDeserializer(self.wizard().getDatabase())
+        diagnosticData = serializer.getDiagnosticDataDictById(patientId)
+        questionnaire = diagnosticData["Questionnaire"]
+        painSymptoms = questionnaire["pain_symptoms"]
+        openingProblems = questionnaire["opening_problems"]
+
+        self.painSymptomsBox.getButton(painSymptoms).setChecked(True)
+        self.openingProblemsBox.getButton(openingProblems).setChecked(True)
