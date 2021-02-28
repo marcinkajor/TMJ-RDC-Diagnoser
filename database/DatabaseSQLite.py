@@ -188,5 +188,20 @@ class DatabaseSQLite(DatabaseInterface):
             print(e)
             return result.fetchall()
 
+    def getStatsRelevantData(self) -> dict:
+        # returns a list of dicts
+        AGE = 3
+        GENDER = 5
+        DIAGNOSIS = 7
+        data = self.getData()
+        result = []
+        for patients in data:
+            record = dict()
+            record["age"] = patients[AGE]
+            record["sex"] = patients[GENDER]
+            record["diagnostic_data"] = patients[DIAGNOSIS]
+            result.append(record)
+        return result
+
     def drop(self):
         self.executor.execute('''DROP TABLE IF EXISTS patients''')
