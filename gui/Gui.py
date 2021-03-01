@@ -20,6 +20,7 @@ if os.name == 'nt':  # 'nt' - Windows, 'posix' - Linux
     myappid = u'tmj-diagnoser'  # arbitrary string
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
+DATABASE_NAME = "patients_database"
 
 class Window(QtWidgets.QMainWindow):
     def __init__(self, database: DatabaseInterface):
@@ -68,6 +69,16 @@ class Window(QtWidgets.QMainWindow):
         showDatabase.setStatusTip('Load patient database')
         showDatabase.triggered.connect(self.table.loadDatabase)
 
+        exportDatabase = QtWidgets.QAction("Export database", self)
+        exportDatabase.setShortcut("Ctrl+e")
+        exportDatabase.setStatusTip('Export database to the file')
+        exportDatabase.triggered.connect(self._exportDatabase)
+
+        importDatabase = QtWidgets.QAction("Import database", self)
+        importDatabase.setShortcut("Ctrl+i")
+        importDatabase.setStatusTip('Import database from the file')
+        importDatabase.triggered.connect(self._importDatabase)
+
         self.statusBar()
 
         mainMenu = self.menuBar()
@@ -77,6 +88,8 @@ class Window(QtWidgets.QMainWindow):
         fileMenu.addAction(generateDiagnosisAction)
         fileMenu.addAction(addRecord)
         fileMenu.addAction(showDatabase)
+        fileMenu.addAction(exportDatabase)
+        fileMenu.addAction(importDatabase)
 
         # TODO: avoid duplicating the database in the Wizard (Diagnoser already have it)
         # maybe the Diagnoser shall not use the database object at all
@@ -179,10 +192,37 @@ class Window(QtWidgets.QMainWindow):
         df.to_excel(writer, sheet_name='Diagnosis', index=False)
         writer.save()
 
+    def _exportDatabase(self):
+        path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', filter="RDC database(*.rdc)")
+        self._swapFiles('../' + DATABASE_NAME + '.db', path)
+
+    def _swapFiles(self, sourceFileName: str, targetFileName: str):
+        try:
+            with open(sourceFileName, mode='rb') as sourceFile:
+                content = sourceFile.read()
+                with open(targetFileName, mode='wb') as targetFile:
+                    targetFile.write(content)
+        except Exception as e:
+            print(e)
+            self._showErrorNotification(str(e))
+
+    def _showErrorNotification(self, msgText: str):
+        message = QtWidgets.QMessageBox(self)
+        message.setIcon(QtWidgets.QMessageBox.Critical)
+        message.setWindowTitle("Error")
+        message.setText(msgText)
+        message.exec_()
+
+    def _importDatabase(self):
+        fileName, fileFilter = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File',
+                                                                     filter="RDC database file (*.rdc)")
+        self._swapFiles(fileName, '../' + DATABASE_NAME + '.db')
+        self.table.loadDatabase()
+
 
 def run():
     app = QtWidgets.QApplication(sys.argv)
-    window = Window(DatabaseSQLite('patients_database'))
+    window = Window(DatabaseSQLite(DATABASE_NAME))
     app.exec_()
 
 
