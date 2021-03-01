@@ -1,5 +1,6 @@
 from database import DatabaseInterface
 import json
+import numpy as np
 
 
 class StatsInterface:
@@ -31,19 +32,29 @@ class Stats(StatsInterface):
         for patientData in patientsData:
             diagnosis = json.loads(patientData['diagnostic_data'])
             scores.append(diagnosis[axisType])
-        return scores
+        return np.unique(scores, return_counts=True)
 
-    def getAxis11Histogram(self):
+    def getAxis11Histogram(self) -> tuple:
         return self._getAxisHistogramNumbers("Axis11")
 
-    def getAxis12RightHistogram(self):
+    def getAxis12RightHistogram(self) -> tuple:
         return self._getAxisHistogramNumbers("Axis12Right")
 
-    def getAxis12LeftHistogram(self):
+    def getAxis12LeftHistogram(self) -> tuple:
         return self._getAxisHistogramNumbers("Axis12Left")
 
-    def getAxis13RightHistogram(self):
+    def getAxis13RightHistogram(self) -> tuple:
         return self._getAxisHistogramNumbers("Axis13Right")
 
-    def getAxis13LeftHistogram(self):
+    def getAxis13LeftHistogram(self) -> tuple:
         return self._getAxisHistogramNumbers("Axis13Left")
+
+    def getMeanAge(self) -> float:
+        patientsData = self.database.getStatsRelevantData()
+        ageValues = [patient["age"] for patient in patientsData]
+        return np.mean(ageValues)
+
+    def getGenderDistribution(self) -> tuple:
+        patientsData = self.database.getStatsRelevantData()
+        sexTable = [patient["sex"] for patient in patientsData]
+        return np.unique(sexTable, return_counts=True)
