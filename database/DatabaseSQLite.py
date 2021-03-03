@@ -1,11 +1,16 @@
 from database import DatabaseInterface
 import sqlite3
 import json
+from PyQt5.QtCore import pyqtSignal, QObject
 
 
-class DatabaseSQLite(DatabaseInterface):
+class DatabaseSQLite(DatabaseInterface, QObject):
+
+    changed = pyqtSignal()
+
     def __init__(self, name):
-        super().__init__()
+        DatabaseInterface.__init__(self)
+        QObject.__init__(self)
         self.fileName = name
         self.connection = None
         self.executor = None
@@ -73,6 +78,7 @@ class DatabaseSQLite(DatabaseInterface):
                 cmd = cmdSchema.format(names, questionMarks)
                 with self.connection:
                     self.executor.execute(cmd, values)
+        self.changed.emit()
 
     @staticmethod
     def _prepareValuesToStore(patientRecord: dict) -> list:
@@ -109,6 +115,7 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute(query, (tuple(values) + (patientId,)))
         except Exception as e:
             print(e)
+        self.changed.emit()
 
     def updatePatientSingleAttribute(self, patientId, attribute, value):
         try:
@@ -117,6 +124,7 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute(schema, (value, patientId))
         except Exception as e:
             print(e)
+        self.changed.emit()
 
     def addPatientSingleAttribute(self, attribute, value):
         try:
@@ -124,6 +132,7 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute('''INSERT INTO patients({}}) VALUES (?)'''.format(attribute), (value,))
         except Exception as e:
             print(e)
+        self.changed.emit()
 
     def getLastInsertedPatientId(self):
         return self.executor.lastrowid
@@ -143,6 +152,7 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute('''DELETE FROM patients WHERE patient_id = ?''', (patientId,))
         except Exception as e:
             print(e)
+        self.changed.emit()
 
     def getPatientRecordByPesel(self, pesel):
         try:

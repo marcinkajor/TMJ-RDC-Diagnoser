@@ -52,9 +52,9 @@ class Window(QtWidgets.QMainWindow):
         self.statistics = Stats(self.database)
         self.statsTabWidget = StatsWidget(self.statistics, self.icon)
         self.statsTabWidget.setWindowTitle("Database statistics")
+        self.database.changed.connect(self.statsTabWidget.update)
 
         openAction = QtWidgets.QAction("Open", self)
-        openAction.setShortcut("Ctrl+O")
         openAction.setStatusTip('Open the examination file')
         openAction.triggered.connect(self._openDiagnosticFile)
 
@@ -231,6 +231,7 @@ class Window(QtWidgets.QMainWindow):
                                                                      filter="RDC database file (*.rdc)")
         self._swapFiles(fileName, '../' + DATABASE_NAME + '.db')
         self.table.loadDatabase()
+        self.statsTabWidget.update()
 
 
 def run():

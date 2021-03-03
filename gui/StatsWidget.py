@@ -23,41 +23,66 @@ class StatsWidget(QTabWidget):
         self.setWindowIcon(icon)
 
         # RDC diagnosis histograms
-        labels, counts = self.stats.getAxis11Histogram()
-        plotWidgetAxis11 = PlotWidget(self)
-        plotWidgetAxis11.axes.bar(labels, counts, align='center')
-
-        labels, counts = self.stats.getAxis12RightHistogram()
-        plotWidgetAxis12Right = PlotWidget(self)
-        plotWidgetAxis12Right.axes.bar(labels, counts, align='center')
-
-        labels, counts = self.stats.getAxis12LeftHistogram()
-        plotWidgetAxis12Left = PlotWidget(self)
-        plotWidgetAxis12Left.axes.bar(labels, counts, align='center')
-
-        labels, counts = self.stats.getAxis13RightHistogram()
-        plotWidgetAxis13Right = PlotWidget(self)
-        plotWidgetAxis13Right.axes.bar(labels, counts, align='center')
-
-        labels, counts = self.stats.getAxis13LeftHistogram()
-        plotWidgetAxis13Left = PlotWidget(self)
-        plotWidgetAxis13Left.axes.bar(labels, counts, align='center')
+        self.plotWidgetAxis11 = PlotWidget(self)
+        self.plotWidgetAxis12Right = PlotWidget(self)
+        self.plotWidgetAxis12Left = PlotWidget(self)
+        self.plotWidgetAxis13Right = PlotWidget(self)
+        self.plotWidgetAxis13Left = PlotWidget(self)
 
         # general statistics data
-        meanAgeLabel = QLabel(": ".join(["Mean patient age", str(self.stats.getMeanAge())]))
-        meanAgeLabel.setFont(QFont("Arial", 10, QFont.Bold))
-        labels, counts = self.stats.getGenderDistribution()
-        sexHistogram = PlotWidget(self)
-        sexHistogram.axes.bar(labels, counts, align='center')
-        verticalLayout = QVBoxLayout()
-        verticalLayout.addWidget(sexHistogram)
-        verticalLayout.addWidget(meanAgeLabel)
-        genericStatisticsWidget = QWidget()
-        genericStatisticsWidget.setLayout(verticalLayout)
+        self.meanAgeLabel = QLabel()
+        self.meanAgeLabel.setFont(QFont("Arial", 10, QFont.Bold))
+        self.sexHistogram = PlotWidget(self)
 
-        self.addTab(plotWidgetAxis11, "Axis11 Histogram")
-        self.addTab(plotWidgetAxis12Right, "Axis12 Right Histogram")
-        self.addTab(plotWidgetAxis12Left, "Axis12 Left Histogram")
-        self.addTab(plotWidgetAxis13Right, "Axis13 Right Histogram")
-        self.addTab(plotWidgetAxis13Left, "Axis13 Left Histogram")
-        self.addTab(genericStatisticsWidget, "General statistics")
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.addWidget(self.sexHistogram)
+        self.verticalLayout.addWidget(self.meanAgeLabel)
+        self.genericStatisticsWidget = QWidget()
+        self.genericStatisticsWidget.setLayout(self.verticalLayout)
+
+        # load with current values
+        self.update()
+
+        self.addTab(self.plotWidgetAxis11, "Axis11 Histogram")
+        self.addTab(self.plotWidgetAxis12Right, "Axis12 Right Histogram")
+        self.addTab(self.plotWidgetAxis12Left, "Axis12 Left Histogram")
+        self.addTab(self.plotWidgetAxis13Right, "Axis13 Right Histogram")
+        self.addTab(self.plotWidgetAxis13Left, "Axis13 Left Histogram")
+        self.addTab(self.genericStatisticsWidget, "General statistics")
+
+    def _updateDiagnosisHistograms(self):
+        labels, counts = self.stats.getAxis11Histogram()
+        self.plotWidgetAxis11.axes.clear()
+        self.plotWidgetAxis11.axes.bar(labels, counts, align='center')
+        self.plotWidgetAxis11.draw()
+
+        labels, counts = self.stats.getAxis12RightHistogram()
+        self.plotWidgetAxis12Right.axes.clear()
+        self.plotWidgetAxis12Right.axes.bar(labels, counts, align='center')
+        self.plotWidgetAxis12Right.draw()
+
+        labels, counts = self.stats.getAxis12LeftHistogram()
+        self.plotWidgetAxis12Left.axes.clear()
+        self.plotWidgetAxis12Left.axes.bar(labels, counts, align='center')
+        self.plotWidgetAxis12Left.draw()
+
+        labels, counts = self.stats.getAxis13RightHistogram()
+        self.plotWidgetAxis13Right.axes.clear()
+        self.plotWidgetAxis13Right.axes.bar(labels, counts, align='center')
+        self.plotWidgetAxis13Right.draw()
+
+        labels, counts = self.stats.getAxis13LeftHistogram()
+        self.plotWidgetAxis13Left.axes.clear()
+        self.plotWidgetAxis13Left.axes.bar(labels, counts, align='center')
+        self.plotWidgetAxis13Left.draw()
+
+    def _updateGeneralStats(self):
+        labels, counts = self.stats.getGenderDistribution()
+        self.sexHistogram.axes.cla()
+        self.sexHistogram.axes.bar(labels, counts, align='center')
+        self.sexHistogram.draw()
+        self.meanAgeLabel.setText(": ".join(["Mean patient age", str(self.stats.getMeanAge())]))
+
+    def update(self):
+        self._updateDiagnosisHistograms()
+        self._updateGeneralStats()
