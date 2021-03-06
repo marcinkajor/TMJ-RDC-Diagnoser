@@ -68,7 +68,7 @@ class E4:
         if (not isinstance(lateralDeviation, int)
                 or lateralDeviation not in range(0, 6)):
             raise Exception("Lateral deviation must be an integer <0-5>")
-            self.lateralDeviation = lateralDeviation
+        self.lateralDeviation = lateralDeviation
 
     def getRealDeviation(self):
         return self.lateralDeviation
