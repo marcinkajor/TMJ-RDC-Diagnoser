@@ -45,6 +45,7 @@ class Wizard(QWizard):
         self.addPage(PalpationPainExtraoralMusclesPage())
         self.addPage(PalpationPainJointPainPage())
         self.addPage(PalpationPainIntraoralPainPage())
+        self.addPage(AudioFilesPage())
 
     def getVisitedFieldsNames(self):
         fields = []
@@ -103,7 +104,6 @@ class Wizard(QWizard):
                 print("Unknown wizard finish action")
             self.dataTable.loadDatabase()
         except Exception as e:
-            self.database.storePatientRecord(self.getParametersMap())
             print(e)
         self._clearAllPages()
         self.restart()

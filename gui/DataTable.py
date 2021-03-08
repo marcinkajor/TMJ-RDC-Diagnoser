@@ -20,12 +20,13 @@ class DataTable(QtWidgets.QTableWidget):
         self.contextMenu.addAction(self.deletePatient)
 
         self.setRowCount(0)
-        self.setColumnCount(8)  # TODO: 9 in case the diagnostic data is included
+        self.setColumnCount(9)  # TODO: 10 in case the diagnostic data is included
         self.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.setHorizontalHeaderLabels(["Patient ID", "Name", "Surname", "Age", "PESEL",
                                                     "Gender",
                                                     "Diagnosis",
                                                     # "Diagnostic data", # TODO: for now skip diagnostic data
+                                                    "Audio signals",
                                                     "Timestamp"])
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setDefaultSectionSize(150)
@@ -47,13 +48,20 @@ class DataTable(QtWidgets.QTableWidget):
         if len(databaseData) == 0:
             self._emptyDatabaseNotification()
         for rowIdx, rowData in enumerate(databaseData):
-            rowData = list(rowData)
-            # TODO: this is to exclude diagnostic data
-            del(rowData[6])
-            #
+            visibleData, timestamp = self._excludeNonVisibleDataFromRecord(list(rowData))
             self.insertRow(rowIdx)
-            for columnIdx, data in enumerate(rowData):
+            for columnIdx, data in enumerate(visibleData):
                 self.setItem(rowIdx, columnIdx, QtWidgets.QTableWidgetItem(str(data)))
+            self.setItem(rowIdx, columnIdx+1, QtWidgets.QTableWidgetItem("AUDIO"))
+            self.setItem(rowIdx, columnIdx+2, QtWidgets.QTableWidgetItem(str(timestamp)))
+
+    @staticmethod
+    def _excludeNonVisibleDataFromRecord(patientRecord: list) -> tuple:
+        timestamp = patientRecord[-1]
+        diagnosis = patientRecord[7]
+        visibleData = patientRecord[0:6]
+        visibleData.append(diagnosis)
+        return visibleData, timestamp
 
     def _emptyDatabaseNotification(self):
         message = QtWidgets.QMessageBox(self)
@@ -63,12 +71,13 @@ class DataTable(QtWidgets.QTableWidget):
         message.exec_()
 
     def _onCellDoubleClicked(self, row: int, column: int):
-        if self.horizontalHeaderItem(column).text() == "Diagnosis":
+        columnName = self.horizontalHeaderItem(column).text()
+        if columnName == "Diagnosis":
             diagnosis = self.item(row, column).text()
             self.diagnosticMessage.setText(self._formatDiagnosis(diagnosis))
             self.diagnosticMessage.exec_()
-        else:  # Only show diagnosis
-            pass
+        elif columnName == "Audio signals":
+            pass # TODO: implement signals visualization
 
     def _handleContextMenu(self, pos: QtCore.QPoint):
         item = self.itemAt(pos)

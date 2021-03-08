@@ -22,6 +22,7 @@ if os.name == 'nt':  # 'nt' - Windows, 'posix' - Linux
 
 DATABASE_NAME = "patients_database"
 
+
 class Window(QtWidgets.QMainWindow):
     def __init__(self, database: DatabaseInterface):
         super().__init__()
