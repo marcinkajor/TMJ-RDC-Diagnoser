@@ -2,6 +2,27 @@ from database import *
 import Wizard
 from PyQt5 import QtWidgets, QtGui, QtCore
 import json
+from audio.AudioHandler import AudioManager, AudioSerializer
+
+# maps convenient string into pair of coupled column indexes in database (name, data)
+audioMap = {
+    "audio1": (8, 9),
+    "audio2": (10, 11),
+    "audio3": (12, 13),
+    "audio4": (14, 15),
+    "audio5": (16, 17),
+    "audio6": (18, 19),
+    "audio7": (20, 21),
+    "audio8": (22, 23)
+}
+
+
+class TabWidget(QtWidgets.QTabWidget):
+    def __init__(self):
+        super().__init__()
+
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+        self.clear()
 
 
 class DataTable(QtWidgets.QTableWidget):
@@ -42,6 +63,10 @@ class DataTable(QtWidgets.QTableWidget):
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._handleContextMenu)
 
+        self.audioWidget = TabWidget()
+        self.audioWidget.setWindowTitle("Audio files (auscultation)")
+        self.audioWidget.setWindowIcon(self.icon)
+
     def loadDatabase(self):
         self.setRowCount(0)
         databaseData = self.database.getData()
@@ -77,7 +102,23 @@ class DataTable(QtWidgets.QTableWidget):
             self.diagnosticMessage.setText(self._formatDiagnosis(diagnosis))
             self.diagnosticMessage.exec_()
         elif columnName == "Audio signals":
-            pass # TODO: implement signals visualization
+            patientId = self.item(row, 0).text()
+            record = self.database.getPatientRecordById(patientId)
+            fileItems = self._getNonEmptyAudioItems(record)
+            audioWidgets = []
+            for item in fileItems:
+                audioWidgets.append(AudioManager(item[0], item[1], AudioSerializer(self, self.icon)))
+            self._signalsVisualization(audioWidgets)
+
+    @staticmethod
+    def _getNonEmptyAudioItems(record: dict) -> list:
+        listOfFiles = []
+        for key in audioMap:
+            name = record[audioMap[key][0]]
+            data = record[audioMap[key][1]]
+            if data is not None:
+                listOfFiles.append((name, data))
+        return listOfFiles
 
     def _handleContextMenu(self, pos: QtCore.QPoint):
         item = self.itemAt(pos)
@@ -112,3 +153,11 @@ class DataTable(QtWidgets.QTableWidget):
         except Exception as e:
             print(str(e))
             return None
+
+    def _signalsVisualization(self, listOfTabs: list):
+        for idx, tab in enumerate(listOfTabs):
+            try:
+                self.audioWidget.addTab(tab, "Audio_{}".format(idx))
+            except Exception as e:
+                print(e)
+        self.audioWidget.show()

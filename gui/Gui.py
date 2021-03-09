@@ -116,8 +116,7 @@ class Window(QtWidgets.QMainWindow):
             event.ignore()
 
     def _openDiagnosticFile(self):
-        fileName, fileFilter = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File',
-                                                           filter="Excel files (*.xls)")
+        fileName, fileFilter = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', filter="Excel files (*.xls)")
         try:
             # Import datasets as separate spreadsheets
             axis1_sheet = pd.read_excel(fileName, sheet_name='axis I')
