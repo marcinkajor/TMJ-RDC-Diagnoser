@@ -107,7 +107,7 @@ class DataTable(QtWidgets.QTableWidget):
             fileItems = self._getNonEmptyAudioItems(record)
             audioWidgets = []
             for item in fileItems:
-                audioWidgets.append(AudioManager(item[0], item[1], AudioSerializer(self, self.icon)))
+                audioWidgets.append(AudioManager(item[0], item[1], AudioSerializer(self, self.icon), self.icon))
             self._signalsVisualization(audioWidgets)
 
     @staticmethod
