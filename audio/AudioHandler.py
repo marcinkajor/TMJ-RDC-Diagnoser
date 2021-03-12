@@ -83,19 +83,11 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         self.serializer = serializer
 
         self.binaryData = binaryData
-        fs, signal = wavfile.read(io.BytesIO(binaryData))
-        self.signal = signal
-        self.fs = fs
-        try:
-            self.numberOfChannels = 2 if signal.shape[1] else 1
-        except Exception as e:
-            str(e)
-            self.numberOfChannels = 1
+        self.fs, self.signal = self._parseWavFile(binaryData)
 
         self.plot = PlotWidget(self)
-        tx = [x * 1 / self.fs for x in range(len(self.signal))]
-        # TODO: the self.normalizeData() causes significant delay when generating plots
-        self.plot.axes.plot(tx, self.signal)
+        # TODO: the self._normalizeData() causes significant delay when generating plots
+        self.plot.axes.plot(self._timeVector(self.fs, self.signal), self.signal)
 
         self.plot.axes.set_xlabel("Time [s]")
         self.plot.axes.set_ylabel("Amplitude")
@@ -127,9 +119,6 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         except Exception as e:
             print(e)
 
-    def _playAudio(self):
-        winsound.PlaySound(self.binaryData, winsound.SND_MEMORY)
-
     def _onSavePlotButtonClicked(self):
         dpi, ok = QtWidgets.QInputDialog.getInt(self, "Choose the dpi", "dpi", 100, 100, 1000)
         try:
@@ -148,7 +137,21 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
             print(e)
 
     @staticmethod
-    def normalizeData(signal, norm_type='minus_one_one'):
+    def _parseWavFile(binaryData) -> tuple:
+        fs, signal = wavfile.read(io.BytesIO(binaryData))
+        # try:
+        #     numberOfChannels = 2 if signal.shape[1] else 1
+        # except Exception as e:
+        #     str(e)
+        #     numberOfChannels = 1
+        return fs, signal
+
+    @staticmethod
+    def _timeVector(fs, signal):
+        return [x * 1 / fs for x in range(len(signal))]
+
+    @staticmethod
+    def _normalizeData(signal, norm_type='minus_one_one'):
         sig_min = int(np.min(signal))
         sig_max = int(np.max(signal))
         max_min_diff = (sig_max - sig_min)
