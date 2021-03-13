@@ -22,6 +22,7 @@ if os.name == 'nt':  # 'nt' - Windows, 'posix' - Linux
 
 DATABASE_NAME = "patients_database"
 
+
 class Window(QtWidgets.QMainWindow):
     def __init__(self, database: DatabaseInterface):
         super().__init__()
@@ -94,7 +95,7 @@ class Window(QtWidgets.QMainWindow):
         # TODO: avoid duplicating the database in the Wizard (Diagnoser already have it)
         # maybe the Diagnoser shall not use the database object at all
         self.wizard = Wizard(self.database, self.diagnoser, self.table)
-
+        self.wizard.isDone.connect(lambda: self.setEnabled(True))
         self.show()
 
     def getWizard(self) -> Wizard:
@@ -102,6 +103,7 @@ class Window(QtWidgets.QMainWindow):
 
     def addPatientRecord(self):
         self.wizard.open()
+        self.setEnabled(False)
 
     # handle close button of the main window (quit QApplication properly)
     def closeEvent(self, event):
@@ -115,8 +117,7 @@ class Window(QtWidgets.QMainWindow):
             event.ignore()
 
     def _openDiagnosticFile(self):
-        fileName, fileFilter = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File',
-                                                           filter="Excel files (*.xls)")
+        fileName, fileFilter = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', filter="Excel files (*.xls)")
         try:
             # Import datasets as separate spreadsheets
             axis1_sheet = pd.read_excel(fileName, sheet_name='axis I')

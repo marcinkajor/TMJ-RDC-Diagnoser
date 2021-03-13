@@ -65,6 +65,7 @@ class ButtonGroupBox(QWidget):
                 return True
         return False
 
+
 class MmInputs:
     def __init__(self, inputs, name, font):
         mmValidator = QIntValidator(0, 9999)

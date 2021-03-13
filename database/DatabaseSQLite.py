@@ -16,7 +16,24 @@ class DatabaseSQLite(DatabaseInterface):
                        "PESEL": "INTEGER",
                        "sex": "TEXT",
                        "diagnostic_data": "TEXT",
-                       "diagnosis": "TEXT"}
+                       "diagnosis": "TEXT",
+                       "audio1_name": "TEXT",
+                       "audio1": "BLOB",
+                       "audio2_name": "TEXT",
+                       "audio2": "BLOB",
+                       "audio3_name": "TEXT",
+                       "audio3": "BLOB",
+                       "audio4_name": "TEXT",
+                       "audio4": "BLOB",
+                       "audio5_name": "TEXT",
+                       "audio5": "BLOB",
+                       "audio6_name": "TEXT",
+                       "audio6": "BLOB",
+                       "audio7_name": "TEXT",
+                       "audio7": "BLOB",
+                       "audio8_name": "TEXT",
+                       "audio8": "BLOB"
+                       }
 
     def connect(self, temporaryDatabase=False):
         try:
@@ -42,14 +59,7 @@ class DatabaseSQLite(DatabaseInterface):
                           )'''.format(name, inputsAndTypes))
 
     def storePatientRecord(self, patientRecord: dict):
-        personalData = patientRecord['PersonalData']
-        diagnosis = patientRecord['Diagnosis']
-        basicData = list(personalData.values())
-        del(patientRecord['PersonalData'])
-        del(patientRecord['Diagnosis'])
-        values = basicData
-        values.append(json.dumps(patientRecord))
-        values.append(json.dumps(diagnosis))
+        values = self._prepareValuesToStore(patientRecord)
         cmdSchema = 'INSERT INTO patients VALUES ({})'
         questionMarks = ('?,' * len(values))[:-1]
         cmd = cmdSchema.format(questionMarks)
@@ -64,17 +74,26 @@ class DatabaseSQLite(DatabaseInterface):
                 with self.connection:
                     self.executor.execute(cmd, values)
 
-    def updatePatientRecord(self, patientId, patientRecord):
-
+    @staticmethod
+    def _prepareValuesToStore(patientRecord: dict) -> list:
         personalData = patientRecord['PersonalData']
         diagnosis = patientRecord['Diagnosis']
+        audioFiles = patientRecord['AudioFiles']
         basicData = list(personalData.values())
         del(patientRecord['PersonalData'])
         del(patientRecord['Diagnosis'])
+        del (patientRecord['AudioFiles'])
         values = basicData
         values.append(json.dumps(patientRecord))
         values.append(json.dumps(diagnosis))
+        for audio in audioFiles:
+            # an order matters here
+            values.append(audioFiles[audio]["name"])
+            values.append(audioFiles[audio]["blob"])
+        return values
 
+    def updatePatientRecord(self, patientId, patientRecord):
+        values = self._prepareValuesToStore(patientRecord)
         query = '''UPDATE patients SET '''
         attributes = []
         for key in self.inputs.keys():

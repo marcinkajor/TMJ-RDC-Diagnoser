@@ -44,3 +44,15 @@ class DatabaseDeserializer:
 
     def getSexById(self, patientId: str) -> str:
         return self._deserializeDatabaseRecordById(patientId)[self.columnNames.index('sex')]
+
+    def getAudioFile(self, patientId: str, fileIdx: int) -> tuple:
+        if fileIdx < 1 or fileIdx > 8:
+            raise Exception("Invalid audio file index")
+        blob = self._deserializeDatabaseRecordById(patientId)[self.columnNames.index("audio" + str(fileIdx))]
+        name = self.getAudioFileName(patientId, fileIdx)
+        return name, blob
+
+    def getAudioFileName(self, patientId: str, fileIdx: int) -> str:
+        if fileIdx < 1 or fileIdx > 8:
+            raise Exception("Invalid audio file index")
+        return self._deserializeDatabaseRecordById(patientId)[self.columnNames.index("audio" + str(fileIdx) + "_name")]
