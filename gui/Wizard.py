@@ -7,6 +7,7 @@ Created on Thu Oct 22 23:01:01 2020
 
 from PyQt5.QtWidgets import QWizard
 from PyQt5.QtGui import QIcon, QCloseEvent
+from PyQt5.QtCore import pyqtSignal
 from algo.Diagnoser import Diagnoser
 from gui.wizard_pages import *
 from gui.DataTable import DataTable
@@ -16,6 +17,9 @@ UPDATE = 1
 
 
 class Wizard(QWizard):
+
+    isDone = pyqtSignal()
+
     def __init__(self, database, diagnoser: Diagnoser, dataTable: DataTable):
         super().__init__()
         self.database = database
@@ -107,10 +111,12 @@ class Wizard(QWizard):
             print(e)
         self._clearAllPages()
         self.restart()
+        self.isDone.emit()
 
     def _onCancelClicked(self):
         self._clearAllPages()
         self.restart()
+        self.isDone.emit()
 
     def _loadWithDatabaseData(self, patientId: str):
         for pageId in self.pageIds():

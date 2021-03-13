@@ -131,6 +131,7 @@ class DataTable(QtWidgets.QTableWidget):
 
     def _onPatientUpdateTriggered(self):
         self.mainWindow.getWizard().open(action=Wizard.UPDATE, patientId=self.latestPatientId)
+        self.mainWindow.setEnabled(False)
 
     def _onDeletePatientTriggered(self):
         self.database.removeRecordOnId(self.latestPatientId)
