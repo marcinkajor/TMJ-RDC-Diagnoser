@@ -38,6 +38,7 @@ class Wizard(QWizard):
         # TODO: add all necessary pages
         self.addPage(PersonalDataPage())
         self.addPage(QuestionnairePage())
+        self.addPage(QuestionnairePage2())
         self.addPage(InitialDataPage())
         self.addPage(AbductionMovementPage())
         self.addPage(VerticalMovementRangePage())

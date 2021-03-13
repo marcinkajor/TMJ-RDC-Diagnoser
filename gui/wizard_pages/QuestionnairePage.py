@@ -8,7 +8,7 @@ class QuestionnairePage(BasePage):
     def __init__(self):
         super().__init__()
 
-        self.setTitle("Questionnaire")
+        self.setTitle("Questionnaire 1")
         self.layout = QVBoxLayout()
         self.label1 = QLabel("Has the patient had pain in the face, jaw, temple, in front of the ear "
                              "or in the ear in the past month?")
