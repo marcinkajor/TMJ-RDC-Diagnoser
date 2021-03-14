@@ -340,15 +340,25 @@ class MapperPalpationE11(MapperPalpation):
 class MapperQ(MapperStrategy):
     def __init__(self, fromDatabase: dict):
         super(MapperQ, self).__init__(fromDatabase)
-        self.mapping = {
+        self.mappingQ = {
             "No": 0,
             "Yes": 1
         }
-        self.q3 = self.mapping[self.readFromDatabase("Questionnaire", "pain_symptoms")]
-        self.q14 = self.mapping[self.readFromDatabase("Questionnaire", "opening_problems")]
+
+        self.q3 = self.mappingQ[self.readFromDatabase("Questionnaire", "pain_symptoms")]
+        self.q14 = self.mappingQ[self.readFromDatabase("Questionnaire", "opening_problems")]
+
+        self.q7 = int(self.readFromDatabase("Questionnaire2", "facial_pain_score"))
+        self.q8 = int(self.readFromDatabase("Questionnaire2", "worst_pain_score"))
+        self.q9 = int(self.readFromDatabase("Questionnaire2", "average_pain_score"))
+        self.q10 = int(self.readFromDatabase("Questionnaire2", "days_without_activities"))
+        self.q11 = int(self.readFromDatabase("Questionnaire2", "six_months_pain_interference"))
+        self.q12 = int(self.readFromDatabase("Questionnaire2", "six_months_pain_recreation_change"))
+        self.q13 = int(self.readFromDatabase("Questionnaire2", "six_months_pain_work_ability_change"))
 
     def get(self):
-        return {"q3": self.q3, "q14": self.q14}
+        return {"q3": self.q3, "q14": self.q14, "q7": self.q7, "q8": self.q8, "q9": self.q9, "q10": self.q10,
+                "q11": self.q11, "q12": self.q12, "q13": self.q13}
 
 
 class DatabaseRecordMapper:

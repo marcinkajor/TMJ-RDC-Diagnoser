@@ -146,7 +146,8 @@ class DataTable(QtWidgets.QTableWidget):
                           <p>  Left:  <strong> {}</strong></p>
                           <p>Axis I: Group III:</p>
                           <p>  Right: <strong> {}</strong></p>
-                          <p>  Left:  <strong> {}</strong></p>'''
+                          <p>  Left:  <strong> {}</strong></p>
+                          <p>Axis II: graded chronic pain:<strong> {}</strong></p>'''
         try:
             diagnosticMap = json.loads(jsonString)
             values = diagnosticMap.values()

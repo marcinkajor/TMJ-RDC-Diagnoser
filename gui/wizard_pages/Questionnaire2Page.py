@@ -2,11 +2,10 @@ from gui.wizard_pages.BaseWizardPage import BasePage
 from gui.wizard_pages.WizardPagesHelpers import *
 from algo.DatabaseDeserializer import DatabaseDeserializer
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QScrollArea, QScrollBar
+from PyQt5.QtWidgets import QScrollArea
 
 
-class QuestionnairePage2(BasePage):
+class Questionnaire2Page(BasePage):
     def __init__(self):
         super().__init__()
 
@@ -108,14 +107,28 @@ including housework) where 0 is "no interference " and 10 is "extreme change"?''
     def clearAll(self):
         self.facialPainScoreSymptomsBox.clearAll()
         self.worstPainScoreBox.clearAll()
+        self.averagePainScoreBox.clearAll()
+        self.daysLineEdit.clear()
+        self.sixMonthsInterferencePainScoreBox.clearAll()
+        self.sixMonthsChangeRecreationPainScoreBox.clearAll()
+        self.sixMonthsChangeWorkAbilityPainScoreBox.clearAll()
 
     def doLoadWithData(self, patientId):
-        pass
-        # serializer = DatabaseDeserializer(self.wizard().getDatabase())
-        # diagnosticData = serializer.getDiagnosticDataDictById(patientId)
-        # questionnaire = diagnosticData["Questionnaire"]
-        # painSymptoms = questionnaire["pain_symptoms"]
-        # openingProblems = questionnaire["opening_problems"]
-        #
-        # self.painSymptomsBox.getButton(painSymptoms).setChecked(True)
-        # self.openingProblemsBox.getButton(openingProblems).setChecked(True)
+        serializer = DatabaseDeserializer(self.wizard().getDatabase())
+        diagnosticData = serializer.getDiagnosticDataDictById(patientId)
+        questionnaire = diagnosticData["Questionnaire2"]
+        facialPainScore = questionnaire["facial_pain_score"]
+        worstPain = questionnaire["worst_pain_score"]
+        averagePain = questionnaire["average_pain_score"]
+        days = questionnaire["days_without_activities"]
+        sixMonthsInterference = questionnaire["six_months_pain_interference"]
+        sixMonthsChangeRecreation = questionnaire["six_months_pain_recreation_change"]
+        sixMonthsChangeWorkAbility = questionnaire["six_months_pain_work_ability_change"]
+
+        self.facialPainScoreSymptomsBox.getButton(facialPainScore).setChecked(True)
+        self.worstPainScoreBox.getButton(worstPain).setChecked(True)
+        self.averagePainScoreBox.getButton(averagePain).setChecked(True)
+        self.daysLineEdit.setText(days)
+        self.sixMonthsInterferencePainScoreBox.getButton(sixMonthsInterference).setChecked(True)
+        self.sixMonthsChangeRecreationPainScoreBox.getButton(sixMonthsChangeRecreation).setChecked(True)
+        self.sixMonthsChangeWorkAbilityPainScoreBox.getButton(sixMonthsChangeWorkAbility).setChecked(True)

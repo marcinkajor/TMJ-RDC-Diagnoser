@@ -38,7 +38,7 @@ class Wizard(QWizard):
         # TODO: add all necessary pages
         self.addPage(PersonalDataPage())
         self.addPage(QuestionnairePage())
-        self.addPage(QuestionnairePage2())
+        self.addPage(Questionnaire2Page())
         self.addPage(InitialDataPage())
         self.addPage(AbductionMovementPage())
         self.addPage(VerticalMovementRangePage())
@@ -98,8 +98,9 @@ class Wizard(QWizard):
             axis12l = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_12_LEFT)
             axis13r = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_13_RIGHT)
             axis13l = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_13_LEFT)
+            axis21 = self.diagoser.getPatientDiagnosisFromRecord(patientRecord, Diagnoser.DiagnosisType.AXIS_21)
             diagnosis = {"Axis11": axis11, "Axis12Right": axis12r, "Axis12Left": axis12l,
-                         "Axis13Right": axis13r, "Axis13Left": axis13l}
+                         "Axis13Right": axis13r, "Axis13Left": axis13l, "Axis21": axis21}
             patientRecord["Diagnosis"] = diagnosis
             if self.action is STORE and self.patientId == -1:
                 self.database.storePatientRecord(patientRecord)

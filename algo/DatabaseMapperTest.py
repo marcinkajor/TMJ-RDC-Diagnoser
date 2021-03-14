@@ -241,6 +241,8 @@ class TestMapper(unittest.TestCase):
             "No": 0,
             "Yes": 1,
         }
+        toTestQ2 = [str(x) for x in range(0, 11)]
+
         database = DatabaseSQLite('patients_test_database')
         database.connect(temporaryDatabase=True)
         database.createPatientTable('patients')
@@ -254,6 +256,22 @@ class TestMapper(unittest.TestCase):
             q = mapper.dataMappedToAlgoInterface()
             self.assertEqual(q["q3"], toTest[value], "Unexpected Q value after mapping")
             self.assertEqual(q["q14"], toTest[value], "Unexpected Q value after mapping")
+
+        # test Q2 parameters
+        for index, value in enumerate(toTestQ2):
+            PESELtoTest = PESEL.format(str(index))
+            database.storePatientRecord(json.loads(generateTestRecordQ(PESELtoTest, value)))
+            deserializer = DatabaseDeserializer(database)
+            diagnosticRecord = deserializer.getDiagnosticDataDict(PESELtoTest)
+            mapper = DatabaseRecordMapper(MapperQ(diagnosticRecord))
+            q = mapper.dataMappedToAlgoInterface()
+            self.assertEqual(q["q7"], toTest[value], "Unexpected Q value after mapping")
+            self.assertEqual(q["q8"], toTest[value], "Unexpected Q value after mapping")
+            self.assertEqual(q["q9"], toTest[value], "Unexpected Q value after mapping")
+            self.assertEqual(q["q10"], toTest[value], "Unexpected Q value after mapping")
+            self.assertEqual(q["q11"], toTest[value], "Unexpected Q value after mapping")
+            self.assertEqual(q["q12"], toTest[value], "Unexpected Q value after mapping")
+            self.assertEqual(q["q13"], toTest[value], "Unexpected Q value after mapping")
         database.drop()
 
 

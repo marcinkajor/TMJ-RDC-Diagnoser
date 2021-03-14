@@ -4,6 +4,9 @@ TEST_PERSONAL_DATA = '''"PersonalData": {"name": "John", "surname": "Wick", "age
                         "sex": "Male"}'''
 
 TEST_DIAGNOSTIC_DATA = '''"Questionnaire": {"pain_symptoms": "TEST_Q", "opening_problems": "TEST_Q"},
+"Questionnaire2": {"facial_pain_score": "TEST_Q2", "worst_pain_score": "TEST_Q2", "average_pain_score": "TEST_Q2",
+"days_without_activities": "TEST_Q2", "six_months_pain_interference": "TEST_Q2",
+"six_months_pain_recreation_change": "TEST_Q2", "six_months_pain_work_ability_change": "TEST_Q2"},
 "InitialData": {"pain_side": "TEST_pain_side", "right_pain_area": "TEST_right_pain_area",
 "left_pain_area": "TEST_left_pain_area"},
 "AbductionMovement": {"abduction_movement": "TEST_abduction_movement", "specific_description": ""},
@@ -54,7 +57,9 @@ TEST_DIAGNOSTIC_DATA = '''"Questionnaire": {"pain_symptoms": "TEST_Q", "opening_
 "PalpationPainIntraoralPain": {"lateral_pterygoid_area_behind_upper_molars_right": "TEST_palpation_E11",
 "tendon_of_temporalis_tendon_right": "TEST_palpation_E11",
 "lateral_pterygoid_area_behind_upper_molars_left": "TEST_palpation_E11",
-"tendon_of_temporalis_tendon_left": "TEST_palpation_E11"}'''
+"tendon_of_temporalis_tendon_left": "TEST_palpation_E11"},
+"Diagnosis": {},
+"AudioFiles": {}'''
 
 TEST_RECORD = '''{{{}, {}}}'''.format(TEST_PERSONAL_DATA, TEST_DIAGNOSTIC_DATA)
 
@@ -108,5 +113,5 @@ def generateTestRecordPalpationE11(pesel: str, pain: str):
     return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_palpation_E11", pain)
 
 
-def generateTestRecordQ(pesel: str, q: str):
-    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_Q", q)
+def generateTestRecordQ(pesel: str, q: str, q2: str):
+    return TEST_RECORD.replace("TEST_pesel", pesel).replace("TEST_Q", q).replace("TEST_Q2", q2)

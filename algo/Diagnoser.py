@@ -2,6 +2,7 @@ from algo.DatabaseMapper import *
 from algo.DatabaseDeserializer import DatabaseDeserializer
 from algo.AlgoAxis1 import E2, E3, E4, E5, E6, E7, E8
 from algo.AlgoAxis1 import AxisOne
+from algo.AlgoAxis2 import Axis2
 from algo.AlgoPalpation import combinePalpations, Palpations, Palpation
 from algo.AlgoQ import Q
 from algo.AlgoPatient import Patient
@@ -16,18 +17,11 @@ class Diagnoser:
         AXIS_12_RIGHT = 3
         AXIS_13_LEFT = 4
         AXIS_13_RIGHT = 5
+        AXIS_21 = 6
 
     def __init__(self, mapper: DatabaseRecordMapper, deserializer: DatabaseDeserializer):
         self.mapper = mapper
         self.deserializer = deserializer
-
-    def getPatientDiagnosisFromPesel(self, pesel: str, diagnosisType: DiagnosisType) -> str:
-        patient = self._loadPatientFromPesel(pesel)
-        return self._getDiagnosis(patient, diagnosisType)
-
-    def _loadPatientFromPesel(self, pesel: str):
-        diagnosticRecord = self.deserializer.getDiagnosticDataDict(pesel)
-        return self._loadPatient(diagnosticRecord)
 
     def _loadPatient(self, diagnosticRecord: dict) -> Patient:
         # parse and combine AxisI data
@@ -111,6 +105,12 @@ class Diagnoser:
 
         return Patient(idx=None, personalData=None, axisOne=axis1_whole, palpations=palpations_whole, q=q)
 
+    def _loadAxis21(self, diagnosticRecord: dict) -> Axis2:
+        qData = self.mapper.setMapper(MapperQ(diagnosticRecord)).dataMappedToAlgoInterface()
+        axis21 = Axis2([qData["q13"], qData["q7"], qData["q8"], qData["q9"], qData["q10"], qData["q11"], qData["q12"],
+                        qData["q13"]])
+        return axis21
+
     @staticmethod
     def _getDiagnosis(patient: Patient, diagnosisType: DiagnosisType) -> str:
         return {
@@ -122,5 +122,9 @@ class Diagnoser:
         }[diagnosisType]
 
     def getPatientDiagnosisFromRecord(self, record: dict, diagnosisType: DiagnosisType) -> str:
-        patient = self._loadPatient(record)
-        return self._getDiagnosis(patient, diagnosisType)
+        if diagnosisType == Diagnoser.DiagnosisType.AXIS_21:
+            axis21 = self._loadAxis21(record)
+            return axis21.getDiagnosis()
+        else:
+            patient = self._loadPatient(record)
+            return self._getDiagnosis(patient, diagnosisType)
