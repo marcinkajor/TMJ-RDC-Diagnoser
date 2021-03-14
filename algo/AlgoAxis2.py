@@ -1,6 +1,6 @@
 class Axis2:
     def __init__(self, qs: list):
-        self.q3 = qs[0]
+        self.q3 = int(qs[0])
         self.q7 = int(qs[1])
         self.q8 = int(qs[2])
         self.q9 = int(qs[3])
@@ -10,7 +10,7 @@ class Axis2:
         self.q13 = int(qs[7])
 
     def getDiagnosis(self) -> str:
-        if self.q3 == "No":
+        if self.q3 == 0:
             return "No TMD pain in prior 6 months"
         else:
             cpi = (self.q7 + self.q8 + self.q9) / 3 * 10

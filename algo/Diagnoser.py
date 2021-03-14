@@ -107,7 +107,7 @@ class Diagnoser:
 
     def _loadAxis21(self, diagnosticRecord: dict) -> Axis2:
         qData = self.mapper.setMapper(MapperQ(diagnosticRecord)).dataMappedToAlgoInterface()
-        axis21 = Axis2([qData["q13"], qData["q7"], qData["q8"], qData["q9"], qData["q10"], qData["q11"], qData["q12"],
+        axis21 = Axis2([qData["q3"], qData["q7"], qData["q8"], qData["q9"], qData["q10"], qData["q11"], qData["q12"],
                         qData["q13"]])
         return axis21
 
