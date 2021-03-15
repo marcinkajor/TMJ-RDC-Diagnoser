@@ -1,11 +1,16 @@
 from database import DatabaseInterface
 import sqlite3
 import json
+from PyQt5.QtCore import pyqtSignal, QObject
 
 
-class DatabaseSQLite(DatabaseInterface):
+class DatabaseSQLite(DatabaseInterface, QObject):
+
+    changed = pyqtSignal()
+
     def __init__(self, name):
-        super().__init__()
+        DatabaseInterface.__init__(self)
+        QObject.__init__(self)
         self.fileName = name
         self.connection = None
         self.executor = None
@@ -73,6 +78,7 @@ class DatabaseSQLite(DatabaseInterface):
                 cmd = cmdSchema.format(names, questionMarks)
                 with self.connection:
                     self.executor.execute(cmd, values)
+        self.changed.emit()
 
     @staticmethod
     def _prepareValuesToStore(patientRecord: dict) -> list:
@@ -82,14 +88,20 @@ class DatabaseSQLite(DatabaseInterface):
         basicData = list(personalData.values())
         del(patientRecord['PersonalData'])
         del(patientRecord['Diagnosis'])
-        del (patientRecord['AudioFiles'])
+        del(patientRecord['AudioFiles'])
         values = basicData
         values.append(json.dumps(patientRecord))
         values.append(json.dumps(diagnosis))
         for audio in audioFiles:
             # an order matters here
-            values.append(audioFiles[audio]["name"])
-            values.append(audioFiles[audio]["blob"])
+            name = audioFiles[audio]["name"]
+            data = audioFiles[audio]["blob"]
+            # dirty hack for strange pyqtProperty behaviour (AudioFilesPage.BlobWidget)
+            # it gives a pure binary OR dict {name, blob}
+            if isinstance(data, dict):
+                data = data["blob"]
+            values.append(name)
+            values.append(data)
         return values
 
     def updatePatientRecord(self, patientId, patientRecord):
@@ -109,6 +121,7 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute(query, (tuple(values) + (patientId,)))
         except Exception as e:
             print(e)
+        self.changed.emit()
 
     def updatePatientSingleAttribute(self, patientId, attribute, value):
         try:
@@ -117,6 +130,7 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute(schema, (value, patientId))
         except Exception as e:
             print(e)
+        self.changed.emit()
 
     def addPatientSingleAttribute(self, attribute, value):
         try:
@@ -124,6 +138,7 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute('''INSERT INTO patients({}}) VALUES (?)'''.format(attribute), (value,))
         except Exception as e:
             print(e)
+        self.changed.emit()
 
     def getLastInsertedPatientId(self):
         return self.executor.lastrowid
@@ -143,6 +158,7 @@ class DatabaseSQLite(DatabaseInterface):
                 self.executor.execute('''DELETE FROM patients WHERE patient_id = ?''', (patientId,))
         except Exception as e:
             print(e)
+        self.changed.emit()
 
     def getPatientRecordByPesel(self, pesel):
         try:
@@ -187,6 +203,21 @@ class DatabaseSQLite(DatabaseInterface):
         except Exception as e:
             print(e)
             return result.fetchall()
+
+    def getStatsRelevantData(self, key: str) -> list:
+        # returns a list of dicts
+        mapping = {
+            "age": 3,
+            "sex": 5,
+            "diagnostic_data": 7
+        }
+        data = self.getData()
+        result = []
+        for patients in data:
+            data = patients[mapping[key]]
+            if data:
+                result.append(data)
+        return result
 
     def drop(self):
         self.executor.execute('''DROP TABLE IF EXISTS patients''')

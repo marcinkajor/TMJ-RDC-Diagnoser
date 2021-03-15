@@ -13,6 +13,8 @@ import os
 import ctypes
 from gui.Wizard import Wizard
 from database import *
+from Statistics.Stats import Stats
+from gui.StatsWidget import StatsWidget
 
 # needed for custom toolbar icon
 # https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105#1552105
@@ -30,6 +32,7 @@ class Window(QtWidgets.QMainWindow):
         self.database = database
         self.database.connect()
         self.database.createPatientTable('patients')
+        self.statistics = Stats(self.database)
 
         self.diagnoser = Diagnoser(DatabaseRecordMapper(), DatabaseDeserializer(self.database))
 
@@ -46,8 +49,12 @@ class Window(QtWidgets.QMainWindow):
         self.table = DataTable(self,  self.database, self.icon)
         self.centralLayout.addWidget(self.table)
 
+        self.statistics = Stats(self.database)
+        self.statsTabWidget = StatsWidget(self.statistics, self.icon)
+        self.statsTabWidget.setWindowTitle("Database statistics")
+        self.database.changed.connect(self.statsTabWidget.update)
+
         openAction = QtWidgets.QAction("Open", self)
-        openAction.setShortcut("Ctrl+O")
         openAction.setStatusTip('Open the examination file')
         openAction.triggered.connect(self._openDiagnosticFile)
 
@@ -79,6 +86,10 @@ class Window(QtWidgets.QMainWindow):
         importDatabase.setShortcut("Ctrl+i")
         importDatabase.setStatusTip('Import database from the file')
         importDatabase.triggered.connect(self._importDatabase)
+        showStats = QtWidgets.QAction("Show statistics", self)
+        showStats.setShortcut("Ctrl+s")
+        showStats.setStatusTip('Show database diagnosis statistics')
+        showStats.triggered.connect(lambda: self.statsTabWidget.show())
 
         self.statusBar()
 
@@ -91,6 +102,7 @@ class Window(QtWidgets.QMainWindow):
         fileMenu.addAction(showDatabase)
         fileMenu.addAction(exportDatabase)
         fileMenu.addAction(importDatabase)
+        fileMenu.addAction(showStats)
 
         # TODO: avoid duplicating the database in the Wizard (Diagnoser already have it)
         # maybe the Diagnoser shall not use the database object at all
@@ -219,6 +231,7 @@ class Window(QtWidgets.QMainWindow):
                                                                      filter="RDC database file (*.rdc)")
         self._swapFiles(fileName, '../' + DATABASE_NAME + '.db')
         self.table.loadDatabase()
+        self.statsTabWidget.update()
 
 
 def run():

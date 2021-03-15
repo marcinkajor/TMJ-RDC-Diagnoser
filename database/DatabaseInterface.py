@@ -41,5 +41,8 @@ class DatabaseInterface:
     def getData(self) -> list:
         pass
 
+    def getStatsRelevantData(self) -> dict:
+        pass
+
     def drop(self):
         pass
