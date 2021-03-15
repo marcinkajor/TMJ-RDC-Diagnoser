@@ -94,8 +94,14 @@ class DatabaseSQLite(DatabaseInterface, QObject):
         values.append(json.dumps(diagnosis))
         for audio in audioFiles:
             # an order matters here
-            values.append(audioFiles[audio]["name"])
-            values.append(audioFiles[audio]["blob"])
+            name = audioFiles[audio]["name"]
+            data = audioFiles[audio]["blob"]
+            # dirty hack for strange pyqtProperty behaviour (AudioFilesPage.BlobWidget)
+            # it gives a pure binary OR dict {name, blob}
+            if isinstance(data, dict):
+                data = data["blob"]
+            values.append(name)
+            values.append(data)
         return values
 
     def updatePatientRecord(self, patientId, patientRecord):
