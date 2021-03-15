@@ -6,8 +6,8 @@ Created on Thu Oct 22 23:01:01 2020
 """
 
 from PyQt5.QtWidgets import QWizard
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QIcon, QCloseEvent, QKeyEvent
+from PyQt5.QtCore import pyqtSignal, Qt
 from algo.Diagnoser import Diagnoser
 from gui.wizard_pages import *
 from gui.DataTable import DataTable
@@ -130,6 +130,11 @@ class Wizard(QWizard):
     def closeEvent(self, event: QCloseEvent):
         self._onCancelClicked()
         event.accept()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self._onCancelClicked()
+        super(Wizard, self).keyPressEvent(event)
 
     def open(self, action=STORE, patientId=-1):
         self.action = action
