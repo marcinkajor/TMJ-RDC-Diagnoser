@@ -25,7 +25,7 @@ class Stats(StatsInterface):
         self.database = database
 
     def _getAxisHistogramNumbers(self, axisType: str):
-        if axisType not in ["Axis11", "Axis12Right", "Axis12Left", "Axis13Right", "Axis13Left"]:
+        if axisType not in ["Axis11", "Axis12Right", "Axis12Left", "Axis13Right", "Axis13Left", "Axis21"]:
             raise Exception("Invalid axis type")
         patientsData = self.database.getStatsRelevantData()
         scores = []
@@ -48,6 +48,9 @@ class Stats(StatsInterface):
 
     def getAxis13LeftHistogram(self) -> tuple:
         return self._getAxisHistogramNumbers("Axis13Left")
+
+    def getAxis21Histogram(self) -> tuple:
+        return self._getAxisHistogramNumbers("Axis21")
 
     def getMeanAge(self) -> float:
         patientsData = self.database.getStatsRelevantData()

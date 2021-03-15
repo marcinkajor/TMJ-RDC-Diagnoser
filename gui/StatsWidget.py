@@ -28,6 +28,7 @@ class StatsWidget(QTabWidget):
         self.plotWidgetAxis12Left = PlotWidget(self)
         self.plotWidgetAxis13Right = PlotWidget(self)
         self.plotWidgetAxis13Left = PlotWidget(self)
+        self.plotWidgetAxis21 = PlotWidget(self)
 
         # general statistics data
         self.meanAgeLabel = QLabel()
@@ -48,6 +49,7 @@ class StatsWidget(QTabWidget):
         self.addTab(self.plotWidgetAxis12Left, "Axis12 Left Histogram")
         self.addTab(self.plotWidgetAxis13Right, "Axis13 Right Histogram")
         self.addTab(self.plotWidgetAxis13Left, "Axis13 Left Histogram")
+        self.addTab(self.plotWidgetAxis21, "Axis2 Chronic Pain Histogram")
         self.addTab(self.genericStatisticsWidget, "General statistics")
 
     def _updateDiagnosisHistograms(self):
@@ -75,6 +77,11 @@ class StatsWidget(QTabWidget):
         self.plotWidgetAxis13Left.axes.clear()
         self.plotWidgetAxis13Left.axes.bar(labels, counts, align='center')
         self.plotWidgetAxis13Left.draw()
+
+        labels, counts = self.stats.getAxis21Histogram()
+        self.plotWidgetAxis21.axes.clear()
+        self.plotWidgetAxis21.axes.bar(labels, counts, align='center')
+        self.plotWidgetAxis21.draw()
 
     def _updateGeneralStats(self):
         labels, counts = self.stats.getGenderDistribution()

@@ -88,7 +88,7 @@ class DatabaseSQLite(DatabaseInterface, QObject):
         basicData = list(personalData.values())
         del(patientRecord['PersonalData'])
         del(patientRecord['Diagnosis'])
-        del (patientRecord['AudioFiles'])
+        del(patientRecord['AudioFiles'])
         values = basicData
         values.append(json.dumps(patientRecord))
         values.append(json.dumps(diagnosis))
