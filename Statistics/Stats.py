@@ -27,11 +27,11 @@ class Stats(StatsInterface):
     def _getAxisHistogramNumbers(self, axisType: str):
         if axisType not in ["Axis11", "Axis12Right", "Axis12Left", "Axis13Right", "Axis13Left", "Axis21"]:
             raise Exception("Invalid axis type")
-        patientsData = self.database.getStatsRelevantData()
+        patientsData = self.database.getStatsRelevantData("diagnostic_data")
         scores = []
-        for patientData in patientsData:
-            diagnosis = json.loads(patientData['diagnostic_data'])
-            scores.append(diagnosis[axisType])
+        for diagnosis in patientsData:
+            diagnosisMap = json.loads(diagnosis)
+            scores.append(diagnosisMap[axisType])
         return np.unique(scores, return_counts=True)
 
     def getAxis11Histogram(self) -> tuple:
@@ -53,11 +53,9 @@ class Stats(StatsInterface):
         return self._getAxisHistogramNumbers("Axis21")
 
     def getMeanAge(self) -> float:
-        patientsData = self.database.getStatsRelevantData()
-        ageValues = [patient["age"] for patient in patientsData]
+        ageValues = self.database.getStatsRelevantData("age")
         return np.mean(ageValues)
 
     def getGenderDistribution(self) -> tuple:
-        patientsData = self.database.getStatsRelevantData()
-        sexTable = [patient["sex"] for patient in patientsData]
+        sexTable = self.database.getStatsRelevantData("sex")
         return np.unique(sexTable, return_counts=True)

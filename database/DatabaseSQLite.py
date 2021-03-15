@@ -204,19 +204,19 @@ class DatabaseSQLite(DatabaseInterface, QObject):
             print(e)
             return result.fetchall()
 
-    def getStatsRelevantData(self) -> dict:
+    def getStatsRelevantData(self, key: str) -> list:
         # returns a list of dicts
-        AGE = 3
-        GENDER = 5
-        DIAGNOSIS = 7
+        mapping = {
+            "age": 3,
+            "sex": 5,
+            "diagnostic_data": 7
+        }
         data = self.getData()
         result = []
         for patients in data:
-            record = dict()
-            record["age"] = patients[AGE]
-            record["sex"] = patients[GENDER]
-            record["diagnostic_data"] = patients[DIAGNOSIS]
-            result.append(record)
+            data = patients[mapping[key]]
+            if data:
+                result.append(data)
         return result
 
     def drop(self):
