@@ -1,4 +1,4 @@
-from database import DatabaseInterface
+from database.DatabaseInterface import DatabaseInterface
 import sqlite3
 import json
 from PyQt5.QtCore import pyqtSignal, QObject

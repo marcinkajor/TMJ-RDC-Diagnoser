@@ -1,18 +1,15 @@
-from inspect import isclass
-from pkgutil import iter_modules
-from pathlib import Path
-from importlib import import_module
 
-
-# iterate through the modules in the current package
-package_dir = Path(__file__).resolve().parent
-print(package_dir)
-for (_, module_name, _) in iter_modules([package_dir]):
-    # import the module and iterate through its attributes
-    module = import_module(f"{__name__}.{module_name}")
-    for attribute_name in dir(module):
-        attribute = getattr(module, attribute_name)
-
-        if isclass(attribute):
-            # Add the class to this package's variables
-            globals()[attribute_name] = attribute
+from gui.wizard_pages.AbductionMovementPage import *
+from gui.wizard_pages.AudioFilesPage import *
+from gui.wizard_pages.BaseWizardPage import *
+from gui.wizard_pages.IncisorsGapPage import *
+from gui.wizard_pages.InitialDataPage import *
+from gui.wizard_pages.MusclesAndJointPalpationPainPage import *
+from gui.wizard_pages.PersonalDataPage import *
+from gui.wizard_pages.Questionnaire2Page import *
+from gui.wizard_pages.QuestionnairePage import *
+from gui.wizard_pages.SoundsInJointAbductionPage import *
+from gui.wizard_pages.SoundsInJointHorizontalMovementsPage import *
+from gui.wizard_pages.VerticalMandibleMovementsPage import *
+from gui.wizard_pages.VerticalMovementRangePage import *
+from gui.wizard_pages.WizardPagesHelpers import *

@@ -9,11 +9,9 @@ from PyQt5.QtWidgets import QWizard
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeyEvent
 from PyQt5.QtCore import pyqtSignal, Qt
 from algo.Diagnoser import Diagnoser
-from gui.wizard_pages import *
-from gui.DataTable import DataTable
+from gui.DataTable import DataTable, UPDATE, STORE
 
-STORE = 0
-UPDATE = 1
+from gui.wizard_pages import *
 
 
 class Wizard(QWizard):

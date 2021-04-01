@@ -7,12 +7,13 @@ from algo.AlgoParser import parseDatabase
 from algo.Diagnoser import Diagnoser
 from algo.DatabaseDeserializer import DatabaseDeserializer
 from algo.DatabaseMapper import DatabaseRecordMapper
-from DataTable import DataTable
+from gui.DataTable import DataTable
 import csv
 import os
 import ctypes
 from gui.Wizard import Wizard
-from database import *
+from database.DatabaseSQLite import DatabaseSQLite
+from database.DatabaseInterface import DatabaseInterface
 from Statistics.Stats import Stats
 from gui.StatsWidget import StatsWidget
 
