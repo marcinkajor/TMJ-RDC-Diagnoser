@@ -10,7 +10,6 @@ from PyQt5.QtGui import QIcon, QCloseEvent, QKeyEvent
 from PyQt5.QtCore import pyqtSignal, Qt
 from algo.Diagnoser import Diagnoser
 from gui.wizard_pages import *
-from gui.DataTable import DataTable
 
 STORE = 0
 UPDATE = 1
@@ -20,7 +19,7 @@ class Wizard(QWizard):
 
     isDone = pyqtSignal()
 
-    def __init__(self, database, diagnoser: Diagnoser, dataTable: DataTable):
+    def __init__(self, database, diagnoser: Diagnoser, dataTable):
         super().__init__()
         self.database = database
         self.diagoser = diagnoser
