@@ -219,5 +219,11 @@ class DatabaseSQLite(DatabaseInterface, QObject):
                 result.append(data)
         return result
 
+    def getPatientIds(self) -> list:
+        with self.connection:
+            idsTuples = self.executor.execute('''SELECT patient_id from patients''').fetchall()
+            ids = [it[0] for it in idsTuples]
+            return ids
+
     def drop(self):
         self.executor.execute('''DROP TABLE IF EXISTS patients''')

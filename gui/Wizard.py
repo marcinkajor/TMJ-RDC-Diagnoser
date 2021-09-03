@@ -18,7 +18,7 @@ class Wizard(QWizard):
 
     isDone = pyqtSignal()
 
-    def __init__(self, database, diagnoser: Diagnoser, dataTable: DataTable):
+    def __init__(self, database, diagnoser: Diagnoser, dataTable):
         super().__init__()
         self.database = database
         self.diagoser = diagnoser

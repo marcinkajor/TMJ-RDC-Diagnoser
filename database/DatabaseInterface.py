@@ -44,5 +44,8 @@ class DatabaseInterface:
     def getStatsRelevantData(self) -> dict:
         pass
 
+    def getPatientIds(self) -> list:
+        pass
+
     def drop(self):
         pass

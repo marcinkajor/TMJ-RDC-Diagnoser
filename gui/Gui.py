@@ -16,6 +16,11 @@ from database.DatabaseSQLite import DatabaseSQLite
 from database.DatabaseInterface import DatabaseInterface
 from Statistics.Stats import Stats
 from gui.StatsWidget import StatsWidget
+from audio.AudioHandler import AudioSerializer, AudioManager
+from zipfile import ZipFile
+import json
+import shutil
+
 
 # needed for custom toolbar icon
 # https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105#1552105
@@ -87,10 +92,16 @@ class Window(QtWidgets.QMainWindow):
         importDatabase.setShortcut("Ctrl+i")
         importDatabase.setStatusTip('Import database from the file')
         importDatabase.triggered.connect(self._importDatabase)
+
         showStats = QtWidgets.QAction("Show statistics", self)
         showStats.setShortcut("Ctrl+s")
         showStats.setStatusTip('Show database diagnosis statistics')
         showStats.triggered.connect(lambda: self.statsTabWidget.show())
+
+        exportAudioFiles = QtWidgets.QAction("Export audio files", self)
+        exportAudioFiles.setShortcut("Ctrl+a")
+        exportAudioFiles.setStatusTip("Exports all WAV files together with RDC diagnosis to the archive")
+        exportAudioFiles.triggered.connect(self._exportAudio)
 
         self.statusBar()
 
@@ -104,6 +115,7 @@ class Window(QtWidgets.QMainWindow):
         fileMenu.addAction(exportDatabase)
         fileMenu.addAction(importDatabase)
         fileMenu.addAction(showStats)
+        fileMenu.addAction(exportAudioFiles)
 
         # TODO: avoid duplicating the database in the Wizard (Diagnoser already have it)
         # maybe the Diagnoser shall not use the database object at all
@@ -233,6 +245,39 @@ class Window(QtWidgets.QMainWindow):
         self._swapFiles(fileName, '../' + DATABASE_NAME + '.db')
         self.table.loadDatabase()
         self.statsTabWidget.update()
+
+    def _exportAudio(self):
+        path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Export audio files',
+                                                                 filter="(*.zip)")
+        databaseName = "tmj_sound_database"
+        diagnosisColumn = 7
+        dirPath = os.path.join(os.path.dirname(path), databaseName)
+        audioSerializer = AudioSerializer(self, self.icon)
+        ids = self.database.getPatientIds()
+        counter = 0
+        for patientId in ids:
+            record = self.database.getPatientRecordById(patientId)
+            audioFiles = DataTable.getNonEmptyAudioItems(record)
+            patientDir = os.path.join(dirPath, str(patientId))
+            if audioFiles:
+                try:
+                    os.makedirs(patientDir)
+                except FileExistsError:
+                    pass
+                for audio in audioFiles:
+                    counter += 1
+                    name = audio[0]
+                    fs, signal = AudioManager.parseWavFile(audio[1])
+                    audioSerializer.serialize(os.path.join(patientDir, name), fs, signal)
+                with open(os.path.join(patientDir, "diagnosis.json"), 'w') as jsonFile:
+                    diagnosis = record[diagnosisColumn]
+                    try:
+                        json.dump(diagnosis, jsonFile, ensure_ascii=False, indent=4)
+                    except Exception as e:
+                        print(e)
+        print("Audio files count: {}".format(counter))
+        shutil.make_archive(path, 'zip', dirPath)
+        shutil.rmtree(dirPath, ignore_errors=True)
 
 
 def run():

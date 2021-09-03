@@ -108,14 +108,14 @@ class DataTable(QtWidgets.QTableWidget):
         elif columnName == "Audio signals":
             patientId = self.item(row, 0).text()
             record = self.database.getPatientRecordById(patientId)
-            fileItems = self._getNonEmptyAudioItems(record)
+            fileItems = self.getNonEmptyAudioItems(record)
             audioWidgets = []
             for item in fileItems:
                 audioWidgets.append(AudioManager(item[0], item[1], AudioSerializer(self, self.icon), self.icon))
             self._signalsVisualization(audioWidgets)
 
     @staticmethod
-    def _getNonEmptyAudioItems(record: dict) -> list:
+    def getNonEmptyAudioItems(record: dict) -> list:
         listOfFiles = []
         for key in audioMap:
             name = record[audioMap[key][0]]

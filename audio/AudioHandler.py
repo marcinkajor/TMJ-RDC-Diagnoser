@@ -83,7 +83,7 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         self.serializer = serializer
 
         self.binaryData = binaryData
-        self.fs, self.signal = self._parseWavFile(binaryData)
+        self.fs, self.signal = self.parseWavFile(binaryData)
 
         self.plot = PlotWidget(self)
         # TODO: the self._normalizeData() causes significant delay when generating plots
@@ -137,7 +137,7 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
             print(e)
 
     @staticmethod
-    def _parseWavFile(binaryData) -> tuple:
+    def parseWavFile(binaryData) -> tuple:
         fs, signal = wavfile.read(io.BytesIO(binaryData))
         # try:
         #     numberOfChannels = 2 if signal.shape[1] else 1
