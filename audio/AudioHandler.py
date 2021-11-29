@@ -8,6 +8,8 @@ import multiprocessing as multiprocess
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Cursor, Button
 matplotlib.use('Qt5Agg')
 
 
@@ -67,10 +69,12 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         self.playButton = QtWidgets.QPushButton("Play audio file")
         self.stopButton = QtWidgets.QPushButton("Stop playing")
         self.savePlotButton = QtWidgets.QPushButton("Save plot")
+        self.segmentationButton = QtWidgets.QPushButton("Segmentation")
         self.saveButton.clicked.connect(self._onSaveButtonClicked)
         self.playButton.clicked.connect(self._onPlayButtonClicked)
         self.stopButton.clicked.connect(self._onStopPlayingButtonClicked)
         self.savePlotButton.clicked.connect(self._onSavePlotButtonClicked)
+        self.segmentationButton.clicked.connect(self._onSegmentationButtonClicked)
 
         self.fileName = filename
         self.label = QtWidgets.QLabel("Audio name")
@@ -103,6 +107,7 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         self.layout.addWidget(self.playButton)
         self.layout.addWidget(self.stopButton)
         self.layout.addWidget(self.savePlotButton)
+        self.layout.addWidget(self.segmentationButton)
         self.setLayout(self.layout)
 
     def _onSaveButtonClicked(self):
@@ -135,6 +140,25 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
             self.playbackProcess.terminate()
         except Exception as e:
             print(e)
+
+    @staticmethod
+    def _onKeyPressedEvent(event):
+        print(event.xdata, event.ydata)
+
+    @staticmethod
+    def _onButtonClicked(event):
+        print("stolec")
+
+    def _onSegmentationButtonClicked(self):
+        fig, ax = plt.subplots()
+        plt.plot(self.signal)
+        self.cursor = Cursor(ax, useblit=True, color='green', linewidth=1)
+        # axprev = plt.axes([0.7, 0.05, 0.1, 0.075])
+        axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
+        self.button = Button(axnext, 'Start')
+        self.button.on_clicked(self._onButtonClicked)
+        fig.canvas.mpl_connect('key_press_event', self._onKeyPressedEvent)
+        plt.show()
 
     @staticmethod
     def parseWavFile(binaryData) -> tuple:
