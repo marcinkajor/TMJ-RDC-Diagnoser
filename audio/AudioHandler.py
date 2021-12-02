@@ -141,23 +141,52 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         except Exception as e:
             print(e)
 
-    @staticmethod
-    def _onKeyPressedEvent(event):
-        print(event.xdata, event.ydata)
+    def _onKeyPressedEvent(self, event):
+        if self.allowPicking:
+            self.points.append(event.xdata)
+            self.ax.scatter(event.xdata, event.ydata, s=50, color='red', zorder=2, marker='x')
+            xleft, xright = self.ax.get_xlim()
+            yleft, yright = self.ax.get_ylim()
+            plt.draw()
+            self.ax.set_xlim(xleft, xright)
+            self.ax.set_ylim(yleft, yright)
+            print(event.xdata, event.ydata)
+
+    def _onStartButtonClicked(self, event):
+        print("Start")
+        self.allowPicking = True
+
+    def _onStopButtonClicked(self, event):
+        print("Stop")
+        self.allowPicking = False
 
     @staticmethod
-    def _onButtonClicked(event):
-        print("stolec")
+    def _onCancelButtonClicked(event):
+        print("Cancel")
+
+    @staticmethod
+    def _onClearAllButtonClicked(event):
+        print("Clear all")
 
     def _onSegmentationButtonClicked(self):
-        fig, ax = plt.subplots()
-        plt.plot(self.signal)
-        self.cursor = Cursor(ax, useblit=True, color='green', linewidth=1)
-        # axprev = plt.axes([0.7, 0.05, 0.1, 0.075])
-        axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
-        self.button = Button(axnext, 'Start')
-        self.button.on_clicked(self._onButtonClicked)
-        fig.canvas.mpl_connect('key_press_event', self._onKeyPressedEvent)
+        self.fig, self.ax = plt.subplots()
+        plt.plot(self.signal, zorder=1)
+        self.cursor = Cursor(self.ax, useblit=True, color='red', linewidth=1)
+        self.points = []
+        self.allowPicking = False
+        startButtonPos = plt.axes([0.12, 0.9, 0.1, 0.075])
+        stopButtonPos = plt.axes([0.24, 0.9, 0.1, 0.075])
+        cancelButtonPos = plt.axes([0.36, 0.9, 0.1, 0.075])
+        clearAllButtonPos = plt.axes([0.48, 0.9, 0.1, 0.075])
+        self.startButton = Button(startButtonPos, 'Start')
+        self.stopButton = Button(stopButtonPos, 'Stop')
+        self.cancelButton = Button(cancelButtonPos, 'Cancel')
+        self.clearAllButton = Button(clearAllButtonPos, 'Clear all')
+        self.startButton.on_clicked(self._onStartButtonClicked)
+        self.stopButton.on_clicked(self._onStopButtonClicked)
+        self.cancelButton.on_clicked(self._onCancelButtonClicked)
+        self.clearAllButton.on_clicked(self._onClearAllButtonClicked)
+        self.fig.canvas.mpl_connect('key_press_event', self._onKeyPressedEvent)
         plt.show()
 
     @staticmethod
