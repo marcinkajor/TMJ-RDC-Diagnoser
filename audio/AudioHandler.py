@@ -10,6 +10,7 @@ from matplotlib.figure import Figure
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Cursor, Button
+import numpy as np
 matplotlib.use('Qt5Agg')
 
 
@@ -143,14 +144,17 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
 
     def _onKeyPressedEvent(self, event):
         if self.allowPicking:
-            self.points.append(event.xdata)
-            self.ax.scatter(event.xdata, event.ydata, s=50, color='red', zorder=2, marker='x')
+            x = int(round(event.xdata))
+            y = int(round(event.ydata))
+            self.points.append((x, y))
+            visiblePoint = self.ax.plot(x, y, 'rx')
+            self.visiblePoints.append(visiblePoint[0])
             xleft, xright = self.ax.get_xlim()
             yleft, yright = self.ax.get_ylim()
             plt.draw()
             self.ax.set_xlim(xleft, xright)
             self.ax.set_ylim(yleft, yright)
-            print(event.xdata, event.ydata)
+            print(x, y)
 
     def _onStartButtonClicked(self, event):
         print("Start")
@@ -160,19 +164,26 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         print("Stop")
         self.allowPicking = False
 
-    @staticmethod
-    def _onCancelButtonClicked(event):
+    def _onCancelButtonClicked(self, event):
         print("Cancel")
+        if self.points:
+            self.points.pop()
+            self.visiblePoints.pop().remove()
+            plt.draw()
 
-    @staticmethod
-    def _onClearAllButtonClicked(event):
+    def _onClearAllButtonClicked(self, event):
         print("Clear all")
+        self.points.clear()
+        # TODO: this takes a lot of time
+        while self.visiblePoints:
+            self.visiblePoints.pop().remove()
 
     def _onSegmentationButtonClicked(self):
         self.fig, self.ax = plt.subplots()
         plt.plot(self.signal, zorder=1)
         self.cursor = Cursor(self.ax, useblit=True, color='red', linewidth=1)
         self.points = []
+        self.visiblePoints = []
         self.allowPicking = False
         startButtonPos = plt.axes([0.12, 0.9, 0.1, 0.075])
         stopButtonPos = plt.axes([0.24, 0.9, 0.1, 0.075])
