@@ -145,6 +145,14 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
 
     def _onKeyPressedEvent(self, event):
         if self.allowPicking:
+            if self.points and event.xdata <= self.points[-1][0]:
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setText("Error")
+                msg.setInformativeText("Points must be consecutive samples!")
+                msg.setWindowTitle("Error")
+                msg.exec_()
+                return
             x = int(round(event.xdata))
             if x < 0:
                 x = 0
@@ -185,6 +193,15 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
 
     def _onSaveButtonClicked(self, event):
         print("POINTS:")
+        if len(self.points) % 2 or not self.points:
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setText("Error")
+            msg.setInformativeText("Even number (!=0) of points required")
+            msg.setWindowTitle("Error")
+            msg.exec_()
+            return
+
         print(self.points)
         path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Save segmentation file',
                                                                  filter="(*.csv)")
