@@ -11,6 +11,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Cursor, Button
 import numpy as np
+import csv
 matplotlib.use('Qt5Agg')
 
 
@@ -145,6 +146,10 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
     def _onKeyPressedEvent(self, event):
         if self.allowPicking:
             x = int(round(event.xdata))
+            if x < 0:
+                x = 0
+            if x >= len(self.signal):
+                x = len(self.signal)-1
             y = int(round(event.ydata))
             self.points.append((x, y))
             visiblePoint = self.ax.plot(x, y, 'rx')
@@ -178,6 +183,29 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         while self.visiblePoints:
             self.visiblePoints.pop().remove()
 
+    def _onSaveButtonClicked(self, event):
+        print("POINTS:")
+        print(self.points)
+        path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Save segmentation file',
+                                                                 filter="(*.csv)")
+        with open(path, mode='w', newline='') as file:
+            fileWriter = csv.writer(file, delimiter=',')
+            pos = 0
+            for idx in range(0, len(self.points), 2):
+                x1 = self.points[idx][0]
+                x2 = self.points[idx+1][0] + 1  # we must include x2 and list slice [x1:x2] ranges <x1:x2)
+                before = self.signal[pos:x1]
+                segment = self.signal[x1:x2]
+                pos = x2 + 1
+                for data in before:
+                    fileWriter.writerow([data, 0])
+                for data in segment:
+                    fileWriter.writerow([data, 1])
+            lastSample = self.points[-1][0]
+            remainingSignal = self.signal[lastSample+1:]
+            for data in remainingSignal:
+                fileWriter.writerow([data, 0])
+
     def _onSegmentationButtonClicked(self):
         self.fig, self.ax = plt.subplots()
         plt.plot(self.signal, zorder=1)
@@ -189,14 +217,17 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         stopButtonPos = plt.axes([0.24, 0.9, 0.1, 0.075])
         cancelButtonPos = plt.axes([0.36, 0.9, 0.1, 0.075])
         clearAllButtonPos = plt.axes([0.48, 0.9, 0.1, 0.075])
+        saveButtonPos = plt.axes([0.60, 0.9, 0.1, 0.075])
         self.startButton = Button(startButtonPos, 'Start')
         self.stopButton = Button(stopButtonPos, 'Stop')
         self.cancelButton = Button(cancelButtonPos, 'Cancel')
         self.clearAllButton = Button(clearAllButtonPos, 'Clear all')
+        self.saveButton = Button(saveButtonPos, 'Save')
         self.startButton.on_clicked(self._onStartButtonClicked)
         self.stopButton.on_clicked(self._onStopButtonClicked)
         self.cancelButton.on_clicked(self._onCancelButtonClicked)
         self.clearAllButton.on_clicked(self._onClearAllButtonClicked)
+        self.saveButton.on_clicked(self._onSaveButtonClicked)
         self.fig.canvas.mpl_connect('key_press_event', self._onKeyPressedEvent)
         plt.show()
 
