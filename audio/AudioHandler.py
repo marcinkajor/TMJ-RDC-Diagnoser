@@ -213,7 +213,7 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
                 x2 = self.points[idx+1][0] + 1  # we must include x2 and list slice [x1:x2] ranges <x1:x2)
                 before = self.signal[pos:x1]
                 segment = self.signal[x1:x2]
-                pos = x2 + 1
+                pos = x2
                 for data in before:
                     fileWriter.writerow([data, 0])
                 for data in segment:
