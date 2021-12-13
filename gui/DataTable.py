@@ -1,8 +1,12 @@
-from database import *
-import Wizard
+
 from PyQt5 import QtWidgets, QtGui, QtCore
 import json
 from audio.AudioHandler import AudioManager, AudioSerializer
+
+from database import DatabaseInterface
+
+STORE = 0
+UPDATE = 1
 
 # maps convenient string into pair of coupled column indexes in database (name, data)
 audioMap = {
@@ -130,7 +134,7 @@ class DataTable(QtWidgets.QTableWidget):
                 self.contextMenu.popup(self.viewport().mapToGlobal(pos))
 
     def _onPatientUpdateTriggered(self):
-        self.mainWindow.getWizard().open(action=Wizard.UPDATE, patientId=self.latestPatientId)
+        self.mainWindow.getWizard().open(action=UPDATE, patientId=self.latestPatientId)
         self.mainWindow.setEnabled(False)
 
     def _onDeletePatientTriggered(self):

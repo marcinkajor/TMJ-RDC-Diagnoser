@@ -12,7 +12,8 @@ import csv
 import os
 import ctypes
 from gui.Wizard import Wizard
-from database import *
+from database.DatabaseSQLite import DatabaseSQLite
+from database.DatabaseInterface import DatabaseInterface
 from Statistics.Stats import Stats
 from gui.StatsWidget import StatsWidget
 from audio.AudioHandler import AudioSerializer, AudioManager
