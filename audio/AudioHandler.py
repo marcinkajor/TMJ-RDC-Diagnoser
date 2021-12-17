@@ -167,32 +167,26 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
             plt.draw()
             self.ax.set_xlim(xleft, xright)
             self.ax.set_ylim(yleft, yright)
-            print(x, y)
 
     def _onStartButtonClicked(self, event):
-        print("Start")
         self.allowPicking = True
 
     def _onStopButtonClicked(self, event):
-        print("Stop")
         self.allowPicking = False
 
     def _onCancelButtonClicked(self, event):
-        print("Cancel")
         if self.points:
             self.points.pop()
             self.visiblePoints.pop().remove()
             plt.draw()
 
     def _onClearAllButtonClicked(self, event):
-        print("Clear all")
         self.points.clear()
         # TODO: this takes a lot of time
         while self.visiblePoints:
             self.visiblePoints.pop().remove()
 
     def _onSaveButtonClicked(self, event):
-        print("POINTS:")
         if len(self.points) % 2 or not self.points:
             msg = QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Critical)
@@ -202,8 +196,8 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
             msg.exec_()
             return
 
-        print(self.points)
-        path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Save segmentation file',
+        defaultFileName = self.fileName[:-len(".wav")]
+        path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Save segmentation file', defaultFileName,
                                                                  filter="(*.csv)")
         with open(path, mode='w', newline='') as file:
             fileWriter = csv.writer(file, delimiter=',')
