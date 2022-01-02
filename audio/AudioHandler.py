@@ -186,7 +186,7 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         while self.visiblePoints:
             self.visiblePoints.pop().remove()
 
-    def _onSaveButtonClicked(self, event):
+    def _onSaveSegmentationButtonClicked(self, event):
         if len(self.points) % 2 or not self.points:
             msg = QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Critical)
@@ -233,12 +233,12 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         self.stopButton = Button(stopButtonPos, 'Stop')
         self.cancelButton = Button(cancelButtonPos, 'Cancel')
         self.clearAllButton = Button(clearAllButtonPos, 'Clear all')
-        self.saveButton = Button(saveButtonPos, 'Save')
+        self.saveSegmentationButton = Button(saveButtonPos, 'Save')
         self.startButton.on_clicked(self._onStartButtonClicked)
         self.stopButton.on_clicked(self._onStopButtonClicked)
         self.cancelButton.on_clicked(self._onCancelButtonClicked)
         self.clearAllButton.on_clicked(self._onClearAllButtonClicked)
-        self.saveButton.on_clicked(self._onSaveButtonClicked)
+        self.saveSegmentationButton.on_clicked(self._onSaveSegmentationButtonClicked)
         self.fig.canvas.mpl_connect('key_press_event', self._onKeyPressedEvent)
         plt.show()
 
