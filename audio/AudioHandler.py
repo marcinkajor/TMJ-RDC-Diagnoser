@@ -8,6 +8,10 @@ import multiprocessing as multiprocess
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Cursor, Button
+import numpy as np
+import csv
 matplotlib.use('Qt5Agg')
 
 
@@ -67,10 +71,12 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         self.playButton = QtWidgets.QPushButton("Play audio file")
         self.stopButton = QtWidgets.QPushButton("Stop playing")
         self.savePlotButton = QtWidgets.QPushButton("Save plot")
+        self.segmentationButton = QtWidgets.QPushButton("Segmentation")
         self.saveButton.clicked.connect(self._onSaveButtonClicked)
         self.playButton.clicked.connect(self._onPlayButtonClicked)
         self.stopButton.clicked.connect(self._onStopPlayingButtonClicked)
         self.savePlotButton.clicked.connect(self._onSavePlotButtonClicked)
+        self.segmentationButton.clicked.connect(self._onSegmentationButtonClicked)
 
         self.fileName = filename
         self.label = QtWidgets.QLabel("Audio name")
@@ -103,6 +109,7 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
         self.layout.addWidget(self.playButton)
         self.layout.addWidget(self.stopButton)
         self.layout.addWidget(self.savePlotButton)
+        self.layout.addWidget(self.segmentationButton)
         self.setLayout(self.layout)
 
     def _onSaveButtonClicked(self):
@@ -135,6 +142,105 @@ class AudioManager(SaveFile, QtWidgets.QWidget):
             self.playbackProcess.terminate()
         except Exception as e:
             print(e)
+
+    def _onKeyPressedEvent(self, event):
+        if self.allowPicking:
+            if self.points and event.xdata <= self.points[-1][0]:
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setText("Error")
+                msg.setInformativeText("Points must be consecutive samples!")
+                msg.setWindowTitle("Error")
+                msg.exec_()
+                return
+            x = int(round(event.xdata))
+            if x < 0:
+                x = 0
+            if x >= len(self.signal):
+                x = len(self.signal)-1
+            y = int(round(event.ydata))
+            self.points.append((x, y))
+            visiblePoint = self.ax.plot(x, y, 'rx')
+            self.visiblePoints.append(visiblePoint[0])
+            xleft, xright = self.ax.get_xlim()
+            yleft, yright = self.ax.get_ylim()
+            plt.draw()
+            self.ax.set_xlim(xleft, xright)
+            self.ax.set_ylim(yleft, yright)
+
+    def _onStartButtonClicked(self, event):
+        self.allowPicking = True
+
+    def _onStopButtonClicked(self, event):
+        self.allowPicking = False
+
+    def _onCancelButtonClicked(self, event):
+        if self.points:
+            self.points.pop()
+            self.visiblePoints.pop().remove()
+            plt.draw()
+
+    def _onClearAllButtonClicked(self, event):
+        self.points.clear()
+        # TODO: this takes a lot of time
+        while self.visiblePoints:
+            self.visiblePoints.pop().remove()
+
+    def _onSaveSegmentationButtonClicked(self, event):
+        if len(self.points) % 2 or not self.points:
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setText("Error")
+            msg.setInformativeText("Even number (!=0) of points required")
+            msg.setWindowTitle("Error")
+            msg.exec_()
+            return
+
+        defaultFileName = self.fileName[:-len(".wav")]
+        path, fileFilter = QtWidgets.QFileDialog.getSaveFileName(self, 'Save segmentation file', defaultFileName,
+                                                                 filter="(*.csv)")
+        with open(path, mode='w', newline='') as file:
+            fileWriter = csv.writer(file, delimiter=',')
+            pos = 0
+            for idx in range(0, len(self.points), 2):
+                x1 = self.points[idx][0]
+                x2 = self.points[idx+1][0] + 1  # we must include x2 and list slice [x1:x2] ranges <x1:x2)
+                before = self.signal[pos:x1]
+                segment = self.signal[x1:x2]
+                pos = x2
+                for data in before:
+                    fileWriter.writerow([data, 0])
+                for data in segment:
+                    fileWriter.writerow([data, 1])
+            lastSample = self.points[-1][0]
+            remainingSignal = self.signal[lastSample+1:]
+            for data in remainingSignal:
+                fileWriter.writerow([data, 0])
+
+    def _onSegmentationButtonClicked(self):
+        self.fig, self.ax = plt.subplots()
+        plt.plot(self.signal, zorder=1)
+        self.cursor = Cursor(self.ax, useblit=True, color='red', linewidth=1)
+        self.points = []
+        self.visiblePoints = []
+        self.allowPicking = False
+        startButtonPos = plt.axes([0.12, 0.9, 0.1, 0.075])
+        stopButtonPos = plt.axes([0.24, 0.9, 0.1, 0.075])
+        cancelButtonPos = plt.axes([0.36, 0.9, 0.1, 0.075])
+        clearAllButtonPos = plt.axes([0.48, 0.9, 0.1, 0.075])
+        saveButtonPos = plt.axes([0.60, 0.9, 0.1, 0.075])
+        self.startButton = Button(startButtonPos, 'Start')
+        self.stopButton = Button(stopButtonPos, 'Stop')
+        self.cancelButton = Button(cancelButtonPos, 'Cancel')
+        self.clearAllButton = Button(clearAllButtonPos, 'Clear all')
+        self.saveSegmentationButton = Button(saveButtonPos, 'Save')
+        self.startButton.on_clicked(self._onStartButtonClicked)
+        self.stopButton.on_clicked(self._onStopButtonClicked)
+        self.cancelButton.on_clicked(self._onCancelButtonClicked)
+        self.clearAllButton.on_clicked(self._onClearAllButtonClicked)
+        self.saveSegmentationButton.on_clicked(self._onSaveSegmentationButtonClicked)
+        self.fig.canvas.mpl_connect('key_press_event', self._onKeyPressedEvent)
+        plt.show()
 
     @staticmethod
     def parseWavFile(binaryData) -> tuple:
